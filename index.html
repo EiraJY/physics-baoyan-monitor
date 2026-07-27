@@ -76,7 +76,7 @@ tr:hover td{filter:brightness(.992)}
 .open-btn,.search-btn{display:inline-block;border-radius:7px;padding:5px 8px;font-weight:800;margin:1px 4px 4px 0}
 .open-btn{background:#eaf1ff;border:1px solid #b9cdf7;color:#1d4ed8}
 .search-btn{background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563}
-.builder-btn{display:inline-block;border-radius:7px;padding:5px 8px;font-weight:850;margin:1px 4px 4px 0;background:#e7f8f0;border:1px solid #9fd6bd;color:#12634c;cursor:pointer}.builder-btn:hover{background:#d8f2e6;text-decoration:none}
+.builder-btn{display:inline-block;border-radius:7px;padding:5px 8px;font-weight:850;margin:1px 4px 4px 0;background:#e7f8f0;border:1px solid #9fd6bd;color:#12634c;cursor:pointer}.builder-btn:hover{background:#d8f2e6;text-decoration:none}.builder-btn.disabled{background:#f1f3f5;border-color:#d9dee5;color:#7b8491;cursor:not-allowed;pointer-events:none}.material-list-auto{margin:4px 0 0;padding-left:20px}.material-list-auto li{margin:4px 0;line-height:1.45}.scope-line{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.scope-chip{display:inline-block;border:1px solid #cfd8e6;background:#f5f8fc;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:800;color:#4a5870}.builder-warning{font-size:12px;color:#8b4c0d;background:#fff8e8;border:1px solid #eed29a;border-radius:8px;padding:7px 9px}
 [contenteditable="true"]{outline:1px dashed transparent}
 [contenteditable="true"]:hover{outline-color:#91ade2;background:#f7faff}
 [contenteditable="true"]:focus{outline:2px solid var(--blue);background:#fff}
@@ -127,7 +127,7 @@ tr:hover td{filter:brightness(.992)}
 .route-chip,.major-chip,.verify-chip,.kind-chip,.status-chip{display:inline-flex;align-items:center;border-radius:999px;padding:3px 8px;font-weight:800;font-size:11px;line-height:1.35}
 .route-summer{background:#fff1dc;color:#9a4a08}.route-pre{background:#e9f1ff;color:#1f55a4}
 .major-chip{background:#f1edff;color:#5b3e9b}.verify-high{background:#dcfce7;color:#166534}.verify-mid{background:#fef3c7;color:#92400e}.verify-low{background:#fee2e2;color:#991b1b}
-.kind-notice{background:#e9f8ef;color:#12633f}.kind-baseline{background:#e8f1ff;color:#174b9b}.kind-report{background:#fff4df;color:#8b4c0d}.kind-lead{background:#edf0f4;color:#5d6674}
+.kind-notice{background:#e9f8ef;color:#12633f}.kind-baseline{background:#e8f1ff;color:#174b9b}.kind-policy{background:#f3f0ff;color:#6645a3}.kind-report{background:#fff4df;color:#8b4c0d}.kind-lead{background:#edf0f4;color:#5d6674}
 .status-open{background:#e6f8ed;color:#12633f}.status-closed{background:#ffe8e5;color:#a22d24}.status-review{background:#fff3df;color:#89500f}
 .follow-btn{border:1px solid var(--line);background:#fff;border-radius:9px;width:34px;height:34px;cursor:pointer;font-size:19px;line-height:1;color:#8290a5;flex:0 0 auto}
 .follow-btn.active{color:#d48a00;background:#fff7db;border-color:#e6c36a}
@@ -1311,6 +1311,8 @@ function isGenericTitle(t,school=''){
   return !x||x===school||generic.includes(x)||x.length<4;
 }
 function recordKind(x){
+  if(x.record_type==='school_policy')return 'policy';
+  if(x.record_type==='notice'&&x.origin==='crawler')return 'notice';
   if(x.origin==='existing_dashboard'||x.verification==='人工核验基线')return 'baseline';
   const title=normalizeText(x.title), body=normalizeText(x.excerpt), url=String(x.url||'');
   const action=/(报名|申请|接收|招生|推荐免试|推免|夏令营.{0,12}(通知|公告|简章)|优秀大学生.{0,12}夏令营)/;
@@ -1323,9 +1325,9 @@ function recordKind(x){
   if(isGenericTitle(title,x.school))return 'lead';
   return 'lead';
 }
-function kindLabel(k){return {baseline:'人工核验',notice:'正式通知',report:'活动报道',lead:'栏目线索'}[k]||'线索';}
-function kindClass(k){return {baseline:'kind-baseline',notice:'kind-notice',report:'kind-report',lead:'kind-lead'}[k]||'kind-lead';}
-function displayTitle(x){const k=recordKind(x);if(k==='lead'&&isGenericTitle(x.title,x.school))return `${x.school}｜官网栏目线索（尚未定位具体通知）`;return normalizeText(x.title)||`${x.school} ${x.route}通知`;}
+function kindLabel(k){return {baseline:'人工核验',notice:'院系正式通知',policy:'校级总办法',report:'活动报道',lead:'栏目线索'}[k]||'线索';}
+function kindClass(k){return {baseline:'kind-baseline',notice:'kind-notice',policy:'kind-policy',report:'kind-report',lead:'kind-lead'}[k]||'kind-lead';}
+function displayTitle(x){const k=recordKind(x);if(k==='policy')return `${x.school}｜学校级总办法（仅作政策参考）`;if(k==='lead'&&isGenericTitle(x.title,x.school))return `${x.school}｜官网栏目线索（尚未定位具体通知）`;return normalizeText(x.title)||`${x.school} ${x.route}通知`;}
 function usefulSnippet(x){
   const k=recordKind(x);
   if(k==='lead')return '自动抓取到了官网首页或招生栏目，但尚未定位到具体报名通知。该条默认隐藏，可打开原文或等待后续更新。';
@@ -1342,7 +1344,7 @@ function parseDateValue(v){
   const s=m[0].replace('年','-').replace('月','-').replace('日','').replace(/[/.]/g,'-');const d=new Date(s+'T00:00:00+08:00');return Number.isNaN(d.getTime())?null:d;
 }
 function deadlineInfo(x){
-  const raw=normalizeText(x.deadline)||'待人工核验';const d=parseDateValue(raw);if(!d)return {raw,cls:''};
+  const raw=normalizeText(x.deadline_display||x.deadline)||'待人工核验';const d=parseDateValue(raw);if(!d)return {raw,cls:''};
   const days=Math.ceil((d-new Date())/86400000);if(days<0)return {raw,cls:'deadline-urgent'};if(days<=7)return {raw,cls:'deadline-urgent'};return {raw,cls:'deadline-open'};
 }
 function statusClass(x){if(x.status==='报名中')return 'open';if(x.status==='已截止')return 'closed';return 'review';}
@@ -1372,19 +1374,32 @@ function filteredAutoItems(){
 }
 function chipList(x){return [...(x.majors||[]),...(x.matched_keywords||[])].filter((v,i,a)=>a.indexOf(v)===i).map(v=>`<span class="major-chip">${escAuto(v)}</span>`).join('');}
 function builderHref(x){return `builder/?noticeId=${encodeURIComponent(x.id)}`;}
+function noticeMaterialItems(x){return Array.isArray(x.material_items)?x.material_items:[];}
+function canBuildFromNotice(x){return recordKind(x)==='notice'&&x.builder_ready===true&&noticeMaterialItems(x).length>=3&&/具体通知/.test(String(x.source_scope||''));}
+function scopeChips(x){return `<div class="scope-line">${x.source_scope?`<span class="scope-chip">${escAuto(x.source_scope)}</span>`:''}${x.degree?`<span class="scope-chip">${escAuto(x.degree)}</span>`:''}${x.material_confidence?`<span class="scope-chip">材料识别：${escAuto(x.material_confidence)}</span>`:''}${noticeMaterialItems(x).length?`<span class="scope-chip">${noticeMaterialItems(x).length}项材料</span>`:''}</div>`;}
+function materialDetailHtml(x){
+  const items=noticeMaterialItems(x);
+  if(items.length)return `<ol class="material-list-auto">${items.map(m=>`<li><b>${escAuto(m.title||'未命名材料')}</b>${m.raw_text&&m.raw_text!==m.title?`<div class="compact-sub">${escAuto(m.raw_text)}</div>`:''}</li>`).join('')}</ol>`;
+  return `<div class="builder-warning">尚未从院系具体通知中提取出完整材料清单。请先打开官方原文，不会自动创建材料项目。</div>`;
+}
+function builderActionHtml(x,label='准备材料'){
+  if(canBuildFromNotice(x))return `<a class="builder-btn" href="${builderHref(x)}" onclick="setAutoProgress('${escAuto(x.id)}','准备申请')">${escAuto(label)}</a>`;
+  return `<span class="builder-btn disabled" title="需要院系具体通知且至少识别3项材料">材料待院系细则</span>`;
+}
 function renderNoticeCard(x){
   const k=recordKind(x),dl=deadlineInfo(x),follow=isFollowed(x.id),summary=usefulSnippet(x);
-  return `<article class="notice-card ${statusClass(x)} ${k==='lead'||k==='report'?'lead':''}">
+  return `<article class="notice-card ${statusClass(x)} ${['lead','report','policy'].includes(k)?'lead':''}">
     <div class="notice-card-head"><div class="badge-line"><span class="route-chip ${routeClass(x.route)}">${escAuto(x.route)}</span><span class="kind-chip ${kindClass(k)}">${kindLabel(k)}</span><span class="verify-chip ${verifyClass(x.verification)}">${escAuto(x.verification||'待核验')}</span><span class="status-chip ${statusChipClass(x)}">${escAuto(x.status||'待人工确认')}</span></div><button class="follow-btn ${follow?'active':''}" type="button" title="本地关注" onclick="toggleFollow('${escAuto(x.id)}')">${follow?'★':'☆'}</button></div>
     <h3 class="notice-institution">${escAuto(x.school)}</h3><div class="notice-college">${escAuto(x.college||x.region||'')}</div>
     <div class="notice-title" title="${escAuto(displayTitle(x))}">${escAuto(displayTitle(x))}</div>
+    ${scopeChips(x)}
     <div class="notice-meta"><div><span>发布日期</span><strong>${escAuto(x.published_at||'待识别')}</strong></div><div><span>截止时间</span><strong class="${dl.cls}">${escAuto(dl.raw)}</strong></div><div><span>相关度</span><strong>${escAuto(x.score??'—')} / 100</strong></div><div><span>单位类型</span><strong>${escAuto(x.institution_type||'其他')}</strong></div></div>
     <div class="notice-keywords">${chipList(x)}</div><p class="notice-summary">${escAuto(summary)}</p>
-    <details class="notice-details"><summary>展开识别详情</summary><div class="detail-grid"><div><b>考核安排</b>${escAuto(x.exam||'待人工核验')}</div><div><b>材料要求</b>${escAuto(x.materials||'待人工核验')}</div><div><b>备注</b>${escAuto(x.remark||'—')}</div><div><b>首次发现</b>${escAuto(x.first_seen||'—')}</div><div class="raw-excerpt"><b>抓取原文片段</b>${escAuto(clipText(x.excerpt||'',700)||'—')}</div></div></details>
-    <div class="notice-card-foot"><a class="open-btn" href="${escAuto(x.url)}" target="_blank" rel="noopener">打开官方原文</a><a class="builder-btn" href="${builderHref(x)}" onclick="setAutoProgress('${escAuto(x.id)}','准备申请')">准备材料</a><button class="detail-btn" type="button" onclick="openNoticeDialog('${escAuto(x.id)}')">集中查看</button><select class="local-status" onchange="setAutoProgress('${escAuto(x.id)}',this.value)">${['未处理','关注','准备申请','已申请','忽略'].map(v=>`<option ${localProgress(x.id)===v?'selected':''}>${v}</option>`).join('')}</select></div>
+    <details class="notice-details"><summary>展开院系通知与材料清单</summary><div class="detail-grid"><div><b>考核安排</b>${escAuto(x.exam||'待人工核验')}</div><div><b>材料要求</b>${materialDetailHtml(x)}</div><div><b>备注</b>${escAuto(x.remark||'—')}</div><div><b>首次发现</b>${escAuto(x.first_seen||'—')}</div><div class="raw-excerpt"><b>抓取原文片段</b>${escAuto(clipText(x.excerpt||'',700)||'—')}</div></div></details>
+    <div class="notice-card-foot"><a class="open-btn" href="${escAuto(x.url)}" target="_blank" rel="noopener">打开官方原文</a>${builderActionHtml(x)}<button class="detail-btn" type="button" onclick="openNoticeDialog('${escAuto(x.id)}')">集中查看</button><select class="local-status" onchange="setAutoProgress('${escAuto(x.id)}',this.value)">${['未处理','关注','准备申请','已申请','忽略'].map(v=>`<option ${localProgress(x.id)===v?'selected':''}>${v}</option>`).join('')}</select></div>
   </article>`;
 }
-function renderCompactRow(x){const k=recordKind(x),dl=deadlineInfo(x);return `<tr><td class="institution-cell"><b>${escAuto(x.school)}</b><div class="compact-sub">${escAuto(x.college||'')}</div></td><td class="notice-cell-compact"><div class="compact-title">${escAuto(displayTitle(x))}</div><div class="compact-sub">${escAuto(clipText(usefulSnippet(x),90))}</div></td><td><span class="route-chip ${routeClass(x.route)}">${escAuto(x.route)}</span><br><span class="kind-chip ${kindClass(k)}">${kindLabel(k)}</span></td><td class="date-cell">${escAuto(x.published_at||'待识别')}</td><td class="date-cell ${dl.cls}">${escAuto(dl.raw)}</td><td><span class="status-chip ${statusChipClass(x)}">${escAuto(x.status||'待确认')}</span></td><td>${escAuto(x.score??'—')}<br><span class="verify-chip ${verifyClass(x.verification)}">${escAuto(x.verification||'待核验')}</span></td><td class="action-cell"><a class="open-btn" href="${escAuto(x.url)}" target="_blank" rel="noopener">原文</a> <a class="builder-btn" href="${builderHref(x)}" onclick="setAutoProgress('${escAuto(x.id)}','准备申请')">材料</a> <button class="detail-btn" onclick="openNoticeDialog('${escAuto(x.id)}')">详情</button></td></tr>`;}
+function renderCompactRow(x){const k=recordKind(x),dl=deadlineInfo(x);return `<tr><td class="institution-cell"><b>${escAuto(x.school)}</b><div class="compact-sub">${escAuto(x.college||'')}</div></td><td class="notice-cell-compact"><div class="compact-title">${escAuto(displayTitle(x))}</div><div class="compact-sub">${escAuto(clipText(usefulSnippet(x),90))}</div></td><td><span class="route-chip ${routeClass(x.route)}">${escAuto(x.route)}</span><br><span class="kind-chip ${kindClass(k)}">${kindLabel(k)}</span></td><td class="date-cell">${escAuto(x.published_at||'待识别')}</td><td class="date-cell ${dl.cls}">${escAuto(dl.raw)}</td><td><span class="status-chip ${statusChipClass(x)}">${escAuto(x.status||'待确认')}</span></td><td>${escAuto(x.score??'—')}<br><span class="verify-chip ${verifyClass(x.verification)}">${escAuto(x.verification||'待核验')}</span></td><td class="action-cell"><a class="open-btn" href="${escAuto(x.url)}" target="_blank" rel="noopener">原文</a> ${builderActionHtml(x,'材料')} <button class="detail-btn" onclick="openNoticeDialog('${escAuto(x.id)}')">详情</button></td></tr>`;}
 function renderAutoResults(resetVisible=true){
   if(resetVisible)AUTO_STATE.visible=12;const items=filteredAutoItems();const shown=items.slice(0,AUTO_STATE.visible);const cards=document.getElementById('noticeCards'),table=document.getElementById('compactTableWrap'),empty=document.getElementById('autoEmpty'),more=document.getElementById('loadMoreBtn');
   document.getElementById('autoResultText').innerHTML=`筛选后 <strong>${items.length}</strong> 条，当前显示 <strong>${shown.length}</strong> 条`;
@@ -1393,12 +1408,15 @@ function renderAutoResults(resetVisible=true){
 }
 function loadMoreNotices(){AUTO_STATE.visible+=12;renderAutoResults(false);}
 function resetAutoFilters(){AUTO_STATE.route='';document.querySelectorAll('#routeTabs button').forEach((b,i)=>b.classList.toggle('active',i===0));['autoType','autoMajor','autoStatus'].forEach(id=>document.getElementById(id).value='');document.getElementById('autoSort').value='priority';document.getElementById('autoSearch').value='';document.getElementById('autoActionable').checked=true;document.getElementById('autoOpenOnly').checked=false;document.getElementById('autoReviewOnly').checked=false;document.getElementById('autoFollowOnly').checked=false;renderAutoResults();}
-function openNoticeDialog(id){const x=(window.CRAWLER_DATA?.notices||[]).find(v=>String(v.id)===String(id));if(!x)return;const dl=deadlineInfo(x),k=recordKind(x);document.getElementById('dialogBody').innerHTML=`<div class="dialog-head"><div><div class="badge-line"><span class="route-chip ${routeClass(x.route)}">${escAuto(x.route)}</span><span class="kind-chip ${kindClass(k)}">${kindLabel(k)}</span><span class="verify-chip ${verifyClass(x.verification)}">${escAuto(x.verification)}</span></div><h3>${escAuto(x.school)}</h3><div class="notice-college">${escAuto(x.college||'')}</div></div><button class="dialog-close" onclick="document.getElementById('noticeDialog').close()">×</button></div><div class="dialog-section"><h4>${escAuto(displayTitle(x))}</h4><p>${escAuto(usefulSnippet(x))}</p></div><div class="dialog-section"><h4>日期与状态</h4><p>发布日期：${escAuto(x.published_at||'待识别')}\n截止时间：${escAuto(dl.raw)}\n自动状态：${escAuto(x.status||'待确认')}\n相关度：${escAuto(x.score??'—')} / 100</p></div><div class="dialog-section"><h4>考核与材料</h4><p>考核：${escAuto(x.exam||'待人工核验')}\n材料：${escAuto(x.materials||'待人工核验')}\n备注：${escAuto(x.remark||'—')}</p></div><div class="dialog-section"><h4>抓取原文片段</h4><p>${escAuto(clipText(x.excerpt||'',1600)||'—')}</p></div><div class="notice-card-foot"><a class="open-btn" href="${escAuto(x.url)}" target="_blank" rel="noopener">打开官方原文</a><a class="builder-btn" href="${builderHref(x)}" onclick="setAutoProgress('${escAuto(x.id)}','准备申请')">创建材料项目</a></div>`;document.getElementById('noticeDialog').showModal();}
+function openNoticeDialog(id){const x=(window.CRAWLER_DATA?.notices||[]).find(v=>String(v.id)===String(id));if(!x)return;const dl=deadlineInfo(x),k=recordKind(x);document.getElementById('dialogBody').innerHTML=`<div class="dialog-head"><div><div class="badge-line"><span class="route-chip ${routeClass(x.route)}">${escAuto(x.route)}</span><span class="kind-chip ${kindClass(k)}">${kindLabel(k)}</span><span class="verify-chip ${verifyClass(x.verification)}">${escAuto(x.verification)}</span></div><h3>${escAuto(x.school)}</h3><div class="notice-college">${escAuto(x.college||'')}</div>${scopeChips(x)}</div><button class="dialog-close" onclick="document.getElementById('noticeDialog').close()">×</button></div><div class="dialog-section"><h4>${escAuto(displayTitle(x))}</h4><p>${escAuto(usefulSnippet(x))}</p></div><div class="dialog-section"><h4>日期与状态</h4><p>发布日期：${escAuto(x.published_at||'待识别')}
+截止时间：${escAuto(dl.raw)}
+自动状态：${escAuto(x.status||'待确认')}
+相关度：${escAuto(x.score??'—')} / 100</p></div><div class="dialog-section"><h4>院系材料清单</h4>${materialDetailHtml(x)}</div><div class="dialog-section"><h4>考核与备注</h4><p>考核：${escAuto(x.exam||'待人工核验')}
+备注：${escAuto(x.remark||'—')}</p></div><div class="dialog-section"><h4>抓取原文片段</h4><p>${escAuto(clipText(x.excerpt||'',1600)||'—')}</p></div><div class="notice-card-foot"><a class="open-btn" href="${escAuto(x.url)}" target="_blank" rel="noopener">打开官方原文</a>${builderActionHtml(x,'创建材料项目')}</div>`;document.getElementById('noticeDialog').showModal();}
 function attachStaticBuilderButtons(){
-  document.querySelectorAll('#preTable tbody tr').forEach((tr,idx)=>{
-    const cells=tr.querySelectorAll('td'),box=tr.querySelector('.link-cell');if(!box||box.querySelector('.builder-btn'))return;
-    const q=new URLSearchParams({sourceId:'static-'+idx,school:cells[2]?.innerText.trim()||'',college:cells[3]?.innerText.trim()||'',route:'预推免',year:'2026',publishedAt:cells[8]?.innerText.trim()||'',deadline:cells[9]?.innerText.trim()||'',materials:cells[11]?.innerText.trim()||'',sourceUrl:box.querySelector('a.open-btn')?.href||''});
-    const a=document.createElement('a');a.className='builder-btn';a.href='builder/?'+q.toString();a.textContent='准备材料';a.addEventListener('click',()=>{const sel=tr.querySelector('.status-select');if(sel){sel.value='准备材料';applyStatusRow(tr);localStorage.setItem(STORAGE_KEY,JSON.stringify(serialize()));}});box.appendChild(a);
+  document.querySelectorAll('#preTable tbody tr').forEach(tr=>{
+    const box=tr.querySelector('.link-cell');if(!box||box.querySelector('.builder-btn'))return;
+    const a=document.createElement('a');a.className='builder-btn';a.href='builder/';a.textContent='手动建项目';a.title='静态底表不是院系具体通知，不自动导入材料';box.appendChild(a);
   });
 }
 function initCrawlerPanel(){

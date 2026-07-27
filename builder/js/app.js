@@ -16,14 +16,23 @@
     material('个人简历',1,true),material('成绩单',1,true),material('学习成绩排名证明',2,true),material('英语水平证明',1,true),material('身份证明',1,false),material('专家推荐信',1,false),material('科研/论文/项目证明',1,false),material('获奖证明',1,false),material('个人陈述/研究计划',1,false),material('其他补充材料',1,false)
   ];}
   function material(title,level=1,required=false){return {id:uid('mat'),title,level,required,include:true,files:[]};}
+  function materialFromNoticeItem(item){
+    return {id:uid('mat'),title:String(item?.title||item?.raw_text||'未命名材料').trim(),level:Number(item?.level)||1,required:item?.required!==false,include:item?.include!==false,rawText:item?.raw_text||'',files:[]};
+  }
+  function structuredMaterials(seed={}){
+    const items=seed.materialItems||seed.noticeMaterialItems||[];
+    return Array.isArray(items)&&items.length?items.map(materialFromNoticeItem):null;
+  }
   function newProject(seed={}){
     const route=seed.route||'预推免',school=seed.school||'',college=seed.college||'',year=Number(seed.year)||currentYear();
+    const importedMaterials=seed.materials?clone(seed.materials):structuredMaterials(seed);
     return {
       id:uid('project'),name:seed.name||`${school||'未命名院校'} ${route}申请材料`,sourceNoticeId:seed.sourceNoticeId||'',noticeImported:Boolean(seed.sourceNoticeId),
-      school,college,route,year,publishedAt:seed.publishedAt||'',deadline:seed.deadline||'',sourceUrl:seed.sourceUrl||'',noticeMaterials:seed.noticeMaterials||'',
-      coverTitle:seed.coverTitle||'',headerText:seed.headerText||`${school}${college}${route}\n申请材料`,sizeLimitMb:Number(seed.sizeLimitMb)||20,pageMode:'fit',
+      school,college,route,year,degree:seed.degree||'',sourceScope:seed.sourceScope||'',materialConfidence:seed.materialConfidence||'',publishedAt:seed.publishedAt||'',deadline:seed.deadline||'',sourceUrl:seed.sourceUrl||'',noticeMaterials:seed.noticeMaterials||'',noticeMaterialItems:clone(seed.materialItems||seed.noticeMaterialItems||[]),
+      coverTitle:seed.coverTitle||'',headerText:seed.headerText||`${school}${college}${route}
+申请材料`,sizeLimitMb:Number(seed.sizeLimitMb)||20,pageMode:'fit',
       includeCover:true,includeToc:true,includeHeader:true,includePageNumbers:true,logoPreset:'generic',logoPath:'../assets/logos/generic-university.svg',logoDataUrl:'',
-      profile:clone(seed.profile||profileDefault),materials:seed.materials?clone(seed.materials):defaultMaterials(),createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()
+      profile:clone(seed.profile||profileDefault),materials:importedMaterials||defaultMaterials(),createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()
     };
   }
   function loadState(){
@@ -49,7 +58,7 @@
     const p=activeProject();
     $$('[data-project]').forEach(el=>{const v=p[el.dataset.project];if(el.type==='checkbox')el.checked=Boolean(v);else el.value=v??'';});
     $$('[data-profile]').forEach(el=>el.value=p.profile?.[el.dataset.profile]??'');
-    $('#noticeState').textContent=p.noticeImported?'已从通知导入':'手动项目';
+    const importedCount=(p.noticeMaterialItems||[]).length;$('#noticeState').textContent=p.noticeImported?(importedCount>=3?`已从院系通知导入 · ${importedCount}项材料`:'旧/校级通知项目 · 材料未锁定'):'手动项目';
     $('#openNoticeLink').href=p.sourceUrl||'#';$('#openNoticeLink').style.visibility=p.sourceUrl?'visible':'hidden';
     $('#logoPreset').value=p.logoPreset||'custom';renderLogoPreview();
   }
@@ -131,6 +140,10 @@
   function validateProject(){
     const p=activeProject(),items=[];const add=(type,text)=>items.push({type,text});
     if(!p.school)add('error','尚未填写申请学校。');if(!p.college)add('warn','尚未填写学院/研究所，封面和页眉可能不完整。');if(!p.profile?.name)add('error','尚未填写姓名。');if(!p.profile?.undergraduateSchool)add('error','尚未填写本科院校。');
+    if(p.noticeImported){
+      const exact=/具体通知/.test(String(p.sourceScope||'')),count=(p.noticeMaterialItems||[]).length;
+      if(!exact||count<3)add('error','当前项目不是从院系/研究所具体通知的完整材料清单创建，禁止直接生成。请返回通知监控页选择“材料可生成”的具体通知。');
+    }
     const included=(p.materials||[]).filter(m=>m.include);if(!included.length)add('error','没有选择任何需要合并的材料。');
     included.filter(m=>m.required&&!m.files?.length).forEach(m=>add('error',`必交材料“${m.title}”尚未上传。`));
     included.filter(m=>!m.title?.trim()).forEach(()=>add('error','存在未命名材料条目。'));
@@ -145,14 +158,24 @@
   }
 
   async function parseMaterialsFromNotice(replace=false){
-    const p=activeProject(),raw=(p.noticeMaterials||'').trim();if(!raw){alert('请先粘贴或导入通知中的材料要求原文。');return;}
-    const rules=[
-      ['申请表/报名表',/(申请表|报名表|自述表)/],['个人简历',/(个人简历|简历)/],['个人陈述/自述',/(个人陈述|个人自述|自述)/],['研究计划',/(研究计划|科研计划|攻博计划)/],['成绩单',/(成绩单|学习成绩)/],['学习成绩排名证明',/(排名证明|专业排名|成绩排名)/],['推免资格/在读证明',/(推免资格|在读证明|学籍证明)/],['英语水平证明',/(英语|四级|六级|CET|雅思|托福)/i],['身份证明',/(身份证|学生证|证件)/],['专家推荐信',/(推荐信|专家推荐)/],['科研/论文/项目证明',/(论文|科研成果|学术成果|项目证明|专利)/],['获奖证明',/(获奖|奖学金|荣誉|竞赛证书)/],['思想政治/政审材料',/(思想政治|政审|现实表现)/],['其他补充材料',/(其他材料|补充材料)/]
-    ];
-    const found=rules.filter(([,re])=>re.test(raw)).map(([title])=>material(title,1,!/其他|获奖|科研/.test(title)));
-    if(!found.length){const chunks=raw.split(/[；;。\n]+/).map(x=>x.replace(/^\s*[（(]?\d+[）).、]?\s*/, '').trim()).filter(x=>x.length>=2&&x.length<=45).slice(0,15);chunks.forEach(x=>found.push(material(x,1,true)));}
+    const p=activeProject(),raw=(p.noticeMaterials||'').trim();
+    let found=(p.noticeMaterialItems||[]).map(materialFromNoticeItem);
+    if(!found.length){
+      if(!raw){alert('该项目没有院系具体材料清单。请返回通知监控页，选择已标记“材料可生成”的具体通知。');return;}
+      const rules=[
+        ['申请表/报名表',/(申请表|报名表|自述表)/],['个人简历',/(个人简历|简历)/],['个人陈述/自述',/(个人陈述|个人自述|自述)/],['研究计划',/(研究计划|科研计划|攻博计划)/],['成绩单',/(成绩单|学习成绩)/],['学习成绩排名证明',/(排名证明|专业排名|成绩排名)/],['推免资格/在读证明',/(推免资格|在读证明|学籍证明)/],['英语水平证明',/(英语|四级|六级|CET|雅思|托福)/i],['身份证明',/(身份证|学生证|证件)/],['专家推荐信',/(推荐信|专家推荐)/],['科研/论文/项目证明',/(论文|科研成果|学术成果|项目证明|专利)/],['获奖证明',/(获奖|奖学金|荣誉|竞赛证书)/],['思想政治/政审材料',/(思想政治|政审|现实表现)/],['其他补充材料',/(其他材料|补充材料)/]
+      ];
+      found=rules.filter(([,re])=>re.test(raw)).map(([title])=>material(title,1,!/其他|获奖|科研/.test(title)));
+      if(!found.length){const chunks=raw.split(/[；;。\n]+/).map(x=>x.replace(/^\s*[（(]?\d+[）).、]?\s*/, '').trim()).filter(x=>x.length>=2&&x.length<=90).slice(0,20);chunks.forEach(x=>found.push(material(x,1,true)));}
+    }
     if(!found.length){alert('没有识别出明确材料名称，请手动添加。');return;}
-    if(replace||confirm(`识别出 ${found.length} 项材料。\n“确定”替换当前清单；“取消”将识别结果追加到末尾。`)){for(const m of p.materials||[])for(const f of m.files||[])await BuilderDB.deleteFile(f.id);p.materials=found;}else{const old=new Set(p.materials.map(m=>m.title));p.materials.push(...found.filter(m=>!old.has(m.title)));}
+    if(replace||confirm(`识别出 ${found.length} 项材料。
+“确定”替换当前清单；“取消”将识别结果追加到末尾。`)){
+      for(const m of p.materials||[])for(const f of m.files||[])await BuilderDB.deleteFile(f.id);
+      p.materials=found;
+    }else{
+      const old=new Set(p.materials.map(m=>m.title));p.materials.push(...found.filter(m=>!old.has(m.title)));
+    }
     saveNow();renderAll();
   }
 
@@ -179,10 +202,34 @@
   async function importNoticeFromQuery(){
     const params=new URLSearchParams(location.search),noticeId=params.get('noticeId');let seed=null;
     if(noticeId){
-      const existing=state.projects.find(p=>p.sourceNoticeId===noticeId);if(existing){selectProject(existing.id);return;}
-      try{const r=await fetch('../data/notices.json',{cache:'no-store'}),d=await r.json(),x=(d.notices||[]).find(v=>String(v.id)===String(noticeId));if(x)seed={sourceNoticeId:x.id,name:`${x.school}${x.college||''} ${x.route}申请材料`,school:x.school,college:x.college,route:x.route,year:d.meta?.publish_year||currentYear(),publishedAt:x.published_at,deadline:x.deadline,sourceUrl:x.url,noticeMaterials:x.materials||'',profile:clone(profileDefault)};}catch(err){console.warn('通知数据读取失败',err);}
+      try{
+        const r=await fetch('../data/notices.json',{cache:'no-store'}),d=await r.json(),x=(d.notices||[]).find(v=>String(v.id)===String(noticeId));
+        if(x)seed={
+          sourceNoticeId:x.id,name:`${x.school}${x.college||''} ${x.route}${x.degree?`·${x.degree}`:''}申请材料`,school:x.school,college:x.college,route:x.route,degree:x.degree||'',year:d.meta?.admission_year||d.meta?.publish_year||currentYear(),publishedAt:x.published_at,deadline:x.deadline_display||x.deadline,sourceUrl:x.url,
+          noticeMaterials:x.materials_text||x.materials||'',materialItems:x.material_items||[],sourceScope:x.source_scope||'',materialConfidence:x.material_confidence||'',profile:clone(profileDefault)
+        };
+      }catch(err){console.warn('通知数据读取失败',err);}
     }else if(params.get('school'))seed={sourceNoticeId:params.get('sourceId')||uid('static'),name:`${params.get('school')||''}${params.get('college')||''} ${params.get('route')||'预推免'}申请材料`,school:params.get('school')||'',college:params.get('college')||'',route:params.get('route')||'预推免',year:Number(params.get('year'))||currentYear(),publishedAt:params.get('publishedAt')||'',deadline:params.get('deadline')||'',sourceUrl:params.get('sourceUrl')||'',noticeMaterials:params.get('materials')||'',profile:clone(profileDefault)};
-    if(seed){const p=newProject(seed);state.projects.push(p);state.activeId=p.id;if(p.noticeMaterials){p.materials=[];const old=activeProject();await parseMaterialsFromNotice(true);state.activeId=old.id;}saveNow();history.replaceState({},'',location.pathname);renderAll();}
+    if(!seed)return;
+
+    const existing=state.projects.find(p=>p.sourceNoticeId===seed.sourceNoticeId);
+    if(existing){
+      const hasUploaded=(existing.materials||[]).some(m=>m.files?.length);
+      Object.assign(existing,{name:seed.name,school:seed.school,college:seed.college,route:seed.route,degree:seed.degree||'',year:seed.year,publishedAt:seed.publishedAt||'',deadline:seed.deadline||'',sourceUrl:seed.sourceUrl||'',noticeMaterials:seed.noticeMaterials||'',noticeMaterialItems:clone(seed.materialItems||[]),sourceScope:seed.sourceScope||'',materialConfidence:seed.materialConfidence||'',noticeImported:true});
+      const incoming=structuredMaterials(seed)||[];
+      if(incoming.length){
+        if(!hasUploaded){existing.materials=incoming;}
+        else{
+          const oldTitles=new Set((existing.materials||[]).map(m=>m.title));
+          existing.materials.push(...incoming.filter(m=>!oldTitles.has(m.title)));
+        }
+      }
+      state.activeId=existing.id;saveNow();history.replaceState({},'',location.pathname);renderAll();return;
+    }
+
+    const p=newProject(seed);state.projects.push(p);state.activeId=p.id;
+    if(!(seed.materialItems||[]).length&&p.noticeMaterials){p.materials=[];await parseMaterialsFromNotice(true);}
+    saveNow();history.replaceState({},'',location.pathname);renderAll();
   }
 
   function exportProject(){const p=clone(activeProject());p.materials.forEach(m=>m.files=[]);const blob=new Blob([JSON.stringify({format:'baoyan-builder-project-v1',project:p},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=PdfBuilder.safeName(p.name)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);}
