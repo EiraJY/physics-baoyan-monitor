@@ -1,48 +1,29 @@
 {
-  "run_at": "2026-07-27T13:28:01+08:00",
+  "run_at": "2026-07-27T14:55:51+08:00",
   "schools_checked": 51,
   "institutions_checked": 51,
-  "candidates_kept": 26,
-  "new_notices": 22,
+  "candidates_kept": 3,
+  "new_notices": 0,
   "errors": [
-    "seed https://www.phys.ruc.edu.cn/info/1055/2892.htm: SSLError: HTTPSConnectionPool(host='www.phys.ruc.edu.cn', port=443): Max retries exceeded with url: /info/1055/2892.htm (Caused by SSLError(SSLCertVerificationError(1, \"[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'www.phys.ruc.edu.cn'. (_ssl.c:1010)\")))",
     "seed https://www.phys.ruc.edu.cn/: SSLError: HTTPSConnectionPool(host='www.phys.ruc.edu.cn', port=443): Max retries exceeded with url: / (Caused by SSLError(SSLCertVerificationError(1, \"[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'www.phys.ruc.edu.cn'. (_ssl.c:1010)\")))",
+    "seed https://www.phys.ruc.edu.cn/info/1055/2892.htm: SSLError: HTTPSConnectionPool(host='www.phys.ruc.edu.cn', port=443): Max retries exceeded with url: /info/1055/2892.htm (Caused by SSLError(SSLCertVerificationError(1, \"[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'www.phys.ruc.edu.cn'. (_ssl.c:1010)\")))",
     "seed https://www.phys.ruc.edu.cn/info/1055/: SSLError: HTTPSConnectionPool(host='www.phys.ruc.edu.cn', port=443): Max retries exceeded with url: /info/1055/ (Caused by SSLError(SSLCertVerificationError(1, \"[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'www.phys.ruc.edu.cn'. (_ssl.c:1010)\")))",
-    "https://www.phys.ruc.edu.cn/info/1055/2892.htm: SSLError: HTTPSConnectionPool(host='www.phys.ruc.edu.cn', port=443): Max retries exceeded with url: /info/1055/2892.htm (Caused by SSLError(SSLCertVerificationError(1, \"[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'www.phys.ruc.edu.cn'. (_ssl.c:1010)\")))",
-    "https://www.phys.ruc.edu.cn/info/1055/: SSLError: HTTPSConnectionPool(host='www.phys.ruc.edu.cn', port=443): Max retries exceeded with url: /info/1055/ (Caused by SSLError(SSLCertVerificationError(1, \"[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'www.phys.ruc.edu.cn'. (_ssl.c:1010)\")))",
-    "https://www.phys.ruc.edu.cn/: SSLError: HTTPSConnectionPool(host='www.phys.ruc.edu.cn', port=443): Max retries exceeded with url: / (Caused by SSLError(SSLCertVerificationError(1, \"[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'www.phys.ruc.edu.cn'. (_ssl.c:1010)\")))",
     "seed https://yzb.buaa.edu.cn/info/1002/: HTTPError: 404 Client Error:  for url: https://yzb.buaa.edu.cn/info/1002/",
-    "https://yzb.buaa.edu.cn/info/1002/: HTTPError: 404 Client Error:  for url: https://yzb.buaa.edu.cn/info/1002/",
     "seed https://yt.cau.edu.cn/art/2026/7/14/: HTTPError: 403 Client Error: Forbidden for url: https://yt.cau.edu.cn/art/2026/7/14/",
-    "https://yt.cau.edu.cn/art/2026/7/14/: HTTPError: 403 Client Error: Forbidden for url: https://yt.cau.edu.cn/art/2026/7/14/",
     "seed https://yzb.tju.edu.cn/xwzx/tkss_xw/202607/: HTTPError: 403 Client Error: Forbidden for url: https://yzb.tju.edu.cn/xwzx/tkss_xw/202607/",
-    "https://yzb.tju.edu.cn/xwzx/tkss_xw/202607/: HTTPError: 403 Client Error: Forbidden for url: https://yzb.tju.edu.cn/xwzx/tkss_xw/202607/",
     "seed https://gs.dlut.edu.cn/info/1173/: HTTPError: 404 Client Error:  for url: https://gs.dlut.edu.cn/info/1173/",
-    "https://gs.dlut.edu.cn/info/1173/: HTTPError: 404 Client Error:  for url: https://gs.dlut.edu.cn/info/1173/",
     "seed https://yz.neu.edu.cn/2026/0720/c5932a458191/: HTTPError: 403 Client Error: Forbidden for url: https://yz.neu.edu.cn/2026/0720/c5932a458191/",
-    "https://yz.neu.edu.cn/2026/0720/c5932a458191/: HTTPError: 403 Client Error: Forbidden for url: https://yz.neu.edu.cn/2026/0720/c5932a458191/",
     "seed https://gsao.fudan.edu.cn/fb/0b/c15029a785163/: HTTPError: 403 Client Error: Forbidden for url: https://gsao.fudan.edu.cn/fb/0b/c15029a785163/",
-    "https://gsao.fudan.edu.cn/fb/0b/c15029a785163/: HTTPError: 403 Client Error: Forbidden for url: https://gsao.fudan.edu.cn/fb/0b/c15029a785163/",
     "seed https://yz.tongji.edu.cn/info/1010/: HTTPError: 404 Client Error:  for url: https://yz.tongji.edu.cn/info/1010/",
-    "https://yz.tongji.edu.cn/info/1010/: HTTPError: 404 Client Error:  for url: https://yz.tongji.edu.cn/info/1010/",
     "seed https://physics.seu.edu.cn/2026/0707/c23142a575759/: HTTPError: 403 Client Error: Forbidden for url: https://physics.seu.edu.cn/2026/0707/c23142a575759/",
-    "https://physics.seu.edu.cn/2026/0707/c23142a575759/: HTTPError: 403 Client Error: Forbidden for url: https://physics.seu.edu.cn/2026/0707/c23142a575759/",
     "seed https://physics.zju.edu.cn/2026/0615/c69706a3178903/: HTTPError: 403 Client Error: Forbidden for url: https://physics.zju.edu.cn/2026/0615/c69706a3178903/",
-    "https://physics.zju.edu.cn/2026/0615/c69706a3178903/: HTTPError: 403 Client Error: Forbidden for url: https://physics.zju.edu.cn/2026/0615/c69706a3178903/",
     "seed https://cpst.xmu.edu.cn/info/1045/: HTTPError: 404 Client Error:  for url: https://cpst.xmu.edu.cn/info/1045/",
-    "https://cpst.xmu.edu.cn/info/1045/: HTTPError: 404 Client Error:  for url: https://cpst.xmu.edu.cn/info/1045/",
     "seed https://yz.cqu.edu.cn/news/2026-06/: HTTPError: 404 Client Error: Not Found for url: https://yz.cqu.edu.cn/news/2026-06/",
-    "https://yz.cqu.edu.cn/news/2026-06/: HTTPError: 404 Client Error: Not Found for url: https://yz.cqu.edu.cn/news/2026-06/",
-    "seed https://www.pmo.cas.cn/: SSLError: HTTPSConnectionPool(host='www.pmo.cas.cn', port=443): Max retries exceeded with url: / (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1010)')))",
     "seed https://www.pmo.cas.cn/gs/zs/xly/: SSLError: HTTPSConnectionPool(host='www.pmo.cas.cn', port=443): Max retries exceeded with url: /gs/zs/xly/ (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1010)')))",
     "seed https://www.pmo.cas.cn/gs/zs/zsjy/: SSLError: HTTPSConnectionPool(host='www.pmo.cas.cn', port=443): Max retries exceeded with url: /gs/zs/zsjy/ (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1010)')))",
-    "https://www.pmo.cas.cn/gs/zs/xly/: SSLError: HTTPSConnectionPool(host='www.pmo.cas.cn', port=443): Max retries exceeded with url: /gs/zs/xly/ (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1010)')))",
-    "https://www.pmo.cas.cn/gs/zs/zsjy/: SSLError: HTTPSConnectionPool(host='www.pmo.cas.cn', port=443): Max retries exceeded with url: /gs/zs/zsjy/ (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1010)')))",
-    "https://www.pmo.cas.cn/: SSLError: HTTPSConnectionPool(host='www.pmo.cas.cn', port=443): Max retries exceeded with url: / (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1010)')))",
-    "seed https://www.xao.ac.cn/xwdt/tzgg/: SSLError: HTTPSConnectionPool(host='www.xao.ac.cn', port=443): Max retries exceeded with url: /xwdt/tzgg/ (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1010)')))",
+    "seed https://www.pmo.cas.cn/: SSLError: HTTPSConnectionPool(host='www.pmo.cas.cn', port=443): Max retries exceeded with url: / (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1010)')))",
     "seed https://www.xao.ac.cn/: SSLError: HTTPSConnectionPool(host='www.xao.ac.cn', port=443): Max retries exceeded with url: / (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1010)')))",
-    "https://www.xao.ac.cn/xwdt/tzgg/: SSLError: HTTPSConnectionPool(host='www.xao.ac.cn', port=443): Max retries exceeded with url: /xwdt/tzgg/ (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1010)')))",
-    "https://www.xao.ac.cn/: SSLError: HTTPSConnectionPool(host='www.xao.ac.cn', port=443): Max retries exceeded with url: / (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1010)')))"
+    "seed https://www.xao.ac.cn/xwdt/tzgg/: SSLError: HTTPSConnectionPool(host='www.xao.ac.cn', port=443): Max retries exceeded with url: /xwdt/tzgg/ (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1010)')))"
   ],
   "school_stats": [
     {
@@ -61,13 +42,13 @@
       "school": "中国人民大学",
       "institution_type": "985高校",
       "found": 0,
-      "errors": 6
+      "errors": 3
     },
     {
       "school": "北京航空航天大学",
       "institution_type": "985高校",
       "found": 0,
-      "errors": 2
+      "errors": 1
     },
     {
       "school": "北京理工大学",
@@ -85,7 +66,7 @@
       "school": "中国农业大学",
       "institution_type": "985高校",
       "found": 0,
-      "errors": 2
+      "errors": 1
     },
     {
       "school": "中央民族大学",
@@ -103,19 +84,19 @@
       "school": "天津大学",
       "institution_type": "985高校",
       "found": 0,
-      "errors": 2
+      "errors": 1
     },
     {
       "school": "大连理工大学",
       "institution_type": "985高校",
       "found": 0,
-      "errors": 2
+      "errors": 1
     },
     {
       "school": "东北大学",
       "institution_type": "985高校",
-      "found": 1,
-      "errors": 2
+      "found": 0,
+      "errors": 1
     },
     {
       "school": "吉林大学",
@@ -126,14 +107,14 @@
     {
       "school": "哈尔滨工业大学",
       "institution_type": "985高校",
-      "found": 1,
+      "found": 0,
       "errors": 0
     },
     {
       "school": "复旦大学",
       "institution_type": "985高校",
-      "found": 1,
-      "errors": 2
+      "found": 0,
+      "errors": 1
     },
     {
       "school": "上海交通大学",
@@ -145,7 +126,7 @@
       "school": "同济大学",
       "institution_type": "985高校",
       "found": 0,
-      "errors": 2
+      "errors": 1
     },
     {
       "school": "华东师范大学",
@@ -156,32 +137,32 @@
     {
       "school": "南京大学",
       "institution_type": "985高校",
-      "found": 1,
+      "found": 0,
       "errors": 0
     },
     {
       "school": "东南大学",
       "institution_type": "985高校",
       "found": 0,
-      "errors": 2
+      "errors": 1
     },
     {
       "school": "浙江大学",
       "institution_type": "985高校",
       "found": 0,
-      "errors": 2
+      "errors": 1
     },
     {
       "school": "中国科学技术大学",
       "institution_type": "985高校",
-      "found": 1,
+      "found": 0,
       "errors": 0
     },
     {
       "school": "厦门大学",
       "institution_type": "985高校",
       "found": 0,
-      "errors": 2
+      "errors": 1
     },
     {
       "school": "山东大学",
@@ -253,7 +234,7 @@
       "school": "重庆大学",
       "institution_type": "985高校",
       "found": 0,
-      "errors": 2
+      "errors": 1
     },
     {
       "school": "西安交通大学",
@@ -270,37 +251,37 @@
     {
       "school": "西北农林科技大学",
       "institution_type": "985高校",
-      "found": 1,
+      "found": 0,
       "errors": 0
     },
     {
       "school": "兰州大学",
       "institution_type": "985高校",
-      "found": 2,
+      "found": 0,
       "errors": 0
     },
     {
       "school": "中国科学院理论物理研究所",
       "institution_type": "中科院研究所",
-      "found": 4,
+      "found": 1,
       "errors": 0
     },
     {
       "school": "中国科学院大学物理科学学院",
       "institution_type": "国科大培养单位",
-      "found": 5,
+      "found": 2,
       "errors": 0
     },
     {
       "school": "中国科学院大学杭州高等研究院",
       "institution_type": "国科大培养单位",
-      "found": 2,
+      "found": 0,
       "errors": 0
     },
     {
       "school": "中国科学院大学国际理论物理中心（亚太地区）",
       "institution_type": "国科大培养单位",
-      "found": 1,
+      "found": 0,
       "errors": 0
     },
     {
@@ -312,31 +293,31 @@
     {
       "school": "中国科学院上海天文台",
       "institution_type": "中科院研究所",
-      "found": 1,
+      "found": 0,
       "errors": 0
     },
     {
       "school": "中国科学院紫金山天文台",
       "institution_type": "中科院研究所",
       "found": 0,
-      "errors": 6
+      "errors": 3
     },
     {
       "school": "中国科学院云南天文台",
       "institution_type": "中科院研究所",
-      "found": 3,
+      "found": 0,
       "errors": 0
     },
     {
       "school": "中国科学院新疆天文台",
       "institution_type": "中科院研究所",
       "found": 0,
-      "errors": 4
+      "errors": 2
     },
     {
       "school": "中国科学院高能物理研究所",
       "institution_type": "中科院研究所",
-      "found": 1,
+      "found": 0,
       "errors": 0
     },
     {
@@ -348,7 +329,7 @@
     {
       "school": "中国科学院精密测量科学与技术创新研究院",
       "institution_type": "中科院研究所",
-      "found": 1,
+      "found": 0,
       "errors": 0
     }
   ],
