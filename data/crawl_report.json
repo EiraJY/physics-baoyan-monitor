@@ -1,13 +1,13 @@
 {
-  "run_at": "2026-07-27T14:55:51+08:00",
+  "run_at": "2026-07-27T16:10:28+08:00",
   "schools_checked": 51,
   "institutions_checked": 51,
   "candidates_kept": 3,
   "new_notices": 0,
   "errors": [
-    "seed https://www.phys.ruc.edu.cn/: SSLError: HTTPSConnectionPool(host='www.phys.ruc.edu.cn', port=443): Max retries exceeded with url: / (Caused by SSLError(SSLCertVerificationError(1, \"[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'www.phys.ruc.edu.cn'. (_ssl.c:1010)\")))",
     "seed https://www.phys.ruc.edu.cn/info/1055/2892.htm: SSLError: HTTPSConnectionPool(host='www.phys.ruc.edu.cn', port=443): Max retries exceeded with url: /info/1055/2892.htm (Caused by SSLError(SSLCertVerificationError(1, \"[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'www.phys.ruc.edu.cn'. (_ssl.c:1010)\")))",
     "seed https://www.phys.ruc.edu.cn/info/1055/: SSLError: HTTPSConnectionPool(host='www.phys.ruc.edu.cn', port=443): Max retries exceeded with url: /info/1055/ (Caused by SSLError(SSLCertVerificationError(1, \"[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'www.phys.ruc.edu.cn'. (_ssl.c:1010)\")))",
+    "seed https://www.phys.ruc.edu.cn/: SSLError: HTTPSConnectionPool(host='www.phys.ruc.edu.cn', port=443): Max retries exceeded with url: / (Caused by SSLError(SSLCertVerificationError(1, \"[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'www.phys.ruc.edu.cn'. (_ssl.c:1010)\")))",
     "seed https://yzb.buaa.edu.cn/info/1002/: HTTPError: 404 Client Error:  for url: https://yzb.buaa.edu.cn/info/1002/",
     "seed https://yt.cau.edu.cn/art/2026/7/14/: HTTPError: 403 Client Error: Forbidden for url: https://yt.cau.edu.cn/art/2026/7/14/",
     "seed https://yzb.tju.edu.cn/xwzx/tkss_xw/202607/: HTTPError: 403 Client Error: Forbidden for url: https://yzb.tju.edu.cn/xwzx/tkss_xw/202607/",
@@ -20,10 +20,11 @@
     "seed https://cpst.xmu.edu.cn/info/1045/: HTTPError: 404 Client Error:  for url: https://cpst.xmu.edu.cn/info/1045/",
     "seed https://yz.cqu.edu.cn/news/2026-06/: HTTPError: 404 Client Error: Not Found for url: https://yz.cqu.edu.cn/news/2026-06/",
     "seed https://www.pmo.cas.cn/gs/zs/xly/: SSLError: HTTPSConnectionPool(host='www.pmo.cas.cn', port=443): Max retries exceeded with url: /gs/zs/xly/ (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1010)')))",
-    "seed https://www.pmo.cas.cn/gs/zs/zsjy/: SSLError: HTTPSConnectionPool(host='www.pmo.cas.cn', port=443): Max retries exceeded with url: /gs/zs/zsjy/ (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1010)')))",
     "seed https://www.pmo.cas.cn/: SSLError: HTTPSConnectionPool(host='www.pmo.cas.cn', port=443): Max retries exceeded with url: / (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1010)')))",
+    "seed https://www.pmo.cas.cn/gs/zs/zsjy/: SSLError: HTTPSConnectionPool(host='www.pmo.cas.cn', port=443): Max retries exceeded with url: /gs/zs/zsjy/ (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1010)')))",
     "seed https://www.xao.ac.cn/: SSLError: HTTPSConnectionPool(host='www.xao.ac.cn', port=443): Max retries exceeded with url: / (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1010)')))",
-    "seed https://www.xao.ac.cn/xwdt/tzgg/: SSLError: HTTPSConnectionPool(host='www.xao.ac.cn', port=443): Max retries exceeded with url: /xwdt/tzgg/ (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1010)')))"
+    "seed https://www.xao.ac.cn/xwdt/tzgg/: SSLError: HTTPSConnectionPool(host='www.xao.ac.cn', port=443): Max retries exceeded with url: /xwdt/tzgg/ (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1010)')))",
+    "seed https://apm.cas.cn/: ConnectionError: HTTPSConnectionPool(host='apm.cas.cn', port=443): Max retries exceeded with url: / (Caused by NewConnectionError(\"HTTPSConnection(host='apm.cas.cn', port=443): Failed to establish a new connection: [Errno 101] Network is unreachable\"))"
   ],
   "school_stats": [
     {
@@ -330,7 +331,7 @@
       "school": "中国科学院精密测量科学与技术创新研究院",
       "institution_type": "中科院研究所",
       "found": 0,
-      "errors": 0
+      "errors": 1
     }
   ],
   "search_provider": "talor"

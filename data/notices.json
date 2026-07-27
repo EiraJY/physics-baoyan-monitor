@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-07-27T14:55:51+08:00",
+    "generated_at": "2026-07-27T16:10:28+08:00",
     "publish_year": 2026,
     "admission_year": 2027,
     "total": 30,
@@ -423,7 +423,7 @@
       "verification": "中",
       "excerpt": "…务指南 党团学工 党支部活动 团支部活动 招生就业 研究生招生 团队介绍 科创计划 大学生夏令营 就业 物苑师生 师生风采 学生活动 国科物语 招聘信息 职工小家 研究生招生 招生通知 招生目录 团队介绍 科创计划 大学生夏令营 就业 中国科学院大学物理科学学院 2026年“凝聚态及原子分子物理”大学生夏令营报名通知 为加强与优秀本科生之间的沟通与交流，向有志于凝聚态物理专业研究的广大学子提供深入了解科学前沿研究的机会，培育科研兴趣、创新精神及激发创新潜力，中国科学院大学物理科学学院拟举办2026年 “凝聚态及原子分子物理”大学生夏令营，即日起至6月19日开放报名。 一、活动内容（具体形式及时间另行通知） 1 . 参加学术讲座，参观实验室，了解凝聚态物理研究前沿； 2 . 与导师、博士后、研究生线下互动，感受课题组科研氛围环境； 3 . 营员选拔面试。 二、申请条件 1 . 2023级物理及相关专业在校本科学生（大三，拟2027",
       "first_seen": "2026-07-27T13:26:34+08:00",
-      "last_seen": "2026-07-27T14:53:43+08:00",
+      "last_seen": "2026-07-27T16:08:34+08:00",
       "origin": "crawler",
       "record_type": "notice"
     },
@@ -746,7 +746,7 @@
       "verification": "高",
       "excerpt": "… | 首页 >> 研究生教育 >> 招生信息 >> 夏令营 招生信息 硕士招生 博士招生 夏令营 导师介绍 表格下载 硕士招生 博士招生 夏令营 导师介绍 表格下载 2026年理论物理大学生夏令营报名通知 时间：2026-05-06 中国科学院理论物理研究所将在暑期举办“2026年理论物理大学生夏令营”活动。请有意参加夏令营的同学，按照如下要求完成报名事宜。 一、申请条件 1．中华人民共和国公民，拥护中国共产党的领导，热爱科学事业，道德品质良好，遵纪守法。 2. 全国高校本科三年级在校生，能获得所在学校当年推荐免试研究生资格。 3．诚实守信，品行端正，学风优良，无任何考试作弊和剽窃他人学术成果记录，无任何违法违纪受处分记录。 4．大学本科阶段攻读物理学或相关专业，学习成绩优异，有较好的科研潜力，具有较强的调查研究、分析问题、解决问题能力。在学期间 所学专业主干课无不及格科目。 5．英语程度良好，具有较强的英语听、说、读、写及综合",
       "first_seen": "2026-07-27T12:00:00+08:00",
-      "last_seen": "2026-07-27T14:53:32+08:00",
+      "last_seen": "2026-07-27T16:08:29+08:00",
       "origin": "crawler",
       "remark": "",
       "record_type": "notice"
@@ -809,7 +809,7 @@
       "verification": "中",
       "excerpt": "…务指南 党团学工 党支部活动 团支部活动 招生就业 研究生招生 团队介绍 科创计划 大学生夏令营 就业 物苑师生 师生风采 学生活动 国科物语 招聘信息 职工小家 研究生招生 招生通知 招生目录 团队介绍 科创计划 大学生夏令营 就业 “理论物理”大学生夏令营教师 粒子物理唯象学，中高能核物理，QCD理论等研究： 【核学院】 黄梅 、 黄飞 【物理学院】 杨德山 、 吴佳俊 、 刘霄 强相互作用多体问题等研究： 【核学院】 郭璐 宇宙学、量子场论、引力等研究： 【物理学院】 朴云松 、 孙雅文 【亚太中心】 张君 软物质及生物物理方向： 【物理学院】 周昕 、 黎明 凝聚态物理方向研究： 【电子学院】 朱振刚 光学： 【物理学院】 奚婷婷 计算原子分子理论： 【光电学院】 屈一至 理论天体物理： 【天文学院】 杜翠花 、 吴京文 、 汤勇 、 王鑫 、 孙宁晨 、 黄样 附件1 国科理论物理研究团队介绍 附件2 夏令营报名信息表",
       "first_seen": "2026-07-27T12:00:00+08:00",
-      "last_seen": "2026-07-27T14:53:43+08:00",
+      "last_seen": "2026-07-27T16:08:36+08:00",
       "origin": "crawler",
       "remark": "",
       "record_type": "notice"
@@ -899,15 +899,15 @@
     }
   ],
   "report": {
-    "run_at": "2026-07-27T14:55:51+08:00",
+    "run_at": "2026-07-27T16:10:28+08:00",
     "schools_checked": 51,
     "institutions_checked": 51,
     "candidates_kept": 3,
     "new_notices": 0,
     "errors": [
-      "seed https://www.phys.ruc.edu.cn/: SSLError: HTTPSConnectionPool(host='www.phys.ruc.edu.cn', port=443): Max retries exceeded with url: / (Caused by SSLError(SSLCertVerificationError(1, \"[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'www.phys.ruc.edu.cn'. (_ssl.c:1010)\")))",
       "seed https://www.phys.ruc.edu.cn/info/1055/2892.htm: SSLError: HTTPSConnectionPool(host='www.phys.ruc.edu.cn', port=443): Max retries exceeded with url: /info/1055/2892.htm (Caused by SSLError(SSLCertVerificationError(1, \"[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'www.phys.ruc.edu.cn'. (_ssl.c:1010)\")))",
       "seed https://www.phys.ruc.edu.cn/info/1055/: SSLError: HTTPSConnectionPool(host='www.phys.ruc.edu.cn', port=443): Max retries exceeded with url: /info/1055/ (Caused by SSLError(SSLCertVerificationError(1, \"[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'www.phys.ruc.edu.cn'. (_ssl.c:1010)\")))",
+      "seed https://www.phys.ruc.edu.cn/: SSLError: HTTPSConnectionPool(host='www.phys.ruc.edu.cn', port=443): Max retries exceeded with url: / (Caused by SSLError(SSLCertVerificationError(1, \"[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'www.phys.ruc.edu.cn'. (_ssl.c:1010)\")))",
       "seed https://yzb.buaa.edu.cn/info/1002/: HTTPError: 404 Client Error:  for url: https://yzb.buaa.edu.cn/info/1002/",
       "seed https://yt.cau.edu.cn/art/2026/7/14/: HTTPError: 403 Client Error: Forbidden for url: https://yt.cau.edu.cn/art/2026/7/14/",
       "seed https://yzb.tju.edu.cn/xwzx/tkss_xw/202607/: HTTPError: 403 Client Error: Forbidden for url: https://yzb.tju.edu.cn/xwzx/tkss_xw/202607/",
@@ -920,10 +920,11 @@
       "seed https://cpst.xmu.edu.cn/info/1045/: HTTPError: 404 Client Error:  for url: https://cpst.xmu.edu.cn/info/1045/",
       "seed https://yz.cqu.edu.cn/news/2026-06/: HTTPError: 404 Client Error: Not Found for url: https://yz.cqu.edu.cn/news/2026-06/",
       "seed https://www.pmo.cas.cn/gs/zs/xly/: SSLError: HTTPSConnectionPool(host='www.pmo.cas.cn', port=443): Max retries exceeded with url: /gs/zs/xly/ (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1010)')))",
-      "seed https://www.pmo.cas.cn/gs/zs/zsjy/: SSLError: HTTPSConnectionPool(host='www.pmo.cas.cn', port=443): Max retries exceeded with url: /gs/zs/zsjy/ (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1010)')))",
       "seed https://www.pmo.cas.cn/: SSLError: HTTPSConnectionPool(host='www.pmo.cas.cn', port=443): Max retries exceeded with url: / (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1010)')))",
+      "seed https://www.pmo.cas.cn/gs/zs/zsjy/: SSLError: HTTPSConnectionPool(host='www.pmo.cas.cn', port=443): Max retries exceeded with url: /gs/zs/zsjy/ (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1010)')))",
       "seed https://www.xao.ac.cn/: SSLError: HTTPSConnectionPool(host='www.xao.ac.cn', port=443): Max retries exceeded with url: / (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1010)')))",
-      "seed https://www.xao.ac.cn/xwdt/tzgg/: SSLError: HTTPSConnectionPool(host='www.xao.ac.cn', port=443): Max retries exceeded with url: /xwdt/tzgg/ (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1010)')))"
+      "seed https://www.xao.ac.cn/xwdt/tzgg/: SSLError: HTTPSConnectionPool(host='www.xao.ac.cn', port=443): Max retries exceeded with url: /xwdt/tzgg/ (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1010)')))",
+      "seed https://apm.cas.cn/: ConnectionError: HTTPSConnectionPool(host='apm.cas.cn', port=443): Max retries exceeded with url: / (Caused by NewConnectionError(\"HTTPSConnection(host='apm.cas.cn', port=443): Failed to establish a new connection: [Errno 101] Network is unreachable\"))"
     ],
     "school_stats": [
       {
@@ -1230,7 +1231,7 @@
         "school": "中国科学院精密测量科学与技术创新研究院",
         "institution_type": "中科院研究所",
         "found": 0,
-        "errors": 0
+        "errors": 1
       }
     ],
     "search_provider": "talor"
