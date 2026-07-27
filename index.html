@@ -95,21 +95,77 @@ tr:hover td{filter:brightness(.992)}
 @media(max-width:900px){.summary{grid-template-columns:1fr 1fr}main{padding:12px}.hero{padding:25px 17px}}
 @media print{body{background:#fff}main{max-width:none;padding:5px}.toolbar,.actions{display:none}.card{box-shadow:none}th{position:static}}
 
-/* 自动抓取面板 */
-.crawler-grid{display:grid;grid-template-columns:repeat(5,minmax(150px,1fr));gap:12px}
-.crawler-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 12px}
-.crawler-tabs button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 12px;font-weight:800;cursor:pointer}
-.crawler-tabs button.active{background:var(--navy);color:#fff;border-color:var(--navy)}
-.crawler-table{min-width:2200px}
-.crawler-table .title-col{min-width:340px;max-width:480px}
-.crawler-table .excerpt-col{min-width:380px;max-width:520px}
-.crawler-table .route-chip,.crawler-table .major-chip,.verify-chip{display:inline-block;border-radius:999px;padding:2px 7px;font-weight:800;font-size:11px;margin:1px 3px 1px 0}
+/* 自动抓取面板：阅读优化版 */
+.crawler-panel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:14px}
+.crawler-panel-head h2{margin:0 0 4px}
+.crawler-panel-head p{margin:0;color:var(--muted);font-size:13px}
+.crawler-grid{display:grid;grid-template-columns:repeat(5,minmax(130px,1fr));gap:10px;margin-bottom:14px}
+.crawler-grid .stat{padding:10px 12px}
+.crawler-grid .stat strong{font-size:22px}
+.crawler-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:0}
+.crawler-tabs button,.view-switch button,.filter-chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 12px;font-weight:800;cursor:pointer;color:var(--ink)}
+.crawler-tabs button.active,.view-switch button.active,.filter-chip.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.view-switch{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.auto-filter-shell{position:sticky;top:0;z-index:8;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:14px;padding:12px;margin:12px 0 14px;box-shadow:0 8px 18px rgba(20,35,61,.06)}
+.auto-filter-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.auto-filter-row+ .auto-filter-row{margin-top:9px}
+.auto-filter-row input,.auto-filter-row select{border:1px solid var(--line);border-radius:9px;background:#fff;padding:9px 10px;min-height:39px}
+.auto-filter-row input[type=search]{flex:1;min-width:280px}
+.auto-filter-row label{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:#3f4b61;background:#f7f9fc;border:1px solid var(--line);border-radius:9px;padding:8px 10px;cursor:pointer}
+.auto-filter-row label input{min-height:auto}
+.auto-status{font-size:12px;color:var(--muted);margin-left:auto}
+.result-bar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:12px 2px;color:var(--muted);font-size:13px}
+.result-bar strong{color:var(--ink)}
+.notice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.notice-card{border:1px solid var(--line);border-radius:15px;background:#fff;padding:15px;box-shadow:0 5px 15px rgba(20,35,61,.045);display:flex;flex-direction:column;min-width:0;position:relative}
+.notice-card:hover{border-color:#aebee0;box-shadow:0 9px 22px rgba(20,35,61,.08)}
+.notice-card.open{border-left:5px solid #18a05e}.notice-card.closed{border-left:5px solid #d2544a}.notice-card.review{border-left:5px solid #d6932e}.notice-card.lead{border-left:5px solid #8591a5;background:#fbfcfe}
+.notice-card-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.badge-line{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.route-chip,.major-chip,.verify-chip,.kind-chip,.status-chip{display:inline-flex;align-items:center;border-radius:999px;padding:3px 8px;font-weight:800;font-size:11px;line-height:1.35}
 .route-summer{background:#fff1dc;color:#9a4a08}.route-pre{background:#e9f1ff;color:#1f55a4}
 .major-chip{background:#f1edff;color:#5b3e9b}.verify-high{background:#dcfce7;color:#166534}.verify-mid{background:#fef3c7;color:#92400e}.verify-low{background:#fee2e2;color:#991b1b}
-.auto-status{font-size:12px;color:var(--muted)}
-.empty-state{padding:30px;text-align:center;color:var(--muted)}
+.kind-notice{background:#e9f8ef;color:#12633f}.kind-baseline{background:#e8f1ff;color:#174b9b}.kind-report{background:#fff4df;color:#8b4c0d}.kind-lead{background:#edf0f4;color:#5d6674}
+.status-open{background:#e6f8ed;color:#12633f}.status-closed{background:#ffe8e5;color:#a22d24}.status-review{background:#fff3df;color:#89500f}
+.follow-btn{border:1px solid var(--line);background:#fff;border-radius:9px;width:34px;height:34px;cursor:pointer;font-size:19px;line-height:1;color:#8290a5;flex:0 0 auto}
+.follow-btn.active{color:#d48a00;background:#fff7db;border-color:#e6c36a}
+.notice-institution{margin:11px 0 2px;font-size:18px;line-height:1.3;overflow-wrap:anywhere}
+.notice-college{color:var(--muted);font-size:13px;margin-bottom:8px;overflow-wrap:anywhere}
+.notice-title{font-size:15px;font-weight:800;line-height:1.45;margin:0 0 11px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:43px}
+.notice-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 10px}
+.notice-meta div{background:#f7f9fc;border:1px solid #edf0f4;border-radius:9px;padding:8px 9px;min-width:0}
+.notice-meta span{display:block;color:var(--muted);font-size:11px;margin-bottom:2px}
+.notice-meta strong{display:block;font-size:13px;overflow-wrap:anywhere}
+.deadline-urgent{color:#b42318}.deadline-open{color:#166534}
+.notice-keywords{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:9px}
+.notice-summary{margin:0;color:#425069;font-size:13px;line-height:1.65;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;min-height:63px}
+.notice-details{margin-top:10px;border-top:1px dashed var(--line);padding-top:9px}
+.notice-details summary{cursor:pointer;font-size:12px;color:var(--blue);font-weight:800}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px;font-size:12px}
+.detail-grid div{background:#fafbfc;border-radius:8px;padding:8px;overflow-wrap:anywhere}
+.detail-grid b{display:block;color:#5c687b;margin-bottom:3px}
+.raw-excerpt{grid-column:1/-1;max-height:130px;overflow:auto;white-space:normal;color:#596579}
+.notice-card-foot{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:12px}
+.notice-card-foot .open-btn{margin:0}
+.local-status{margin-left:auto;border:1px solid var(--line);border-radius:8px;background:#fff;padding:6px 8px;font-size:12px;max-width:130px}
+.load-more-wrap{text-align:center;margin-top:16px}
+.load-more-btn{border:1px solid #b9c7dc;background:#fff;border-radius:10px;padding:9px 20px;font-weight:800;cursor:pointer}
+.empty-state{padding:42px 20px;text-align:center;color:var(--muted);background:#fafbfc;border:1px dashed var(--line);border-radius:13px}
+.compact-table-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px}
+.compact-table{border-collapse:collapse;width:100%;min-width:1100px;font-size:12.5px}
+.compact-table th,.compact-table td{padding:9px;border-bottom:1px solid var(--line);vertical-align:top}
+.compact-table th{position:sticky;top:0;background:#edf1f6;z-index:2}
+.compact-table .institution-cell{min-width:180px}.compact-table .notice-cell-compact{min-width:300px}.compact-table .date-cell{min-width:135px}.compact-table .action-cell{min-width:130px}
+.compact-title{font-weight:800;margin-bottom:3px}.compact-sub{color:var(--muted);font-size:11px}
+.detail-btn{border:1px solid var(--line);background:#fff;border-radius:7px;padding:5px 7px;cursor:pointer;font-weight:700;color:var(--blue)}
+.notice-dialog{border:0;border-radius:16px;padding:0;max-width:760px;width:calc(100% - 30px);box-shadow:0 24px 70px rgba(14,24,43,.28)}
+.notice-dialog::backdrop{background:rgba(15,23,42,.52)}
+.dialog-body{padding:20px;max-height:82vh;overflow:auto}
+.dialog-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:12px}.dialog-head h3{margin:0;font-size:21px}.dialog-close{border:1px solid var(--line);background:#fff;border-radius:8px;width:34px;height:34px;cursor:pointer}
+.dialog-section{border-top:1px solid var(--line);padding-top:11px;margin-top:11px}.dialog-section h4{margin:0 0 6px}.dialog-section p{margin:0;color:#46536a;white-space:pre-wrap;overflow-wrap:anywhere}
 .code-inline{font-family:Consolas,Monaco,monospace;background:#eef1f5;border-radius:5px;padding:1px 5px}
-@media(max-width:900px){.crawler-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:1050px){.notice-grid{grid-template-columns:1fr}.crawler-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:700px){.crawler-panel-head{display:block}.view-switch{justify-content:flex-start;margin-top:10px}.crawler-grid{grid-template-columns:1fr 1fr}.auto-filter-shell{position:static}.auto-filter-row{align-items:stretch}.auto-filter-row>*{width:100%}.auto-filter-row input[type=search]{min-width:0}.notice-meta{grid-template-columns:1fr}.detail-grid{grid-template-columns:1fr}.raw-excerpt{grid-column:auto}.result-bar{display:block}.auto-status{margin-left:0}.notice-card{padding:13px}}
 
 </style>
 </head>
@@ -117,7 +173,7 @@ tr:hover td{filter:brightness(.992)}
 <header class="hero"><div class="hero-inner">
 <h1>理论物理·天文学保研通知自动监控</h1>
 <p>总体路径：夏令营 / 预推免｜专业：理论物理 / 天文学｜扩展关键词：理论、引力、宇宙、黑洞。</p>
-<p>监控范围：39所原985高校 + 12个中科院研究所/国科大培养单位，共51个单位；GitHub Actions 每日定时更新。</p>
+<p>监控范围：39所原985高校 + 12个中科院研究所/国科大培养单位，共51个单位；GitHub Actions 定时更新。</p>
 </div></header>
 
 <main>
@@ -177,30 +233,63 @@ tr:hover td{filter:brightness(.992)}
 
 
 <section class="card" id="crawlerPanel">
-<h2>自动抓取结果｜高校 + 研究所</h2>
+<div class="crawler-panel-head">
+  <div>
+    <h2>最新通知｜阅读视图</h2>
+    <p>默认只展示可操作的正式通知和人工核验基线；官网首页、栏目页和活动报道单独隐藏，避免干扰。</p>
+  </div>
+  <div class="view-switch" id="viewSwitch">
+    <button class="active" data-view="cards">卡片视图</button>
+    <button data-view="table">紧凑表格</button>
+  </div>
+</div>
 <div class="crawler-grid">
-  <div class="stat"><strong id="autoTotal">0</strong><span>当前保留通知</span></div>
-  <div class="stat"><strong id="autoNew">0</strong><span>本轮新增</span></div>
-  <div class="stat"><strong id="autoReview">0</strong><span>需要人工复核</span></div>
-  <div class="stat"><strong id="autoSchools">0</strong><span>本轮检查单位</span></div>
+  <div class="stat"><strong id="autoTotal">0</strong><span>有效通知</span></div>
+  <div class="stat"><strong id="autoOpen">0</strong><span>报名中</span></div>
+  <div class="stat"><strong id="autoReview">0</strong><span>需要复核</span></div>
+  <div class="stat"><strong id="autoLeads">0</strong><span>栏目/报道线索</span></div>
   <div class="stat"><strong id="autoErrors">0</strong><span>抓取错误</span></div>
 </div>
-<div class="note"><b>自动判定逻辑：</b>页面必须同时命中“夏令营/预推免”路径词、理论物理或天文学专业词，并结合“理论、引力、宇宙、黑洞”评分。搜索API只用于发现候选链接；只有高校、学院、研究所或培养单位的官方域名页面才会进入结果表。</div>
-<div class="note warning"><b>关键限制：</b>单个静态 HTML 不能绕过浏览器跨域限制，也不能自行定时运行。因此本项目采用“Python抓取器 → data/notices.js → HTML展示”，由 GitHub Actions 每日执行。截止日期是正则自动抽取，仍应打开原文核验。</div>
-<div class="crawler-tabs" id="routeTabs">
-  <button class="active" data-route="">全部路径</button><button data-route="夏令营">夏令营</button><button data-route="预推免">预推免</button>
+
+<div class="auto-filter-shell">
+  <div class="auto-filter-row">
+    <div class="crawler-tabs" id="routeTabs">
+      <button class="active" data-route="">全部路径</button>
+      <button data-route="夏令营">夏令营</button>
+      <button data-route="预推免">预推免</button>
+    </div>
+    <span class="auto-status" id="autoUpdated">数据尚未加载</span>
+  </div>
+  <div class="auto-filter-row">
+    <select id="autoType"><option value="">全部单位类型</option><option>985高校</option><option>中科院研究所</option><option>国科大培养单位</option></select>
+    <select id="autoMajor"><option value="">全部专业</option><option>理论物理</option><option>天文学</option></select>
+    <select id="autoStatus"><option value="">全部状态</option><option value="报名中">报名中</option><option value="已截止">已截止</option><option value="待人工确认">待人工确认</option></select>
+    <select id="autoSort"><option value="priority">优先级排序</option><option value="published">发布日期最新</option><option value="deadline">截止时间最早</option><option value="score">相关度最高</option><option value="school">单位名称</option></select>
+    <input id="autoSearch" type="search" placeholder="搜索学校、学院、通知标题、理论/引力/宇宙/黑洞……">
+  </div>
+  <div class="auto-filter-row">
+    <label><input id="autoActionable" type="checkbox" checked> 只看有效通知</label>
+    <label><input id="autoOpenOnly" type="checkbox"> 只看报名中</label>
+    <label><input id="autoReviewOnly" type="checkbox"> 只看需复核</label>
+    <label><input id="autoFollowOnly" type="checkbox"> 只看已关注</label>
+    <button class="filter-chip" type="button" onclick="resetAutoFilters()">清空筛选</button>
+    <button class="filter-chip" type="button" onclick="location.reload()">重新载入数据</button>
+  </div>
 </div>
-<div class="toolbar">
-  <select id="autoType"><option value="">全部单位类型</option><option>985高校</option><option>中科院研究所</option><option>国科大培养单位</option></select>
-<select id="autoMajor"><option value="">全部专业</option><option>理论物理</option><option>天文学</option></select>
-  <select id="autoVerify"><option value="">全部可信度</option><option value="高">高</option><option value="中">中</option><option value="低">低</option><option value="人工核验基线">人工核验基线</option></select>
-  <input id="autoSearch" type="search" placeholder="搜索学校、学院、标题、理论/引力/宇宙/黑洞……">
-  <button onclick="renderCrawlerTable()">应用筛选</button><button onclick="location.reload()">重新载入最新数据</button>
-  <span class="auto-status" id="autoUpdated">数据尚未加载</span>
+
+<div class="result-bar">
+  <span id="autoResultText">正在整理结果……</span>
+  <span>提示：点击星标可本地关注；申请进度仅保存在当前浏览器。</span>
 </div>
-<div class="table-wrap"><table class="crawler-table" id="crawlerTable">
-<thead><tr><th>序号</th><th>路径</th><th>单位类型</th><th>学校/研究单位</th><th>学院/招生入口</th><th>专业/命中词</th><th>通知标题</th><th>发布日期</th><th>截止时间</th><th>自动状态</th><th>相关度</th><th>可信度</th><th>官方原文</th><th>摘要/复核提示</th></tr></thead>
-<tbody></tbody></table></div>
+<div id="noticeCards" class="notice-grid"></div>
+<div id="autoEmpty" class="empty-state" hidden>当前筛选条件下没有结果。</div>
+<div class="load-more-wrap"><button id="loadMoreBtn" class="load-more-btn" type="button" onclick="loadMoreNotices()">显示更多</button></div>
+
+<div id="compactTableWrap" class="compact-table-wrap" hidden>
+<table class="compact-table"><thead><tr><th>单位/学院</th><th>通知</th><th>路径</th><th>发布日期</th><th>截止时间</th><th>状态</th><th>相关度/可信度</th><th>操作</th></tr></thead><tbody id="compactTableBody"></tbody></table>
+</div>
+
+<dialog id="noticeDialog" class="notice-dialog"><div class="dialog-body" id="dialogBody"></div></dialog>
 </section>
 
 <section class="card">
@@ -1206,40 +1295,107 @@ document.addEventListener('change',e=>{
 });
 document.addEventListener('DOMContentLoaded',restore);
 
-let AUTO_ROUTE='';
+let AUTO_STATE={route:'',view:'cards',pageSize:12,visible:12};
+const AUTO_STORE='physics_baoyan_auto_status_v2';
 function escAuto(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function normalizeText(s){return String(s??'').replace(/\s+/g,' ').trim();}
+function clipText(s,n=180){const t=normalizeText(s);return t.length>n?t.slice(0,n)+'…':t;}
 function verifyClass(v){if(v==='高'||v==='人工核验基线')return 'verify-high';if(v==='中')return 'verify-mid';return 'verify-low';}
-function renderCrawlerTable(){
-  const data=window.CRAWLER_DATA||{meta:{},notices:[],report:{}};
-  const type=document.getElementById('autoType')?.value||'';
-  const major=document.getElementById('autoMajor')?.value||'';
-  const verify=document.getElementById('autoVerify')?.value||'';
-  const q=(document.getElementById('autoSearch')?.value||'').trim().toLowerCase();
-  let items=(data.notices||[]).filter(x=>(!AUTO_ROUTE||x.route===AUTO_ROUTE)&&(!type||x.institution_type===type)&&(!major||(x.majors||[]).includes(major))&&(!verify||x.verification===verify));
-  if(q)items=items.filter(x=>JSON.stringify(x).toLowerCase().includes(q));
-  const tbody=document.querySelector('#crawlerTable tbody');
-  if(!tbody)return;
-  if(!items.length){tbody.innerHTML='<tr><td colspan="14" class="empty-state">当前筛选条件下没有结果。先运行 <span class="code-inline">python crawler.py --all</span>，或等待 GitHub Actions 更新。</td></tr>';return;}
-  tbody.innerHTML=items.map((x,i)=>{
-    const routeClass=x.route==='夏令营'?'route-summer':'route-pre';
-    const majors=(x.majors||[]).map(v=>`<span class="major-chip">${escAuto(v)}</span>`).join('');
-    const kws=(x.matched_keywords||[]).map(v=>`<span class="major-chip">${escAuto(v)}</span>`).join('');
-    return `<tr><td class="num">${i+1}</td><td><span class="route-chip ${routeClass}">${escAuto(x.route)}</span></td><td><span class="major-chip">${escAuto(x.institution_type||'其他')}</span></td><td class="school"><strong>${escAuto(x.school)}</strong></td><td>${escAuto(x.college)}</td><td>${majors}${kws}</td><td class="title-col"><b>${escAuto(x.title)}</b></td><td>${escAuto(x.published_at||'待识别')}</td><td class="deadline-cell">${escAuto(x.deadline||'待人工核验')}</td><td>${escAuto(x.status||'待人工确认')}</td><td>${escAuto(x.score)}</td><td><span class="verify-chip ${verifyClass(x.verification)}">${escAuto(x.verification)}</span></td><td><a class="open-btn" href="${escAuto(x.url)}" target="_blank" rel="noopener">打开官方原文</a></td><td class="excerpt-col">${escAuto(x.deadline_context||x.excerpt||'')}</td></tr>`;
-  }).join('');
+function routeClass(v){return v==='夏令营'?'route-summer':'route-pre';}
+function isGenericTitle(t,school=''){
+  const x=normalizeText(t).replace(/[｜|_-].*$/,'');
+  const generic=['首页','学院动态','研招办','研究生院','招生信息','通知公告','招生就业','物理科学学院 物理学院','中国科学院理论物理研究所'];
+  return !x||x===school||generic.includes(x)||x.length<4;
 }
+function recordKind(x){
+  if(x.origin==='existing_dashboard'||x.verification==='人工核验基线')return 'baseline';
+  const title=normalizeText(x.title), body=normalizeText(x.excerpt), url=String(x.url||'');
+  const action=/(报名|申请|接收|招生|推荐免试|推免|夏令营.{0,12}(通知|公告|简章)|优秀大学生.{0,12}夏令营)/;
+  const recap=/(成功举办|圆满举行|开营仪式|活动期间|齐聚|顺利举行|圆满结束)/;
+  const path=(()=>{try{return new URL(url).pathname}catch{return ''}})();
+  if(recap.test(title+' '+body)&&!/(报名|申请|截止)/.test(title+' '+body))return 'report';
+  if(path==='/'||path==='')return 'lead';
+  const detailUrl=/(?:\/info\/\d+\/\d+|\/20\d{2}\/\d{2,}|\/t20\d{4,}|\/\d{4,}[-_][^/]+|\/[^/]+\.(?:htm|html|shtml))$/i.test(path);
+  if(action.test(title)||(detailUrl&&action.test(body.slice(0,2400))))return 'notice';
+  if(isGenericTitle(title,x.school))return 'lead';
+  return 'lead';
+}
+function kindLabel(k){return {baseline:'人工核验',notice:'正式通知',report:'活动报道',lead:'栏目线索'}[k]||'线索';}
+function kindClass(k){return {baseline:'kind-baseline',notice:'kind-notice',report:'kind-report',lead:'kind-lead'}[k]||'kind-lead';}
+function displayTitle(x){const k=recordKind(x);if(k==='lead'&&isGenericTitle(x.title,x.school))return `${x.school}｜官网栏目线索（尚未定位具体通知）`;return normalizeText(x.title)||`${x.school} ${x.route}通知`;}
+function usefulSnippet(x){
+  const k=recordKind(x);
+  if(k==='lead')return '自动抓取到了官网首页或招生栏目，但尚未定位到具体报名通知。该条默认隐藏，可打开原文或等待后续更新。';
+  if(k==='report')return '该页面更像夏令营活动报道，而不是当前可报名通知。保留作历史线索，默认不纳入可操作结果。';
+  const preferred=normalizeText(x.deadline_context||x.excerpt||x.remark||'');
+  if(preferred.length<=220)return preferred||'暂无摘要，请打开官方原文核验。';
+  const keys=['报名','申请','截止','预推免','推荐免试','夏令营','理论物理','天文学'];
+  let idx=-1;for(const key of keys){const p=preferred.indexOf(key,60);if(p>=0&&(idx<0||p<idx))idx=p;}
+  if(idx<0)return clipText(preferred,220);
+  return (idx>28?'…':'')+clipText(preferred.slice(Math.max(0,idx-28)),220);
+}
+function parseDateValue(v){
+  const m=String(v||'').match(/20\d{2}[-/.年]\d{1,2}[-/.月]\d{1,2}/);if(!m)return null;
+  const s=m[0].replace('年','-').replace('月','-').replace('日','').replace(/[/.]/g,'-');const d=new Date(s+'T00:00:00+08:00');return Number.isNaN(d.getTime())?null:d;
+}
+function deadlineInfo(x){
+  const raw=normalizeText(x.deadline)||'待人工核验';const d=parseDateValue(raw);if(!d)return {raw,cls:''};
+  const days=Math.ceil((d-new Date())/86400000);if(days<0)return {raw,cls:'deadline-urgent'};if(days<=7)return {raw,cls:'deadline-urgent'};return {raw,cls:'deadline-open'};
+}
+function statusClass(x){if(x.status==='报名中')return 'open';if(x.status==='已截止')return 'closed';return 'review';}
+function statusChipClass(x){if(x.status==='报名中')return 'status-open';if(x.status==='已截止')return 'status-closed';return 'status-review';}
+function loadLocalMap(){try{return JSON.parse(localStorage.getItem(AUTO_STORE)||'{}')}catch{return {}}}
+function saveLocalMap(map){localStorage.setItem(AUTO_STORE,JSON.stringify(map));}
+function isFollowed(id){return Boolean(loadLocalMap()[id]?.followed);}
+function localProgress(id){return loadLocalMap()[id]?.progress||'未处理';}
+function toggleFollow(id){const m=loadLocalMap();m[id]={...(m[id]||{}),followed:!m[id]?.followed};saveLocalMap(m);renderAutoResults(false);}
+function setAutoProgress(id,value){const m=loadLocalMap();m[id]={...(m[id]||{}),progress:value};saveLocalMap(m);}
+function filteredAutoItems(){
+  const data=window.CRAWLER_DATA||{notices:[]};const type=document.getElementById('autoType')?.value||'';const major=document.getElementById('autoMajor')?.value||'';const status=document.getElementById('autoStatus')?.value||'';const q=normalizeText(document.getElementById('autoSearch')?.value).toLowerCase();
+  const actionable=document.getElementById('autoActionable')?.checked;const openOnly=document.getElementById('autoOpenOnly')?.checked;const reviewOnly=document.getElementById('autoReviewOnly')?.checked;const followOnly=document.getElementById('autoFollowOnly')?.checked;
+  let items=(data.notices||[]).filter(x=>{
+    const kind=recordKind(x);if(AUTO_STATE.route&&x.route!==AUTO_STATE.route)return false;if(type&&x.institution_type!==type)return false;if(major&&!(x.majors||[]).includes(major))return false;if(status&&x.status!==status)return false;if(actionable&&!['baseline','notice'].includes(kind))return false;if(openOnly&&x.status!=='报名中')return false;if(reviewOnly&&(x.verification==='高'||x.verification==='人工核验基线'))return false;if(followOnly&&!isFollowed(x.id))return false;if(q&&!JSON.stringify(x).toLowerCase().includes(q))return false;return true;
+  });
+  const sort=document.getElementById('autoSort')?.value||'priority';
+  const rankKind=x=>({baseline:4,notice:3,report:1,lead:0}[recordKind(x)]||0);const rankStatus=x=>x.status==='报名中'?3:(x.status==='待人工确认'?2:1);
+  items.sort((a,b)=>{
+    if(sort==='published')return (parseDateValue(b.published_at)?.getTime()||0)-(parseDateValue(a.published_at)?.getTime()||0)||b.score-a.score;
+    if(sort==='deadline'){const ad=parseDateValue(a.deadline)?.getTime()||9e15,bd=parseDateValue(b.deadline)?.getTime()||9e15;return ad-bd||b.score-a.score;}
+    if(sort==='score')return (b.score||0)-(a.score||0);
+    if(sort==='school')return String(a.school).localeCompare(String(b.school),'zh-CN');
+    return rankStatus(b)-rankStatus(a)||rankKind(b)-rankKind(a)||(b.score||0)-(a.score||0)||(parseDateValue(b.published_at)?.getTime()||0)-(parseDateValue(a.published_at)?.getTime()||0);
+  });
+  return items;
+}
+function chipList(x){return [...(x.majors||[]),...(x.matched_keywords||[])].filter((v,i,a)=>a.indexOf(v)===i).map(v=>`<span class="major-chip">${escAuto(v)}</span>`).join('');}
+function renderNoticeCard(x){
+  const k=recordKind(x),dl=deadlineInfo(x),follow=isFollowed(x.id),summary=usefulSnippet(x);
+  return `<article class="notice-card ${statusClass(x)} ${k==='lead'||k==='report'?'lead':''}">
+    <div class="notice-card-head"><div class="badge-line"><span class="route-chip ${routeClass(x.route)}">${escAuto(x.route)}</span><span class="kind-chip ${kindClass(k)}">${kindLabel(k)}</span><span class="verify-chip ${verifyClass(x.verification)}">${escAuto(x.verification||'待核验')}</span><span class="status-chip ${statusChipClass(x)}">${escAuto(x.status||'待人工确认')}</span></div><button class="follow-btn ${follow?'active':''}" type="button" title="本地关注" onclick="toggleFollow('${escAuto(x.id)}')">${follow?'★':'☆'}</button></div>
+    <h3 class="notice-institution">${escAuto(x.school)}</h3><div class="notice-college">${escAuto(x.college||x.region||'')}</div>
+    <div class="notice-title" title="${escAuto(displayTitle(x))}">${escAuto(displayTitle(x))}</div>
+    <div class="notice-meta"><div><span>发布日期</span><strong>${escAuto(x.published_at||'待识别')}</strong></div><div><span>截止时间</span><strong class="${dl.cls}">${escAuto(dl.raw)}</strong></div><div><span>相关度</span><strong>${escAuto(x.score??'—')} / 100</strong></div><div><span>单位类型</span><strong>${escAuto(x.institution_type||'其他')}</strong></div></div>
+    <div class="notice-keywords">${chipList(x)}</div><p class="notice-summary">${escAuto(summary)}</p>
+    <details class="notice-details"><summary>展开识别详情</summary><div class="detail-grid"><div><b>考核安排</b>${escAuto(x.exam||'待人工核验')}</div><div><b>材料要求</b>${escAuto(x.materials||'待人工核验')}</div><div><b>备注</b>${escAuto(x.remark||'—')}</div><div><b>首次发现</b>${escAuto(x.first_seen||'—')}</div><div class="raw-excerpt"><b>抓取原文片段</b>${escAuto(clipText(x.excerpt||'',700)||'—')}</div></div></details>
+    <div class="notice-card-foot"><a class="open-btn" href="${escAuto(x.url)}" target="_blank" rel="noopener">打开官方原文</a><button class="detail-btn" type="button" onclick="openNoticeDialog('${escAuto(x.id)}')">集中查看</button><select class="local-status" onchange="setAutoProgress('${escAuto(x.id)}',this.value)">${['未处理','关注','准备申请','已申请','忽略'].map(v=>`<option ${localProgress(x.id)===v?'selected':''}>${v}</option>`).join('')}</select></div>
+  </article>`;
+}
+function renderCompactRow(x){const k=recordKind(x),dl=deadlineInfo(x);return `<tr><td class="institution-cell"><b>${escAuto(x.school)}</b><div class="compact-sub">${escAuto(x.college||'')}</div></td><td class="notice-cell-compact"><div class="compact-title">${escAuto(displayTitle(x))}</div><div class="compact-sub">${escAuto(clipText(usefulSnippet(x),90))}</div></td><td><span class="route-chip ${routeClass(x.route)}">${escAuto(x.route)}</span><br><span class="kind-chip ${kindClass(k)}">${kindLabel(k)}</span></td><td class="date-cell">${escAuto(x.published_at||'待识别')}</td><td class="date-cell ${dl.cls}">${escAuto(dl.raw)}</td><td><span class="status-chip ${statusChipClass(x)}">${escAuto(x.status||'待确认')}</span></td><td>${escAuto(x.score??'—')}<br><span class="verify-chip ${verifyClass(x.verification)}">${escAuto(x.verification||'待核验')}</span></td><td class="action-cell"><a class="open-btn" href="${escAuto(x.url)}" target="_blank" rel="noopener">原文</a> <button class="detail-btn" onclick="openNoticeDialog('${escAuto(x.id)}')">详情</button></td></tr>`;}
+function renderAutoResults(resetVisible=true){
+  if(resetVisible)AUTO_STATE.visible=12;const items=filteredAutoItems();const shown=items.slice(0,AUTO_STATE.visible);const cards=document.getElementById('noticeCards'),table=document.getElementById('compactTableWrap'),empty=document.getElementById('autoEmpty'),more=document.getElementById('loadMoreBtn');
+  document.getElementById('autoResultText').innerHTML=`筛选后 <strong>${items.length}</strong> 条，当前显示 <strong>${shown.length}</strong> 条`;
+  cards.innerHTML=shown.map(renderNoticeCard).join('');document.getElementById('compactTableBody').innerHTML=shown.map(renderCompactRow).join('');empty.hidden=items.length>0;more.parentElement.hidden=AUTO_STATE.view==='table'||shown.length>=items.length;
+  cards.hidden=AUTO_STATE.view!=='cards';table.hidden=AUTO_STATE.view!=='table';
+}
+function loadMoreNotices(){AUTO_STATE.visible+=12;renderAutoResults(false);}
+function resetAutoFilters(){AUTO_STATE.route='';document.querySelectorAll('#routeTabs button').forEach((b,i)=>b.classList.toggle('active',i===0));['autoType','autoMajor','autoStatus'].forEach(id=>document.getElementById(id).value='');document.getElementById('autoSort').value='priority';document.getElementById('autoSearch').value='';document.getElementById('autoActionable').checked=true;document.getElementById('autoOpenOnly').checked=false;document.getElementById('autoReviewOnly').checked=false;document.getElementById('autoFollowOnly').checked=false;renderAutoResults();}
+function openNoticeDialog(id){const x=(window.CRAWLER_DATA?.notices||[]).find(v=>String(v.id)===String(id));if(!x)return;const dl=deadlineInfo(x),k=recordKind(x);document.getElementById('dialogBody').innerHTML=`<div class="dialog-head"><div><div class="badge-line"><span class="route-chip ${routeClass(x.route)}">${escAuto(x.route)}</span><span class="kind-chip ${kindClass(k)}">${kindLabel(k)}</span><span class="verify-chip ${verifyClass(x.verification)}">${escAuto(x.verification)}</span></div><h3>${escAuto(x.school)}</h3><div class="notice-college">${escAuto(x.college||'')}</div></div><button class="dialog-close" onclick="document.getElementById('noticeDialog').close()">×</button></div><div class="dialog-section"><h4>${escAuto(displayTitle(x))}</h4><p>${escAuto(usefulSnippet(x))}</p></div><div class="dialog-section"><h4>日期与状态</h4><p>发布日期：${escAuto(x.published_at||'待识别')}\n截止时间：${escAuto(dl.raw)}\n自动状态：${escAuto(x.status||'待确认')}\n相关度：${escAuto(x.score??'—')} / 100</p></div><div class="dialog-section"><h4>考核与材料</h4><p>考核：${escAuto(x.exam||'待人工核验')}\n材料：${escAuto(x.materials||'待人工核验')}\n备注：${escAuto(x.remark||'—')}</p></div><div class="dialog-section"><h4>抓取原文片段</h4><p>${escAuto(clipText(x.excerpt||'',1600)||'—')}</p></div><div class="notice-card-foot"><a class="open-btn" href="${escAuto(x.url)}" target="_blank" rel="noopener">打开官方原文</a></div>`;document.getElementById('noticeDialog').showModal();}
 function initCrawlerPanel(){
-  const data=window.CRAWLER_DATA||{meta:{},notices:[],report:{}};
-  const rep=data.report||{}, items=data.notices||[];
-  document.getElementById('autoTotal').textContent=items.length;
-  document.getElementById('autoNew').textContent=rep.new_notices||0;
-  document.getElementById('autoReview').textContent=items.filter(x=>x.verification!=='高'&&x.verification!=='人工核验基线').length;
-  document.getElementById('autoSchools').textContent=rep.institutions_checked||rep.schools_checked||data.meta?.monitored_units||0;
-  document.getElementById('autoErrors').textContent=(rep.errors||[]).length;
-  document.getElementById('autoUpdated').textContent='最近数据：'+(data.meta?.generated_at||rep.run_at||'未知')+'｜发现方式：'+(rep.search_provider||'none');
-  document.querySelectorAll('#routeTabs button').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('#routeTabs button').forEach(x=>x.classList.remove('active'));btn.classList.add('active');AUTO_ROUTE=btn.dataset.route||'';renderCrawlerTable();}));
-  ['autoType','autoMajor','autoVerify'].forEach(id=>document.getElementById(id)?.addEventListener('change',renderCrawlerTable));
-  document.getElementById('autoSearch')?.addEventListener('input',renderCrawlerTable);
-  renderCrawlerTable();
+  const data=window.CRAWLER_DATA||{meta:{},notices:[],report:{}};const rep=data.report||{},items=data.notices||[];const actionable=items.filter(x=>['baseline','notice'].includes(recordKind(x)));document.getElementById('autoTotal').textContent=actionable.length;document.getElementById('autoOpen').textContent=actionable.filter(x=>x.status==='报名中').length;document.getElementById('autoReview').textContent=actionable.filter(x=>x.verification!=='高'&&x.verification!=='人工核验基线').length;document.getElementById('autoLeads').textContent=items.length-actionable.length;document.getElementById('autoErrors').textContent=(rep.errors||[]).length;document.getElementById('autoUpdated').textContent='最近数据：'+(data.meta?.generated_at||rep.run_at||'未知')+'｜发现方式：'+(rep.search_provider||'none');
+  document.querySelectorAll('#routeTabs button').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('#routeTabs button').forEach(x=>x.classList.remove('active'));btn.classList.add('active');AUTO_STATE.route=btn.dataset.route||'';renderAutoResults();}));
+  document.querySelectorAll('#viewSwitch button').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('#viewSwitch button').forEach(x=>x.classList.remove('active'));btn.classList.add('active');AUTO_STATE.view=btn.dataset.view;renderAutoResults(false);}));
+  ['autoType','autoMajor','autoStatus','autoSort','autoActionable','autoOpenOnly','autoReviewOnly','autoFollowOnly'].forEach(id=>document.getElementById(id)?.addEventListener('change',()=>renderAutoResults()));document.getElementById('autoSearch')?.addEventListener('input',()=>renderAutoResults());
+  document.getElementById('noticeDialog')?.addEventListener('click',e=>{if(e.target.id==='noticeDialog')e.target.close();});renderAutoResults();
 }
 document.addEventListener('DOMContentLoaded',initCrawlerPanel);
 
