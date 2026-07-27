@@ -1,0 +1,35 @@
+GitHub 每日更新部署包｜申请材料生成器
+
+用途：
+1. 在现有 physics-baoyan-monitor 仓库中增加/更新申请材料生成器；
+2. 将自动抓取改为每天北京时间 09:30 运行；
+3. 不覆盖现有 crawler.py、config.yaml 和 data/，保留你当前抓取配置和最新数据。
+
+本包内容：
+- index.html
+- builder/
+- assets/
+- .github/workflows/update-notices.yml
+- .nojekyll
+- THIRD_PARTY_NOTICES.md
+
+上传方法：
+1. 解压本 ZIP。
+2. 打开 GitHub 仓库 Code 页面。
+3. 点击 Add file → Upload files。
+4. 将解压目录“内部的全部内容”拖入上传区，包括 .github 文件夹。
+5. Commit message 填：增加申请材料生成器并启用每日更新
+6. 选择 Commit directly to the main branch。
+7. 点击 Commit changes。
+8. 打开 Actions，确认“每日更新保研通知”工作流存在。
+9. 手动 Run workflow 一次，确认绿色勾。
+10. 等待 Pages 自动重新发布，打开网页后按 Ctrl+F5。
+
+必要设置：
+- Settings → Secrets and variables → Actions 中存在 TALOR_API_TOKEN。
+- Settings → Actions → General → Workflow permissions 选择 Read and write permissions。
+- Settings → Pages 保持 main / (root)。
+
+定时规则：
+- cron: 30 1 * * *
+- GitHub Actions 使用 UTC，因此对应北京时间每天 09:30。

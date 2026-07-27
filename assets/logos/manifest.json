@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "logos": [
+    {
+      "id": "generic",
+      "name": "通用院校徽标",
+      "school": "通用",
+      "path": "../assets/logos/generic-university.svg"
+    },
+    {
+      "id": "ictp-ap",
+      "name": "国际理论物理中心（亚太地区）",
+      "school": "中国科学院大学",
+      "path": "../assets/logos/ictp-ap.png"
+    }
+  ]
+}

@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>保研申请材料生成器｜理论物理·天文学保研系统</title>
+<link rel="stylesheet" href="css/builder.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="site-header-inner">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">BG</span>
+      <span><b>BAOYAN GALAXY</b><small>理论物理·天文学保研系统</small></span>
+    </a>
+    <nav class="site-nav">
+      <a href="../index.html">通知监控</a>
+      <a class="active" href="./">申请材料生成器</a>
+    </nav>
+    <div class="privacy-pill">文件仅在本机浏览器处理</div>
+  </div>
+</header>
+
+<main>
+<section class="hero-panel">
+  <div>
+    <p class="eyebrow">APPLICATION PDF BUILDER</p>
+    <h1>申请材料整合</h1>
+    <p>从招生通知建立材料清单，上传 PDF 或图片，自动生成封面、目录、统一页眉、正文页码和可点击跳转。</p>
+  </div>
+  <div class="hero-stats">
+    <div><strong id="statUploaded">0</strong><span>已上传文件</span></div>
+    <div><strong id="statSize">0 MB</strong><span>原始总大小</span></div>
+    <div><strong id="statPages">0</strong><span>预计正文页</span></div>
+    <div><strong id="statRequired">0 / 0</strong><span>必交完成</span></div>
+  </div>
+</section>
+
+<section class="workspace-grid">
+  <aside class="left-column">
+    <section class="panel project-panel">
+      <div class="section-head compact">
+        <div><p class="eyebrow">PROJECT</p><h2>申请项目</h2></div>
+        <button class="btn secondary small" id="newProjectBtn" type="button">新建</button>
+      </div>
+      <label class="field"><span>当前项目</span><select id="projectSelect"></select></label>
+      <div class="inline-actions">
+        <button class="text-btn" id="renameProjectBtn" type="button">重命名</button>
+        <button class="text-btn danger" id="deleteProjectBtn" type="button">删除项目</button>
+        <button class="text-btn" id="exportProjectBtn" type="button">导出配置</button>
+        <label class="text-btn file-label">导入配置<input id="importProjectInput" type="file" accept="application/json" hidden></label>
+      </div>
+    </section>
+
+    <section class="panel notice-panel">
+      <div class="section-head compact">
+        <div><p class="eyebrow">LOCKED NOTICE</p><h2>通知信息</h2></div>
+        <span class="lock-chip" id="noticeState">手动项目</span>
+      </div>
+      <div class="two-col-form">
+        <label class="field"><span>学校</span><input data-project="school" placeholder="如：清华大学"></label>
+        <label class="field"><span>学院/研究所</span><input data-project="college" placeholder="如：物理系"></label>
+        <label class="field"><span>申请类型</span><select data-project="route"><option>夏令营</option><option>预推免</option><option>九推</option><option>博士招生</option><option>其他</option></select></label>
+        <label class="field"><span>年份</span><input data-project="year" type="number" min="2020" max="2100"></label>
+        <label class="field"><span>发布日期</span><input data-project="publishedAt"></label>
+        <label class="field"><span>截止时间</span><input data-project="deadline"></label>
+      </div>
+      <label class="field"><span>官方通知链接</span><input data-project="sourceUrl" type="url" placeholder="https://..."></label>
+      <label class="field"><span>通知中的材料要求原文</span><textarea data-project="noticeMaterials" rows="4" placeholder="粘贴招生通知中的材料清单或要求"></textarea></label>
+      <div class="inline-actions">
+        <button class="btn secondary small" id="parseMaterialsBtn" type="button">从原文生成清单</button>
+        <a class="text-btn" id="openNoticeLink" href="#" target="_blank" rel="noopener">打开官方通知</a>
+      </div>
+    </section>
+
+    <section class="panel student-panel dark">
+      <div class="section-head compact"><div><p class="eyebrow">STUDENT INFO</p><h2>封面信息</h2></div></div>
+      <label class="field"><span>姓名</span><input data-profile="name"></label>
+      <label class="field"><span>本科院校</span><input data-profile="undergraduateSchool"></label>
+      <label class="field"><span>本科专业</span><input data-profile="undergraduateMajor"></label>
+      <label class="field"><span>申请专业/方向</span><input data-profile="targetMajor"></label>
+      <label class="field"><span>联系电话</span><input data-profile="phone"></label>
+      <label class="field"><span>电子邮箱（可选）</span><input data-profile="email"></label>
+    </section>
+
+    <section class="panel cover-panel">
+      <div class="section-head compact"><div><p class="eyebrow">COVER & HEADER</p><h2>封面与页眉</h2></div></div>
+      <label class="field"><span>封面标题</span><input data-project="coverTitle" placeholder="留空则自动生成"></label>
+      <label class="field"><span>页眉文字</span><textarea data-project="headerText" rows="2"></textarea></label>
+      <div class="two-col-form">
+        <label class="field"><span>最终文件上限（MB）</span><input data-project="sizeLimitMb" type="number" min="1" step="1"></label>
+        <label class="field"><span>内容版式</span><select data-project="pageMode"><option value="fit">统一 A4 并预留页眉</option><option value="preserve">保留原页面尺寸并覆盖页眉</option></select></label>
+      </div>
+      <label class="check-row"><input data-project="includeCover" type="checkbox"><span>增加封面</span></label>
+      <label class="check-row"><input data-project="includeToc" type="checkbox"><span>增加可点击目录</span></label>
+      <label class="check-row"><input data-project="includeHeader" type="checkbox"><span>正文增加统一页眉</span></label>
+      <label class="check-row"><input data-project="includePageNumbers" type="checkbox"><span>正文从第 1 页开始编号</span></label>
+      <label class="field"><span>院校徽标</span><select id="logoPreset"></select></label>
+      <div class="logo-row">
+        <div class="logo-preview" id="logoPreview"></div>
+        <label class="btn secondary small file-label">上传自定义徽标<input id="logoInput" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" hidden></label>
+        <button class="text-btn danger" id="clearLogoBtn" type="button">清除</button>
+      </div>
+    </section>
+  </aside>
+
+  <section class="right-column">
+    <section class="panel materials-panel">
+      <div class="section-head">
+        <div><p class="eyebrow">MATERIAL LIST</p><h2>申请材料清单</h2><p>材料顺序即最终 PDF 顺序。支持拖拽排序、一级/二级目录、每项多文件。</p></div>
+        <div class="head-actions"><button class="btn secondary" id="addSubMaterialBtn" type="button">添加二级材料</button><button class="btn primary" id="addMaterialBtn" type="button">添加一级材料</button></div>
+      </div>
+      <div id="materialList" class="material-list"></div>
+      <div id="emptyMaterials" class="empty-state" hidden>暂无材料条目，请添加材料或从通知原文生成清单。</div>
+    </section>
+
+    <section class="panel validation-panel">
+      <div class="section-head compact"><div><p class="eyebrow">CHECK</p><h2>生成前核验</h2></div><button class="btn secondary small" id="validateBtn" type="button">重新核验</button></div>
+      <div id="validationSummary" class="validation-summary"></div>
+      <ul id="validationList" class="validation-list"></ul>
+    </section>
+
+    <section class="panel build-panel">
+      <div class="section-head">
+        <div><p class="eyebrow">BUILD</p><h2>预览与生成</h2><p>生成时会重新读取本地文件并计算目录页码。较大的论文可能需要几十秒。</p></div>
+        <div class="head-actions"><button class="btn secondary" id="previewBtn" type="button">生成预览</button><button class="btn primary" id="buildBtn" type="button">生成并下载 PDF</button></div>
+      </div>
+      <div class="progress-shell" id="progressShell" hidden><div class="progress-bar"><i id="progressBar"></i></div><span id="progressText">正在处理……</span></div>
+      <div class="preview-shell">
+        <iframe id="pdfPreview" title="PDF 预览"></iframe>
+        <div class="preview-placeholder" id="previewPlaceholder"><b>尚未生成预览</b><span>上传材料后点击“生成预览”。</span></div>
+      </div>
+      <div class="build-result" id="buildResult"></div>
+    </section>
+  </section>
+</section>
+</main>
+
+<footer>保研申请材料生成器 · 所有文件默认仅保存在当前浏览器 IndexedDB 中</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js" onerror="this.onerror=null;this.src='https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js'"></script>
+<script src="js/db.js"></script>
+<script src="js/pdf-builder.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
