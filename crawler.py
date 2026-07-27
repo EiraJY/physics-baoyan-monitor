@@ -131,11 +131,39 @@ def extract_links(html: str, base_url: str, domains: list[str], max_links: int) 
 
 
 DETAIL_PATH_RE = re.compile(r"/publish/s03/s0302/detail/[0-9a-fA-F-]{20,}(?:\?[^\"'<>\s\\]*)?")
+CATALOG_TITLE_RE = re.compile(r"招生专业目录|专业目录[_｜| -]*推荐免试|博士研究生招生目录|硕士研究生招生目录|导师目录")
+CATALOG_PATH_RE = re.compile(r"/publish/(?:s01/s0103|s03/s0303)/", re.I)
+
+
+def is_catalog_page(title: str = "", url: str = "") -> bool:
+    return bool(CATALOG_TITLE_RE.search(title or "") or CATALOG_PATH_RE.search(urlsplit(url).path or ""))
 
 
 def is_detail_notice_url(url: str) -> bool:
-    path = (urlsplit(url).path or "").lower()
+    """判断 URL 是否是招生通知正文，明确排除招生专业目录。"""
+    p = urlsplit(url)
+    path = (p.path or "").lower()
+    if CATALOG_PATH_RE.search(path):
+        return False
+    if p.netloc.lower().endswith("yzbm.tsinghua.edu.cn"):
+        # 清华综合平台：s03/s0302 是院系招生简章；s01/s0103、s03/s0303 是专业目录。
+        return "/publish/s03/s0302/detail/" in path
     return "/detail/" in path or bool(re.search(r"/(?:info/\d+/\d+|20\d{2}/\d{2,}|t20\d{4,}|[^/]+\.(?:htm|html|shtml))$", path, re.I))
+
+
+def candidate_allowed_for_unit(url: str, school: dict[str, Any]) -> bool:
+    """按院系配置限制候选 URL，防止目录页和其他院系详情混入。"""
+    if not url or is_catalog_page(url=url):
+        return False
+    path = urlsplit(url).path or ""
+    for pat in school.get("reject_url_patterns", []):
+        if pat and pat in url:
+            return False
+    strict = [str(x) for x in school.get("strict_notice_paths", []) if str(x)]
+    # 列表页仍可作为发现入口；详情页必须命中严格路径。
+    if strict and is_detail_notice_url(url):
+        return any(x in path for x in strict)
+    return True
 
 
 def extract_embedded_detail_urls(html: str, base_url: str, domains: list[str]) -> list[str]:
@@ -246,23 +274,22 @@ def search_web(session: requests.Session, query: str, cfg: dict[str, Any]) -> li
     return []
 
 def build_queries(school: dict[str, Any], cfg: dict[str, Any]) -> list[str]:
-    """每个院系/研究单位只发1条定向查询。
-
-    对配置了 unit_id 的院系，优先搜索精确的院系招生简章标题；
-    搜索 API 找到列表页后，再由列表源码解析出具体详情页。
-    """
+    """每个院系只搜索具体招生简章，不搜索专业目录。"""
     pyear, ayear = cfg["target"]["publish_year"], cfg["target"]["admission_year"]
     domain = school.get("official_domains", [""])[0]
     domain_part = f"site:{domain}" if domain else ""
     college = str(school.get("college", "")).strip()
     if school.get("unit_id") and college:
         exact = f'{school["name"]}{college}{ayear}年博士研究生招生简章'
-        return [f'{domain_part} "{exact}"'.strip()]
+        strict = school.get("strict_notice_paths", [])
+        path_hint = strict[0].rstrip("/") if strict else ""
+        return [f'{domain_part}{path_hint} "{exact}"'.strip()]
     unit = school.get("required_title_terms", []) or [college]
     unit_part = " OR ".join(f'"{x}"' for x in unit if x)
     route = '("夏令营" OR "预推免" OR "推免" OR "推荐免试" OR "博士研究生招生简章" OR "硕士研究生招生简章")'
     years = f"({pyear} OR {ayear})"
     return [f'{domain_part} "{school["name"]}" ({unit_part}) {years} {route}'.strip()]
+
 
 def extract_date(text: str, target_year: int | None = None) -> str:
     for pat in DATE_PATTERNS:
@@ -359,10 +386,12 @@ def _college_tokens(school: dict[str, Any]) -> list[str]:
 
 
 def unit_matches_page(title: str, text: str, school: dict[str, Any]) -> bool:
-    """配置了院系关键词时，正文必须真正命中该院系。"""
+    """院系级配置必须在页面标题中命中院系名，不能靠导航菜单误判。"""
     required = [str(x) for x in school.get("required_title_terms", []) if str(x)]
     if not required:
         return True
+    if school.get("unit_id") or school.get("strict_title_match"):
+        return any(x in title for x in required)
     head = f"{title}\n{text[:2500]}"
     return any(x in head for x in required)
 
@@ -504,6 +533,10 @@ def classify(title: str, text: str, school: dict[str, Any], cfg: dict[str, Any])
         exact = any(t in hay for t in rule.get("exact", []))
         scoped = any(t in hay for t in rule.get("scope", [])) and any(k in hay for k in cfg["keywords"])
         if exact or scoped: majors.append(name)
+    # 院系名称已经明确专业归属时，正文不必再次出现“理论物理/天文学”字样。
+    for name in school.get("major_overrides", []):
+        if name in cfg["majors"] and name not in majors:
+            majors.append(name)
     if not majors:
         return None
     matched=[k for k in cfg["keywords"] if k in hay]
@@ -527,6 +560,8 @@ def record_quality(title: str, text: str, url: str, school_name: str) -> str:
     t = re.sub(r"\s+", " ", title).strip()
     body = re.sub(r"\s+", " ", text[:6000])
     path = urlsplit(url).path or "/"
+    if is_catalog_page(t, url):
+        return "catalog"
     if RECAP_RE.search(t + " " + body) and not re.search(r"报名|申请|截止", t + " " + body):
         return "report"
     if path in {"", "/"}:
@@ -553,16 +588,24 @@ def build_excerpt(text: str) -> str:
 def is_old_noise(item: dict[str, Any]) -> bool:
     if item.get("origin") != "crawler":
         return False
+    if is_catalog_page(str(item.get("title", "")), str(item.get("url", ""))):
+        return True
     return record_quality(item.get("title", ""), item.get("excerpt", ""), item.get("url", ""), item.get("school", "")) != "notice"
+
 
 def process_candidate(session: requests.Session, url: str, school: dict[str, Any], cfg: dict[str, Any]) -> tuple[dict[str, Any] | None, str | None]:
     try:
+        if not candidate_allowed_for_unit(url, school):
+            return None, None
         final, html = fetch(session, url, int(cfg["crawler"]["timeout_seconds"]))
-        if not html or not allowed_domain(final, school.get("official_domains", [])):
+        if (not html or not allowed_domain(final, school.get("official_domains", []))
+                or not candidate_allowed_for_unit(final, school)):
             return None, None
         soup = BeautifulSoup(html, "html.parser")
         title = page_title(soup)
         text = clean_text(soup)
+        if is_catalog_page(title, final):
+            return None, None
         c = classify(title, text, school, cfg)
         if not c or c["score"] < int(cfg["crawler"]["min_score"]):
             return None, None
@@ -626,9 +669,9 @@ def discover_school(session: requests.Session, school: dict[str, Any], cfg: dict
     max_links = int(cfg["crawler"]["max_links_per_page"])
     seed_urls = {canonical_url(u) for u in school.get("start_urls", []) if canonical_url(u)}
     direct_urls = {canonical_url(u) for u in school.get("direct_notice_urls", []) if canonical_url(u)}
+    direct_urls = {u for u in direct_urls if candidate_allowed_for_unit(u, school)}
     candidates = set(direct_urls)
-    # 旧版的关键错误：start_urls 中已经给出的详情页只被当作“列表入口”，从未进入正文处理。
-    candidates.update(u for u in seed_urls if is_detail_notice_url(u))
+    candidates.update(u for u in seed_urls if is_detail_notice_url(u) and candidate_allowed_for_unit(u, school))
     errors: list[str] = []
     search_count = 0
     embedded_count = 0
@@ -637,33 +680,36 @@ def discover_school(session: requests.Session, school: dict[str, Any], cfg: dict
         try:
             for u in search_web(session, q, cfg):
                 cu = canonical_url(u)
-                if cu and allowed_domain(cu, domains):
+                if cu and allowed_domain(cu, domains) and candidate_allowed_for_unit(cu, school):
                     candidates.add(cu)
                     search_count += 1
         except Exception as e:
             errors.append(f"search {school['name']}｜{school.get('college','')}: {type(e).__name__}: {e}")
 
-    # 列表入口、搜索结果页和直接详情页都进行一轮链接发现。
+    # 列表入口只用于发现链接；专业目录会在 candidate_allowed_for_unit 中被排除。
     seeds = list(seed_urls | candidates)
     for seed in seeds[:30]:
+        if not candidate_allowed_for_unit(seed, school):
+            continue
         try:
             final, page_html = fetch(session, seed, int(cfg["crawler"]["timeout_seconds"]))
             if not page_html:
                 continue
-            # 标准超链接。
             for u, atext in extract_links(page_html, final, domains, max_links):
-                if likely_link(atext, u, cfg, school) or is_detail_notice_url(u):
+                if candidate_allowed_for_unit(u, school) and (likely_link(atext, u, cfg, school) or is_detail_notice_url(u)):
                     candidates.add(u)
-            # onclick、内嵌 JSON、前端路由中的详情链接。
-            embedded = extract_embedded_detail_urls(page_html, final, domains)
+            embedded = [u for u in extract_embedded_detail_urls(page_html, final, domains) if candidate_allowed_for_unit(u, school)]
             embedded_count += len(embedded)
             candidates.update(embedded)
         except Exception as e:
             errors.append(f"seed {seed}: {type(e).__name__}: {e}")
         time.sleep(float(cfg["crawler"].get("request_interval_seconds", 0.25)))
 
-    # 只处理详情页或明确配置的直达页；避免把列表页自身误写成通知。
-    urls = [u for u in candidates if is_detail_notice_url(u) or u in direct_urls][:max_pages]
+    # 直达通知优先；其余候选必须是真正的招生简章详情页。
+    urls = sorted(
+        (u for u in candidates if candidate_allowed_for_unit(u, school) and (u in direct_urls or is_detail_notice_url(u))),
+        key=lambda u: (u not in direct_urls, u),
+    )[:max_pages]
     found: list[dict[str, Any]] = []
     with cf.ThreadPoolExecutor(max_workers=int(cfg["crawler"]["max_workers"])) as ex:
         futs = [ex.submit(process_candidate, session, u, school, cfg) for u in urls]
@@ -676,9 +722,9 @@ def discover_school(session: requests.Session, school: dict[str, Any], cfg: dict
 
     label = f"{school['name']}｜{school.get('college','')}".strip("｜")
     if not urls:
-        errors.append(f"discovery {label}: 未发现任何可处理的详情页；seed={len(seed_urls)} search={search_count} embedded={embedded_count}")
+        errors.append(f"discovery {label}: 未发现招生简章详情页；seed={len(seed_urls)} search={search_count} embedded={embedded_count}")
     elif not found:
-        errors.append(f"classification {label}: 已处理{len(urls)}个详情候选，但均未通过院系/年份/路径/专业筛选")
+        errors.append(f"classification {label}: 已处理{len(urls)}个招生简章候选，但均未通过院系标题/年份/专业筛选")
 
     diag = {
         "seed_count": len(seed_urls),
@@ -688,6 +734,7 @@ def discover_school(session: requests.Session, school: dict[str, Any], cfg: dict
         "candidate_details": len(urls),
     }
     return found, errors, diag
+
 
 def load_existing() -> list[dict[str, Any]]:
     if not JSON_PATH.exists(): return []
@@ -706,33 +753,69 @@ def is_generic_school_baseline(item: dict[str, Any]) -> bool:
             and (url.endswith("/zxgg.htm") or not item.get("material_items")))
 
 
+def _logical_notice_key(item: dict[str, Any]) -> str:
+    unit = str(item.get("unit_id") or f"{item.get('school','')}|{item.get('college','')}")
+    title = re.sub(r"[\s_｜|—–-]+", "", str(item.get("title", "")))
+    return f"{unit}|{item.get('route','')}|{title}"
+
+
+def _record_value(item: dict[str, Any]) -> tuple[int, int, int, int]:
+    return (
+        1 if item.get("builder_ready") else 0,
+        len(item.get("material_items") or []),
+        1 if item.get("source_scope") in {"院系具体通知", "培养单位具体通知"} else 0,
+        int(item.get("score") or 0),
+    )
+
+
+def dedupe_logical_notices(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    chosen: dict[str, dict[str, Any]] = {}
+    passthrough: list[dict[str, Any]] = []
+    for item in items:
+        if item.get("record_type") != "notice" or not item.get("unit_id"):
+            passthrough.append(item)
+            continue
+        key = _logical_notice_key(item)
+        prev = chosen.get(key)
+        if prev is None or _record_value(item) > _record_value(prev):
+            chosen[key] = item
+    return passthrough + list(chosen.values())
+
+
 def merge_notices(old: list[dict[str, Any]], new: list[dict[str, Any]], cfg: dict[str, Any]) -> tuple[list[dict[str, Any]], int]:
-    # 清理旧版本产生的官网首页、栏目页和活动报道误报。
-    # 对已拆分为院系级 unit_id 的学校，删除“物理系、天文系/相关方向”这类混合基线，
-    # 防止它继续冒充可申请项目。
     unit_schools = {x.get("name") for x in cfg.get("schools", []) if x.get("unit_id")}
-    old = [x for x in old if not is_old_noise(x) and not (is_generic_school_baseline(x) and x.get("school") in unit_schools)]
-    by_url={canonical_url(x.get("url", "")): x for x in old if canonical_url(x.get("url", ""))}
-    new_count=0
+    # 删除历史目录卡片、官网栏目误报和院系混合基线。
+    old = [
+        x for x in old
+        if not is_old_noise(x)
+        and not is_catalog_page(str(x.get("title", "")), str(x.get("url", "")))
+        and not (is_generic_school_baseline(x) and x.get("school") in unit_schools)
+    ]
+    by_url = {canonical_url(x.get("url", "")): x for x in old if canonical_url(x.get("url", ""))}
+    new_count = 0
     for item in new:
-        key=canonical_url(item.get("url", ""))
-        if not key: continue
+        key = canonical_url(item.get("url", ""))
+        if not key or is_catalog_page(str(item.get("title", "")), key):
+            continue
         if key in by_url:
-            prev=by_url[key]
-            first=prev.get("first_seen") or item["first_seen"]
-            manual={k:v for k,v in prev.items() if k.startswith("manual_")}
-            prev.update(item); prev["first_seen"]=first; prev.update(manual)
+            prev = by_url[key]
+            first = prev.get("first_seen") or item["first_seen"]
+            manual = {k: v for k, v in prev.items() if k.startswith("manual_")}
+            prev.update(item)
+            prev["first_seen"] = first
+            prev.update(manual)
         else:
-            by_url[key]=item; new_count+=1
-    result=list(by_url.values())
-    specific_schools={x.get("school") for x in result if x.get("origin") == "crawler" and x.get("source_scope") not in {"学校级通知", "学校级总办法", None, ""}}
+            by_url[key] = item
+            new_count += 1
+    result = dedupe_logical_notices(list(by_url.values()))
+    specific_schools = {x.get("school") for x in result if x.get("origin") == "crawler" and x.get("source_scope") not in {"学校级通知", "学校级总办法", None, ""}}
     for x in result:
         if is_generic_school_baseline(x) and x.get("school") in specific_schools:
-            x["record_type"]="school_policy"
-            x["builder_ready"]=False
-            x["source_scope"]="学校级总办法"
-            x["verification"]="仅作校级政策参考"
-    result=sorted(result, key=lambda x:(x.get("published_at", ""), x.get("last_seen", ""), x.get("score", 0)), reverse=True)
+            x["record_type"] = "school_policy"
+            x["builder_ready"] = False
+            x["source_scope"] = "学校级总办法"
+            x["verification"] = "仅作校级政策参考"
+    result = sorted(result, key=lambda x: (x.get("published_at", ""), x.get("last_seen", ""), x.get("score", 0)), reverse=True)
     return result, new_count
 
 

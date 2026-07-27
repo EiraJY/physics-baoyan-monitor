@@ -91,9 +91,16 @@ schools:
   - 物理系
   start_urls:
   - https://yzbm.tsinghua.edu.cn/publish/s03/s0302/list?yxsdm=043
-  - https://yzbm.tsinghua.edu.cn/publish/s01/s0103/detail/2ede1fca-d9a0-407a-9d68-3475494848b7/2?yxsdm=043&zslx=%272%27
   directions: 理论物理、高能物理、粒子物理、量子信息等；以物理系当年招生简章和目录为准
   direct_notice_urls: []
+  strict_notice_paths:
+  - /publish/s03/s0302/detail/
+  reject_url_patterns:
+  - /publish/s01/s0103/
+  - /publish/s03/s0303/
+  strict_title_match: true
+  major_overrides:
+  - 理论物理
 - name: 清华大学
   region: 北京
   institution_type: 985高校
@@ -105,11 +112,18 @@ schools:
   - 天文系
   start_urls:
   - https://yzbm.tsinghua.edu.cn/publish/s03/s0302/list?yxsdm=092
-  - https://yzbm.tsinghua.edu.cn/publish/s01/s0103/detail/2ede1fca-d9a0-407a-9d68-3475494848b7/2?yxsdm=092&zslx=%272%27
   - https://yzbm.tsinghua.edu.cn/publish/s03/s0302/detail/346816fb-3701-4295-83e6-a6d7ea3b915d?yxsdm=092
   directions: 天文学、星系宇宙学、高能天体物理、空间天文、射电天文学
   direct_notice_urls:
   - https://yzbm.tsinghua.edu.cn/publish/s03/s0302/detail/346816fb-3701-4295-83e6-a6d7ea3b915d?yxsdm=092
+  strict_notice_paths:
+  - /publish/s03/s0302/detail/
+  reject_url_patterns:
+  - /publish/s01/s0103/
+  - /publish/s03/s0303/
+  strict_title_match: true
+  major_overrides:
+  - 天文学
 - name: 清华大学
   region: 北京
   institution_type: 985高校
@@ -125,6 +139,15 @@ schools:
   directions: 物理学、天文学及相关基础理论方向
   direct_notice_urls:
   - https://yzbm.tsinghua.edu.cn/publish/s03/s0302/detail/82142123-fb09-4931-a837-e080ea5b2e47?yxsdm=048
+  strict_notice_paths:
+  - /publish/s03/s0302/detail/
+  reject_url_patterns:
+  - /publish/s01/s0103/
+  - /publish/s03/s0303/
+  strict_title_match: true
+  major_overrides:
+  - 理论物理
+  - 天文学
 - name: 中国人民大学
   region: 北京
   college: 物理学院

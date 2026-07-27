@@ -76,7 +76,7 @@ tr:hover td{filter:brightness(.992)}
 .open-btn,.search-btn{display:inline-block;border-radius:7px;padding:5px 8px;font-weight:800;margin:1px 4px 4px 0}
 .open-btn{background:#eaf1ff;border:1px solid #b9cdf7;color:#1d4ed8}
 .search-btn{background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563}
-.builder-btn{display:inline-block;border-radius:7px;padding:5px 8px;font-weight:850;margin:1px 4px 4px 0;background:#e7f8f0;border:1px solid #9fd6bd;color:#12634c;cursor:pointer}.builder-btn:hover{background:#d8f2e6;text-decoration:none}.builder-btn.disabled{background:#f1f3f5;border-color:#d9dee5;color:#7b8491;cursor:not-allowed;pointer-events:none}.material-list-auto{margin:4px 0 0;padding-left:20px}.material-list-auto li{margin:4px 0;line-height:1.45}.scope-line{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.scope-chip{display:inline-block;border:1px solid #cfd8e6;background:#f5f8fc;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:800;color:#4a5870}.builder-warning{font-size:12px;color:#8b4c0d;background:#fff8e8;border:1px solid #eed29a;border-radius:8px;padding:7px 9px}
+.builder-btn{display:inline-block;border-radius:7px;padding:5px 8px;font-weight:850;margin:1px 4px 4px 0;background:#e7f8f0;border:1px solid #9fd6bd;color:#12634c;cursor:pointer}.builder-btn:hover{background:#d8f2e6;text-decoration:none}.builder-btn.manual{background:#fff7e8;border-color:#e6bd76;color:#8a5208}.builder-btn.manual:hover{background:#ffefd2}.builder-btn.disabled{cursor:not-allowed;opacity:.62;background:#f1f3f6;border-color:#d5dae2;color:#6d7788}.builder-btn.disabled{background:#f1f3f5;border-color:#d9dee5;color:#7b8491;cursor:not-allowed;pointer-events:none}.material-list-auto{margin:4px 0 0;padding-left:20px}.material-list-auto li{margin:4px 0;line-height:1.45}.scope-line{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.scope-chip{display:inline-block;border:1px solid #cfd8e6;background:#f5f8fc;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:800;color:#4a5870}.builder-warning{font-size:12px;color:#8b4c0d;background:#fff8e8;border:1px solid #eed29a;border-radius:8px;padding:7px 9px}
 [contenteditable="true"]{outline:1px dashed transparent}
 [contenteditable="true"]:hover{outline-color:#91ade2;background:#f7faff}
 [contenteditable="true"]:focus{outline:2px solid var(--blue);background:#fff}
@@ -1302,6 +1302,23 @@ let AUTO_STATE={route:'',view:'cards',pageSize:12,visible:12};
 const AUTO_STORE='physics_baoyan_auto_status_v2';
 function escAuto(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function normalizeText(s){return String(s??'').replace(/\s+/g,' ').trim();}
+function isCatalogRecord(x){
+  const title=normalizeText(x?.title),url=String(x?.url||'');
+  return /(招生专业目录|专业目录[_｜| -]*推荐免试|博士研究生招生目录|硕士研究生招生目录|导师目录)/.test(title)||/\/publish\/(?:s01\/s0103|s03\/s0303)\//.test(url);
+}
+function recordValue(x){return [(x?.builder_ready===true)?1:0,Array.isArray(x?.material_items)?x.material_items.length:0,/具体通知/.test(String(x?.source_scope||''))?1:0,Number(x?.score||0)];}
+function betterRecord(a,b){const av=recordValue(a),bv=recordValue(b);for(let i=0;i<av.length;i++){if(av[i]!==bv[i])return av[i]>bv[i]?a:b;}return a;}
+function autoSourceItems(){
+  const raw=window.CRAWLER_DATA?.notices||[],map=new Map(),rest=[];
+  for(const x of raw){
+    if(isCatalogRecord(x))continue;
+    if(x?.record_type==='notice'&&x?.unit_id){
+      const title=normalizeText(x.title).replace(/[\s_｜|—–-]+/g,''),key=`${x.unit_id}|${x.route||''}|${title}`;
+      map.set(key,map.has(key)?betterRecord(map.get(key),x):x);
+    }else rest.push(x);
+  }
+  return [...rest,...map.values()];
+}
 function clipText(s,n=180){const t=normalizeText(s);return t.length>n?t.slice(0,n)+'…':t;}
 function verifyClass(v){if(v==='高'||v==='人工核验基线')return 'verify-high';if(v==='中')return 'verify-mid';return 'verify-low';}
 function routeClass(v){return v==='夏令营'?'route-summer':'route-pre';}
@@ -1311,6 +1328,7 @@ function isGenericTitle(t,school=''){
   return !x||x===school||generic.includes(x)||x.length<4;
 }
 function recordKind(x){
+  if(isCatalogRecord(x))return 'catalog';
   if(x.record_type==='school_policy')return 'policy';
   if(x.record_type==='notice'&&x.origin==='crawler')return 'notice';
   if(x.origin==='existing_dashboard'||x.verification==='人工核验基线')return 'baseline';
@@ -1325,8 +1343,8 @@ function recordKind(x){
   if(isGenericTitle(title,x.school))return 'lead';
   return 'lead';
 }
-function kindLabel(k){return {baseline:'人工核验',notice:'院系正式通知',policy:'校级总办法',report:'活动报道',lead:'栏目线索'}[k]||'线索';}
-function kindClass(k){return {baseline:'kind-baseline',notice:'kind-notice',policy:'kind-policy',report:'kind-report',lead:'kind-lead'}[k]||'kind-lead';}
+function kindLabel(k){return {baseline:'人工核验',notice:'院系正式通知',policy:'校级总办法',catalog:'招生目录',report:'活动报道',lead:'栏目线索'}[k]||'线索';}
+function kindClass(k){return {baseline:'kind-baseline',notice:'kind-notice',policy:'kind-policy',catalog:'kind-lead',report:'kind-report',lead:'kind-lead'}[k]||'kind-lead';}
 function displayTitle(x){const k=recordKind(x);if(k==='policy')return `${x.school}｜学校级总办法（仅作政策参考）`;if(k==='lead'&&isGenericTitle(x.title,x.school))return `${x.school}｜官网栏目线索（尚未定位具体通知）`;return normalizeText(x.title)||`${x.school} ${x.route}通知`;}
 function usefulSnippet(x){
   const k=recordKind(x);
@@ -1358,7 +1376,7 @@ function setAutoProgress(id,value){const m=loadLocalMap();m[id]={...(m[id]||{}),
 function filteredAutoItems(){
   const data=window.CRAWLER_DATA||{notices:[]};const type=document.getElementById('autoType')?.value||'';const major=document.getElementById('autoMajor')?.value||'';const status=document.getElementById('autoStatus')?.value||'';const q=normalizeText(document.getElementById('autoSearch')?.value).toLowerCase();
   const actionable=document.getElementById('autoActionable')?.checked;const openOnly=document.getElementById('autoOpenOnly')?.checked;const reviewOnly=document.getElementById('autoReviewOnly')?.checked;const followOnly=document.getElementById('autoFollowOnly')?.checked;
-  let items=(data.notices||[]).filter(x=>{
+  let items=autoSourceItems().filter(x=>{
     const kind=recordKind(x);if(AUTO_STATE.route&&x.route!==AUTO_STATE.route)return false;if(type&&x.institution_type!==type)return false;if(major&&!(x.majors||[]).includes(major))return false;if(status&&x.status!==status)return false;if(actionable&&!['baseline','notice'].includes(kind))return false;if(openOnly&&x.status!=='报名中')return false;if(reviewOnly&&(x.verification==='高'||x.verification==='人工核验基线'))return false;if(followOnly&&!isFollowed(x.id))return false;if(q&&!JSON.stringify(x).toLowerCase().includes(q))return false;return true;
   });
   const sort=document.getElementById('autoSort')?.value||'priority';
@@ -1384,7 +1402,8 @@ function materialDetailHtml(x){
 }
 function builderActionHtml(x,label='准备材料'){
   if(canBuildFromNotice(x))return `<a class="builder-btn" href="${builderHref(x)}" onclick="setAutoProgress('${escAuto(x.id)}','准备申请')">${escAuto(label)}</a>`;
-  return `<span class="builder-btn disabled" title="需要院系具体通知且至少识别3项材料">材料待院系细则</span>`;
+  if(recordKind(x)==='notice'&&!isCatalogRecord(x))return `<a class="builder-btn manual" href="${builderHref(x)}" onclick="setAutoProgress('${escAuto(x.id)}','准备申请')" title="自动识别未完成，可进入生成器手动补充">手动整理材料</a>`;
+  return `<span class="builder-btn disabled" title="该条不是院系申请通知，不能据此生成材料">不可生成材料</span>`;
 }
 function renderNoticeCard(x){
   const k=recordKind(x),dl=deadlineInfo(x),follow=isFollowed(x.id),summary=usefulSnippet(x);
@@ -1408,7 +1427,7 @@ function renderAutoResults(resetVisible=true){
 }
 function loadMoreNotices(){AUTO_STATE.visible+=12;renderAutoResults(false);}
 function resetAutoFilters(){AUTO_STATE.route='';document.querySelectorAll('#routeTabs button').forEach((b,i)=>b.classList.toggle('active',i===0));['autoType','autoMajor','autoStatus'].forEach(id=>document.getElementById(id).value='');document.getElementById('autoSort').value='priority';document.getElementById('autoSearch').value='';document.getElementById('autoActionable').checked=true;document.getElementById('autoOpenOnly').checked=false;document.getElementById('autoReviewOnly').checked=false;document.getElementById('autoFollowOnly').checked=false;renderAutoResults();}
-function openNoticeDialog(id){const x=(window.CRAWLER_DATA?.notices||[]).find(v=>String(v.id)===String(id));if(!x)return;const dl=deadlineInfo(x),k=recordKind(x);document.getElementById('dialogBody').innerHTML=`<div class="dialog-head"><div><div class="badge-line"><span class="route-chip ${routeClass(x.route)}">${escAuto(x.route)}</span><span class="kind-chip ${kindClass(k)}">${kindLabel(k)}</span><span class="verify-chip ${verifyClass(x.verification)}">${escAuto(x.verification)}</span></div><h3>${escAuto(x.school)}</h3><div class="notice-college">${escAuto(x.college||'')}</div>${scopeChips(x)}</div><button class="dialog-close" onclick="document.getElementById('noticeDialog').close()">×</button></div><div class="dialog-section"><h4>${escAuto(displayTitle(x))}</h4><p>${escAuto(usefulSnippet(x))}</p></div><div class="dialog-section"><h4>日期与状态</h4><p>发布日期：${escAuto(x.published_at||'待识别')}
+function openNoticeDialog(id){const x=autoSourceItems().find(v=>String(v.id)===String(id));if(!x)return;const dl=deadlineInfo(x),k=recordKind(x);document.getElementById('dialogBody').innerHTML=`<div class="dialog-head"><div><div class="badge-line"><span class="route-chip ${routeClass(x.route)}">${escAuto(x.route)}</span><span class="kind-chip ${kindClass(k)}">${kindLabel(k)}</span><span class="verify-chip ${verifyClass(x.verification)}">${escAuto(x.verification)}</span></div><h3>${escAuto(x.school)}</h3><div class="notice-college">${escAuto(x.college||'')}</div>${scopeChips(x)}</div><button class="dialog-close" onclick="document.getElementById('noticeDialog').close()">×</button></div><div class="dialog-section"><h4>${escAuto(displayTitle(x))}</h4><p>${escAuto(usefulSnippet(x))}</p></div><div class="dialog-section"><h4>日期与状态</h4><p>发布日期：${escAuto(x.published_at||'待识别')}
 截止时间：${escAuto(dl.raw)}
 自动状态：${escAuto(x.status||'待确认')}
 相关度：${escAuto(x.score??'—')} / 100</p></div><div class="dialog-section"><h4>院系材料清单</h4>${materialDetailHtml(x)}</div><div class="dialog-section"><h4>考核与备注</h4><p>考核：${escAuto(x.exam||'待人工核验')}
@@ -1420,7 +1439,7 @@ function attachStaticBuilderButtons(){
   });
 }
 function initCrawlerPanel(){
-  const data=window.CRAWLER_DATA||{meta:{},notices:[],report:{}};const rep=data.report||{},items=data.notices||[];const actionable=items.filter(x=>['baseline','notice'].includes(recordKind(x)));document.getElementById('autoTotal').textContent=actionable.length;document.getElementById('autoOpen').textContent=actionable.filter(x=>x.status==='报名中').length;document.getElementById('autoReview').textContent=actionable.filter(x=>x.verification!=='高'&&x.verification!=='人工核验基线').length;document.getElementById('autoLeads').textContent=items.length-actionable.length;document.getElementById('autoErrors').textContent=(rep.errors||[]).length;document.getElementById('autoUpdated').textContent='最近数据：'+(data.meta?.generated_at||rep.run_at||'未知')+'｜发现方式：'+(rep.search_provider||'none');
+  const data=window.CRAWLER_DATA||{meta:{},notices:[],report:{}};const rep=data.report||{},items=autoSourceItems();const actionable=items.filter(x=>['baseline','notice'].includes(recordKind(x)));document.getElementById('autoTotal').textContent=actionable.length;document.getElementById('autoOpen').textContent=actionable.filter(x=>x.status==='报名中').length;document.getElementById('autoReview').textContent=actionable.filter(x=>x.verification!=='高'&&x.verification!=='人工核验基线').length;document.getElementById('autoLeads').textContent=items.length-actionable.length;document.getElementById('autoErrors').textContent=(rep.errors||[]).length;document.getElementById('autoUpdated').textContent='最近数据：'+(data.meta?.generated_at||rep.run_at||'未知')+'｜发现方式：'+(rep.search_provider||'none');
   document.querySelectorAll('#routeTabs button').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('#routeTabs button').forEach(x=>x.classList.remove('active'));btn.classList.add('active');AUTO_STATE.route=btn.dataset.route||'';renderAutoResults();}));
   document.querySelectorAll('#viewSwitch button').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('#viewSwitch button').forEach(x=>x.classList.remove('active'));btn.classList.add('active');AUTO_STATE.view=btn.dataset.view;renderAutoResults(false);}));
   ['autoType','autoMajor','autoStatus','autoSort','autoActionable','autoOpenOnly','autoReviewOnly','autoFollowOnly'].forEach(id=>document.getElementById(id)?.addEventListener('change',()=>renderAutoResults()));document.getElementById('autoSearch')?.addEventListener('input',()=>renderAutoResults());
