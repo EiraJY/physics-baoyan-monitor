@@ -1,0 +1,1248 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>理论物理·天文学保研通知自动监控｜985高校·中科院研究所·国科大培养单位</title>
+<style>
+:root{
+  --bg:#f4f7fb;--card:#fff;--ink:#172033;--muted:#657086;--line:#dfe5ee;
+  --navy:#14233d;--blue:#2457d6;--green:#18794e;--orange:#b85a12;--red:#b42318;
+  --purple:#6842ad;--soft-blue:#edf4ff;--soft-green:#e9f8ef;--soft-orange:#fff4e6;
+  --soft-red:#fff0ee;--soft-purple:#f5f0ff;--soft-gray:#f3f5f8;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",Arial,sans-serif;line-height:1.5}
+button,input,select{font:inherit}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+.hero{background:linear-gradient(135deg,#101a2e,#294b75);color:#fff;padding:34px 30px}
+.hero-inner{max-width:1900px;margin:auto}
+.hero h1{margin:0 0 8px;font-size:29px}
+.hero p{margin:4px 0;color:#dce6f5}
+main{max-width:1900px;margin:auto;padding:22px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin-bottom:18px;box-shadow:0 8px 24px rgba(20,35,61,.05)}
+h2{margin:0 0 12px;font-size:21px}
+.summary{display:grid;grid-template-columns:repeat(5,minmax(150px,1fr));gap:12px}
+.stat{border:1px solid var(--line);border-radius:12px;padding:13px;background:#fafcff}
+.stat strong{display:block;font-size:25px;color:var(--navy)}
+.stat span{font-size:13px;color:var(--muted)}
+.note{padding:11px 13px;border-left:4px solid var(--blue);background:var(--soft-blue);border-radius:9px;color:#35435d;margin-top:12px}
+.note.warning{border-left-color:#d97706;background:#fff8e9}
+.note.good{border-left-color:#159447;background:#eefbf3}
+.actions,.toolbar{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+.actions button,.toolbar button{border:1px solid var(--line);border-radius:9px;background:#fff;padding:9px 12px;font-weight:700;cursor:pointer}
+.actions button:hover,.toolbar button:hover{background:#f0f4f9}
+.edit-status{font-size:13px;color:var(--muted)}
+.toolbar input,.toolbar select{border:1px solid var(--line);border-radius:9px;background:#fff;padding:9px 11px}
+.toolbar input[type="search"]{flex:1;min-width:300px}
+.legend{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.legend span{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:800;border:1px solid var(--line)}
+.dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px}
+table{border-collapse:collapse;width:100%;min-width:3300px;background:#fff;font-size:12.6px}
+th,td{padding:8px 9px;border-bottom:1px solid var(--line);vertical-align:top}
+th{position:sticky;top:0;z-index:4;background:#edf1f6;text-align:left;white-space:nowrap}
+tr:hover td{filter:brightness(.992)}
+.region-start td{border-top:3px solid #aebbd0}
+.num{width:45px;text-align:center;color:#7b8799}
+.school{min-width:140px}
+.school strong{display:block;font-size:14px}
+.unit{min-width:220px}
+.direction{min-width:260px}
+.policy-cell{min-width:330px;max-width:430px}
+.conclusion{min-width:330px;max-width:450px}
+.deadline-cell{min-width:190px;font-weight:800}
+.status-cell{min-width:160px}
+.status-select{width:155px;border:1px solid var(--line);border-radius:8px;padding:6px 7px;background:#fff;font-weight:750}
+.rel,.tier-tag,.notice-chip{display:inline-block;border-radius:999px;padding:2px 8px;font-weight:850;font-size:12px;white-space:nowrap}
+.rel-s{background:#5b21b6;color:#fff} .rel-a{background:#ad3434;color:#fff}
+.rel-b{background:#2457d6;color:#fff} .rel-c{background:#596579;color:#fff}
+.tier-tag{border:1px solid var(--line);background:#fff}
+.notice-chip.published{background:#dff7e8;color:#11653f;border:1px solid #a7e1bd}
+.notice-chip.partial{background:#fff2d9;color:#8d4e0d;border:1px solid #f0ca8b}
+.notice-chip.closed{background:#ffe2df;color:#a82b20;border:1px solid #efb4ad}
+.notice-chip.policy{background:#eee8ff;color:#573b90;border:1px solid #cfc1ee}
+.notice-chip.watch{background:#e9f1ff;color:#2457a6;border:1px solid #bfd2f3}
+.notice-chip.missing{background:#eef1f5;color:#5e6877;border:1px solid #cfd5df}
+.notice-published td{background:#f5fff8}
+.notice-partial td{background:#fffbf2}
+.notice-closed td{background:#fff7f6}
+.notice-policy td{background:#fbf8ff}
+.notice-watch td{background:#f8fbff}
+.notice-missing td{background:#fff}
+.link-cell{min-width:190px}
+.open-btn,.search-btn{display:inline-block;border-radius:7px;padding:5px 8px;font-weight:800;margin:1px 4px 4px 0}
+.open-btn{background:#eaf1ff;border:1px solid #b9cdf7;color:#1d4ed8}
+.search-btn{background:#f3f4f6;border:1px solid #d1d5db;color:#4b5563}
+[contenteditable="true"]{outline:1px dashed transparent}
+[contenteditable="true"]:hover{outline-color:#91ade2;background:#f7faff}
+[contenteditable="true"]:focus{outline:2px solid var(--blue);background:#fff}
+.edited{background:#fff7e6!important;box-shadow:inset 4px 0 0 #f59e0b}
+.status-unapplied .status-cell{box-shadow:inset 5px 0 0 #94a3b8}
+.status-preparing .status-cell{box-shadow:inset 5px 0 0 #0ea5e9}
+.status-applied td{background:#fff7ed!important;color:#7c2d12}
+.status-applied .status-cell{box-shadow:inset 5px 0 0 #f97316}
+.status-pass td{background:#eff6ff!important;color:#173d78}
+.status-pass .status-cell{box-shadow:inset 5px 0 0 #2563eb}
+.status-offer td{background:#ecfdf5!important;color:#065f46}
+.status-offer .status-cell{box-shadow:inset 5px 0 0 #10b981}
+.status-fail td{background:#fef2f2!important;color:#991b1b;text-decoration:line-through}
+.status-stop td{background:#f1f5f9!important;color:#64748b}
+.status-stop td:not(.status-cell):not(.link-cell){opacity:.72}
+.status-fail .status-cell,.status-stop .status-cell,.status-fail .link-cell,.status-stop .link-cell{text-decoration:none;opacity:1}
+.footer{text-align:center;font-size:12px;color:#7a8596;padding:8px 0 18px}
+@media(max-width:900px){.summary{grid-template-columns:1fr 1fr}main{padding:12px}.hero{padding:25px 17px}}
+@media print{body{background:#fff}main{max-width:none;padding:5px}.toolbar,.actions{display:none}.card{box-shadow:none}th{position:static}}
+
+/* 自动抓取面板 */
+.crawler-grid{display:grid;grid-template-columns:repeat(5,minmax(150px,1fr));gap:12px}
+.crawler-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 12px}
+.crawler-tabs button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 12px;font-weight:800;cursor:pointer}
+.crawler-tabs button.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.crawler-table{min-width:2200px}
+.crawler-table .title-col{min-width:340px;max-width:480px}
+.crawler-table .excerpt-col{min-width:380px;max-width:520px}
+.crawler-table .route-chip,.crawler-table .major-chip,.verify-chip{display:inline-block;border-radius:999px;padding:2px 7px;font-weight:800;font-size:11px;margin:1px 3px 1px 0}
+.route-summer{background:#fff1dc;color:#9a4a08}.route-pre{background:#e9f1ff;color:#1f55a4}
+.major-chip{background:#f1edff;color:#5b3e9b}.verify-high{background:#dcfce7;color:#166534}.verify-mid{background:#fef3c7;color:#92400e}.verify-low{background:#fee2e2;color:#991b1b}
+.auto-status{font-size:12px;color:var(--muted)}
+.empty-state{padding:30px;text-align:center;color:var(--muted)}
+.code-inline{font-family:Consolas,Monaco,monospace;background:#eef1f5;border-radius:5px;padding:1px 5px}
+@media(max-width:900px){.crawler-grid{grid-template-columns:1fr 1fr}}
+
+</style>
+</head>
+<body>
+<header class="hero"><div class="hero-inner">
+<h1>理论物理·天文学保研通知自动监控</h1>
+<p>总体路径：夏令营 / 预推免｜专业：理论物理 / 天文学｜扩展关键词：理论、引力、宇宙、黑洞。</p>
+<p>监控范围：39所原985高校 + 12个中科院研究所/国科大培养单位，共51个单位；GitHub Actions 每日定时更新。</p>
+</div></header>
+
+<main>
+<section class="card">
+<h2>完整性与当前窗口</h2>
+<div class="summary">
+<div class="stat"><strong>51</strong><span>高校与研究单位总监控数</span></div>
+<div class="stat"><strong>7</strong><span>明确已发布且可继续操作</span></div>
+<div class="stat"><strong>4</strong><span>校级/平台已开，院系待核验</span></div>
+<div class="stat"><strong>2</strong><span>已检索到但报名已截止</span></div>
+<div class="stat"><strong>21</strong><span>截至核验日未检索到正式通知</span></div>
+</div>
+<div class="note warning"><b>年份说明：</b>“2026年预推免通知”在你的申请场景中，实际是各校于2026年发布、面向2027级研究生的推免接收或预报名通知。表中没有把“2026级研究生推免通知”误当作本轮信息。</div>
+<div class="note good"><b>最需立即处理：</b>清华校级通道至7月28日；四川大学共用平台显示至7月31日；东南大学物理学院至8月7日；大连理工物理学院至9月14日；重庆大学校级系统至9月30日。具体院系可能设置更早截止，必须点开原文或进入系统确认。</div>
+</section>
+
+<section class="card">
+<h2>编辑、筛选与导出</h2>
+<div class="toolbar">
+<input id="search" type="search" placeholder="搜索学校、学院、方向、截止时间、结论……" oninput="applyFilter()">
+<select id="noticeFilter" onchange="applyFilter()">
+<option value="">全部通知状态</option>
+<option>官方已发布-报名中</option>
+<option>校级已发布-报名中</option>
+<option>校级已发布-院系细则待核验</option>
+<option>校级已发布-院系截止待定</option>
+<option>官方平台开放-项目待核验</option>
+<option>官方已发布-已截止</option>
+<option>重要政策已发布-硕士受限</option>
+<option>招生宣传已发布-预推免待发</option>
+<option>夏令营已发布-预推免待发</option>
+<option>仅校内推荐办法-外校接收待发</option>
+<option>截至2026-07-21未检索到</option>
+</select>
+<select id="tierFilter" onchange="applyFilter()">
+<option value="">全部策略</option><option>冲刺</option><option>主申</option><option>补充</option><option>低优先</option>
+</select>
+<select id="appFilter" onchange="applyFilter()">
+<option value="">全部申请状态</option>
+<option>未申请</option><option>准备材料</option><option>已报名-等待初审</option><option>已通过初审</option><option>已参加考核</option><option>已获offer</option><option>未通过</option><option>不申请</option><option>放弃</option>
+</select>
+<button onclick="resetFilter()">清空筛选</button>
+<button onclick="exportEditedHTML()">导出修改后HTML</button>
+<button onclick="exportCSV()">导出CSV</button>
+<button onclick="clearSavedEdits()">清除本地修改缓存</button>
+<span class="edit-status" id="editStatus">等待编辑</span>
+</div>
+<div class="legend">
+<span><i class="dot" style="background:#35a366"></i>正式发布/报名中</span>
+<span><i class="dot" style="background:#e6a23c"></i>校级或平台开放，院系待确认</span>
+<span><i class="dot" style="background:#d95045"></i>已截止</span>
+<span><i class="dot" style="background:#7662b3"></i>重要政策限制</span>
+<span><i class="dot" style="background:#7b8799"></i>尚未检索到</span>
+</div>
+<div class="note">文字单元格可直接修改；“我的申请状态”使用下拉框。修改会保存在当前浏览器。官方链接与“定向复查”链接分开保留，避免把搜索结果页误当作官方通知。</div>
+</section>
+
+
+<section class="card" id="crawlerPanel">
+<h2>自动抓取结果｜高校 + 研究所</h2>
+<div class="crawler-grid">
+  <div class="stat"><strong id="autoTotal">0</strong><span>当前保留通知</span></div>
+  <div class="stat"><strong id="autoNew">0</strong><span>本轮新增</span></div>
+  <div class="stat"><strong id="autoReview">0</strong><span>需要人工复核</span></div>
+  <div class="stat"><strong id="autoSchools">0</strong><span>本轮检查单位</span></div>
+  <div class="stat"><strong id="autoErrors">0</strong><span>抓取错误</span></div>
+</div>
+<div class="note"><b>自动判定逻辑：</b>页面必须同时命中“夏令营/预推免”路径词、理论物理或天文学专业词，并结合“理论、引力、宇宙、黑洞”评分。搜索API只用于发现候选链接；只有高校、学院、研究所或培养单位的官方域名页面才会进入结果表。</div>
+<div class="note warning"><b>关键限制：</b>单个静态 HTML 不能绕过浏览器跨域限制，也不能自行定时运行。因此本项目采用“Python抓取器 → data/notices.js → HTML展示”，由 GitHub Actions 每日执行。截止日期是正则自动抽取，仍应打开原文核验。</div>
+<div class="crawler-tabs" id="routeTabs">
+  <button class="active" data-route="">全部路径</button><button data-route="夏令营">夏令营</button><button data-route="预推免">预推免</button>
+</div>
+<div class="toolbar">
+  <select id="autoType"><option value="">全部单位类型</option><option>985高校</option><option>中科院研究所</option><option>国科大培养单位</option></select>
+<select id="autoMajor"><option value="">全部专业</option><option>理论物理</option><option>天文学</option></select>
+  <select id="autoVerify"><option value="">全部可信度</option><option value="高">高</option><option value="中">中</option><option value="低">低</option><option value="人工核验基线">人工核验基线</option></select>
+  <input id="autoSearch" type="search" placeholder="搜索学校、学院、标题、理论/引力/宇宙/黑洞……">
+  <button onclick="renderCrawlerTable()">应用筛选</button><button onclick="location.reload()">重新载入最新数据</button>
+  <span class="auto-status" id="autoUpdated">数据尚未加载</span>
+</div>
+<div class="table-wrap"><table class="crawler-table" id="crawlerTable">
+<thead><tr><th>序号</th><th>路径</th><th>单位类型</th><th>学校/研究单位</th><th>学院/招生入口</th><th>专业/命中词</th><th>通知标题</th><th>发布日期</th><th>截止时间</th><th>自动状态</th><th>相关度</th><th>可信度</th><th>官方原文</th><th>摘要/复核提示</th></tr></thead>
+<tbody></tbody></table></div>
+</section>
+
+<section class="card">
+<h2>新增重点研究单位（12个）</h2>
+<div class="note"><b>理论与引力：</b>中科院理论物理所、国科大物理科学学院、国科大杭高院数理学院、ICTP-AP、中科院高能所、中科院精密测量院。<br><b>天文学：</b>国家天文台、上海天文台、紫金山天文台、云南天文台、新疆天文台。<br><b>空间交叉：</b>国家空间科学中心。新疆天文台已纳入完整监控，但可按你的地域偏好设为“不申请”。</div>
+</section>
+
+<section class="card">
+<h2>39所985高校院校底表（人工申请状态保留）</h2>
+<div class="table-wrap">
+<table id="preTable">
+<thead><tr>
+<th>序号</th><th>地区</th><th>学校</th><th>相关学院/入口</th><th>匹配度</th><th>策略</th>
+<th>通知状态</th><th>理论物理/天文/引力方向</th><th>发布日期</th><th>报名截止</th>
+<th>考核时间/形式</th><th>申请条件与材料</th><th>官方来源</th><th>核验结论</th>
+<th>我的申请状态</th><th>风险与备注</th>
+</tr></thead>
+<tbody>
+
+<tr class="notice-missing status-unapplied region-start" data-notice="截至2026-07-21未检索到" data-tier="冲刺">
+  <td class="num">1</td>
+  <td contenteditable="true">北京</td>
+  <td class="school" contenteditable="true"><strong>北京大学</strong></td>
+  <td class="unit" contenteditable="true">物理学院（含天文学、粒子物理与核物理等方向）</td>
+  <td><span class="rel rel-s">S</span></td>
+  <td contenteditable="true"><span class="tier-tag">冲刺</span></td>
+  <td class="notice-cell"><span class="notice-chip missing">截至2026-07-21未检索到</span></td>
+  <td class="direction" contenteditable="true">理论物理、宇宙学、天体物理、引力与高能天体物理</td>
+  <td contenteditable="true">—</td>
+  <td class="deadline-cell" contenteditable="true">待官方通知</td>
+  <td contenteditable="true">待官方通知</td>
+  <td class="policy-cell" contenteditable="true">预计需推免资格、成绩单与排名、英语证明、科研材料；以正式通知为准。</td>
+  <td class="link-cell">
+    <a class="open-btn" href="https://admission.pku.edu.cn/" target="_blank" rel="noopener">官方研招入口</a>
+    <a class="search-btn" href="https://www.bing.com/search?q=site%3Aedu.cn%20%E5%8C%97%E4%BA%AC%E5%A4%A7%E5%AD%A6%20%E7%89%A9%E7%90%86%E5%AD%A6%E9%99%A2%EF%BC%88%E5%90%AB%E5%A4%A9%E6%96%87%E5%AD%A6%E3%80%81%E7%B2%92%E5%AD%90%E7%89%A9%E7%90%86%E4%B8%8E%E6%A0%B8%E7%89%A9%E7%90%86%E7%AD%89%E6%96%B9%E5%90%91%EF%BC%89%202027%20%E6%8E%A8%E8%8D%90%E5%85%8D%E8%AF%95%20%E9%A2%84%E6%8A%A5%E5%90%8D%202026%20%E7%90%86%E8%AE%BA%E7%89%A9%E7%90%86%20%E5%A4%A9%E6%96%87%E5%AD%A6%20%E5%BC%95%E5%8A%9B" target="_blank" rel="noopener">定向复查</a>
+  </td>
+  <td class="conclusion" contenteditable="true">未检索到2027级物理/天文方向预推免通知；重点盯物理学院和研究生招生网。</td>
+  <td class="status-cell"><select class="status-select"><option value="未申请" selected>未申请</option><option value="准备材料">准备材料</option><option value="已报名-等待初审">已报名-等待初审</option><option value="已通过初审">已通过初审</option><option value="已参加考核">已参加考核</option><option value="已获offer">已获offer</option><option value="未通过">未通过</option><option value="不申请">不申请</option><option value="放弃">放弃</option></select></td>
+  <td contenteditable="true">方向高度匹配；通常竞争极强。</td>
+</tr>
+
+<tr class="notice-published status-unapplied" data-notice="官方已发布-报名中" data-tier="冲刺">
+  <td class="num">2</td>
+  <td contenteditable="true">北京</td>
+  <td class="school" contenteditable="true"><strong>清华大学</strong></td>
+  <td class="unit" contenteditable="true">物理系、天文系/相关理论方向</td>
+  <td><span class="rel rel-s">S</span></td>
+  <td contenteditable="true"><span class="tier-tag">冲刺</span></td>
+  <td class="notice-cell"><span class="notice-chip published">官方已发布-报名中</span></td>
+  <td class="direction" contenteditable="true">理论物理、高能物理、宇宙学、天体物理；硕士/直博目录需逐项核验</td>
+  <td contenteditable="true">2026-06-18、2026-07-03</td>
+  <td class="deadline-cell" contenteditable="true">2026-07-28 15:00（校级通道）</td>
+  <td contenteditable="true">院系另行组织</td>
+  <td class="policy-cell" contenteditable="true">按校级接收推免办法及院系要求提交；直博通常需研究计划、专家推荐等。</td>
+  <td class="link-cell">
+    <a class="open-btn" href="https://yz.tsinghua.edu.cn/zxgg.htm" target="_blank" rel="noopener">官方最新公告</a>
+    <a class="search-btn" href="https://www.bing.com/search?q=site%3Aedu.cn%20%E6%B8%85%E5%8D%8E%E5%A4%A7%E5%AD%A6%20%E7%89%A9%E7%90%86%E7%B3%BB%E3%80%81%E5%A4%A9%E6%96%87%E7%B3%BB/%E7%9B%B8%E5%85%B3%E7%90%86%E8%AE%BA%E6%96%B9%E5%90%91%202027%20%E6%8E%A8%E8%8D%90%E5%85%8D%E8%AF%95%20%E9%A2%84%E6%8A%A5%E5%90%8D%202026%20%E7%90%86%E8%AE%BA%E7%89%A9%E7%90%86%20%E5%A4%A9%E6%96%87%E5%AD%A6%20%E5%BC%95%E5%8A%9B" target="_blank" rel="noopener">定向复查</a>
+  </td>
+  <td class="conclusion" contenteditable="true">学校已发布2027年接收推免办法及硕/博推免目录；申请前必须确认物理系/天文系具体招生简章。</td>
+  <td class="status-cell"><select class="status-select"><option value="未申请" selected>未申请</option><option value="准备材料">准备材料</option><option value="已报名-等待初审">已报名-等待初审</option><option value="已通过初审">已通过初审</option><option value="已参加考核">已参加考核</option><option value="已获offer">已获offer</option><option value="未通过">未通过</option><option value="不申请">不申请</option><option value="放弃">放弃</option></select></td>
+  <td contenteditable="true">当前最紧迫的冲刺项之一；不要只看校级截止。</td>
+</tr>
+
+<tr class="notice-closed status-unapplied" data-notice="官方已发布-已截止" data-tier="主申">
+  <td class="num">3</td>
+  <td contenteditable="true">北京</td>
+  <td class="school" contenteditable="true"><strong>中国人民大学</strong></td>
+  <td class="unit" contenteditable="true">物理学院</td>
+  <td><span class="rel rel-a">A</span></td>
+  <td contenteditable="true"><span class="tier-tag">主申</span></td>
+  <td class="notice-cell"><span class="notice-chip closed">官方已发布-已截止</span></td>
+  <td class="direction" contenteditable="true">理论物理、凝聚态物理、原子与分子物理</td>
+  <td contenteditable="true">2026-06-22</td>
+  <td class="deadline-cell" contenteditable="true">2026-07-05 17:00</td>
+  <td contenteditable="true">量子力学、热力学与统计物理；面试覆盖普通物理和四大力学</td>
+  <td class="policy-cell" contenteditable="true">成绩单与排名、身份证/学生证、科研证明；直博需两封教授推荐信。</td>
+  <td class="link-cell">
+    <a class="open-btn" href="https://www.phys.ruc.edu.cn/info/1055/2892.htm" target="_blank" rel="noopener">物理学院官方通知</a>
+    <a class="search-btn" href="https://www.bing.com/search?q=site%3Aedu.cn%20%E4%B8%AD%E5%9B%BD%E4%BA%BA%E6%B0%91%E5%A4%A7%E5%AD%A6%20%E7%89%A9%E7%90%86%E5%AD%A6%E9%99%A2%202027%20%E6%8E%A8%E8%8D%90%E5%85%8D%E8%AF%95%20%E9%A2%84%E6%8A%A5%E5%90%8D%202026%20%E7%90%86%E8%AE%BA%E7%89%A9%E7%90%86%20%E5%A4%A9%E6%96%87%E5%AD%A6%20%E5%BC%95%E5%8A%9B" target="_blank" rel="noopener">定向复查</a>
+  </td>
+  <td class="conclusion" contenteditable="true">2027级报名已结束；可关注补录、后续批次或正式推免系统阶段。</td>
+  <td class="status-cell"><select class="status-select"><option value="未申请" selected>未申请</option><option value="准备材料">准备材料</option><option value="已报名-等待初审">已报名-等待初审</option><option value="已通过初审">已通过初审</option><option value="已参加考核">已参加考核</option><option value="已获offer">已获offer</option><option value="未通过">未通过</option><option value="不申请">不申请</option><option value="放弃">放弃</option></select></td>
+  <td contenteditable="true">硕士按硕博直通培养；理论物理匹配度较高。</td>
+</tr>
+
+<tr class="notice-watch status-unapplied" data-notice="招生宣传已发布-预推免待发" data-tier="主申">
+  <td class="num">4</td>
+  <td contenteditable="true">北京</td>
+  <td class="school" contenteditable="true"><strong>北京航空航天大学</strong></td>
+  <td class="unit" contenteditable="true">物理学院</td>
+  <td><span class="rel rel-a">A</span></td>
+  <td contenteditable="true"><span class="tier-tag">主申</span></td>
+  <td class="notice-cell"><span class="notice-chip watch">招生宣传已发布-预推免待发</span></td>
+  <td class="direction" contenteditable="true">理论物理、粒子物理、引力及空间科学相关交叉方向</td>
+  <td contenteditable="true">2026-06-12（招生宣传）</td>
+  <td class="deadline-cell" contenteditable="true">待官方预推免通知</td>
+  <td contenteditable="true">待官方通知</td>
+  <td class="policy-cell" contenteditable="true">暂按往年准备申请表、成绩单与排名、英语证明、科研成果、现实表现材料。</td>
+  <td class="link-cell">
+    <a class="open-btn" href="https://yzb.buaa.edu.cn/info/1002/3552.htm" target="_blank" rel="noopener">2027招生宣传</a>
+    <a class="search-btn" href="https://www.bing.com/search?q=site%3Aedu.cn%20%E5%8C%97%E4%BA%AC%E8%88%AA%E7%A9%BA%E8%88%AA%E5%A4%A9%E5%A4%A7%E5%AD%A6%20%E7%89%A9%E7%90%86%E5%AD%A6%E9%99%A2%202027%20%E6%8E%A8%E8%8D%90%E5%85%8D%E8%AF%95%20%E9%A2%84%E6%8A%A5%E5%90%8D%202026%20%E7%90%86%E8%AE%BA%E7%89%A9%E7%90%86%20%E5%A4%A9%E6%96%87%E5%AD%A6%20%E5%BC%95%E5%8A%9B" target="_blank" rel="noopener">定向复查</a>
+  </td>
+  <td class="conclusion" contenteditable="true">检索到物理学院2027招生宣传活动，但尚未检索到2027级正式接收推免通知。</td>
+  <td class="status-cell"><select class="status-select"><option value="未申请" selected>未申请</option><option value="准备材料">准备材料</option><option value="已报名-等待初审">已报名-等待初审</option><option value="已通过初审">已通过初审</option><option value="已参加考核">已参加考核</option><option value="已获offer">已获offer</option><option value="未通过">未通过</option><option value="不申请">不申请</option><option value="放弃">放弃</option></select></td>
+  <td contenteditable="true">与空间引力/精密测量存在潜在交叉，需核验导师。</td>
+</tr>
+
+<tr class="notice-watch status-unapplied" data-notice="夏令营已发布-预推免待发" data-tier="主申">
+  <td class="num">5</td>
+  <td contenteditable="true">北京</td>
+  <td class="school" contenteditable="true"><strong>北京理工大学</strong></td>
+  <td class="unit" contenteditable="true">物理学院</td>
+  <td><span class="rel rel-a">A</span></td>
+  <td contenteditable="true"><span class="tier-tag">主申</span></td>
+  <td class="notice-cell"><span class="notice-chip watch">夏令营已发布-预推免待发</span></td>
+  <td class="direction" contenteditable="true">理论物理、凝聚态、光学及相关方向</td>
+  <td contenteditable="true">2026年夏令营通知已发布</td>
+  <td class="deadline-cell" contenteditable="true">待官方预推免通知</td>
+  <td contenteditable="true">待官方通知</td>
+  <td class="policy-cell" contenteditable="true">暂按往年准备成绩单与排名、英语证明、科研成果；本直博另需推荐信。</td>
+  <td class="link-cell">
+    <a class="open-btn" href="https://grd.bit.edu.cn/" target="_blank" rel="noopener">研究生院官方入口</a>
+    <a class="search-btn" href="https://www.bing.com/search?q=site%3Aedu.cn%20%E5%8C%97%E4%BA%AC%E7%90%86%E5%B7%A5%E5%A4%A7%E5%AD%A6%20%E7%89%A9%E7%90%86%E5%AD%A6%E9%99%A2%202027%20%E6%8E%A8%E8%8D%90%E5%85%8D%E8%AF%95%20%E9%A2%84%E6%8A%A5%E5%90%8D%202026%20%E7%90%86%E8%AE%BA%E7%89%A9%E7%90%86%20%E5%A4%A9%E6%96%87%E5%AD%A6%20%E5%BC%95%E5%8A%9B" target="_blank" rel="noopener">定向复查</a>
+  </td>
+  <td class="conclusion" contenteditable="true">未检索到2027级物理学院正式预推免通知；夏令营不等同于后续预推免。</td>
+  <td class="status-cell"><select class="status-select"><option value="未申请" selected>未申请</option><option value="准备材料">准备材料</option><option value="已报名-等待初审">已报名-等待初审</option><option value="已通过初审">已通过初审</option><option value="已参加考核">已参加考核</option><option value="已获offer">已获offer</option><option value="未通过">未通过</option><option value="不申请">不申请</option><option value="放弃">放弃</option></select></td>
+  <td contenteditable="true">理论物理可申，但引力方向需导师层面确认。</td>
+</tr>
+
+<tr class="notice-watch status-unapplied" data-notice="夏令营已发布-预推免待发" data-tier="冲刺">
+  <td class="num">6</td>
+  <td contenteditable="true">北京</td>
+  <td class="school" contenteditable="true"><strong>北京师范大学</strong></td>
+  <td class="unit" contenteditable="true">物理与天文学院</td>
+  <td><span class="rel rel-s">S</span></td>
+  <td contenteditable="true"><span class="tier-tag">冲刺</span></td>
+  <td class="notice-cell"><span class="notice-chip watch">夏令营已发布-预推免待发</span></td>
+  <td class="direction" contenteditable="true">理论物理、天文学、宇宙学、引力与高能天体物理</td>
+  <td contenteditable="true">2026-05-06（夏令营入口）</td>
+  <td class="deadline-cell" contenteditable="true">待官方预推免通知</td>
+  <td contenteditable="true">待官方通知</td>
+  <td class="policy-cell" contenteditable="true">预计需申请表、成绩单与排名、英语证明、科研成果及个人陈述。</td>
+  <td class="link-cell">
+    <a class="open-btn" href="https://yz.bnu.edu.cn/detail/cdce4e9e-8997-4380-9d0c-da2f1319528b" target="_blank" rel="noopener">官方夏令营/招生入口</a>
+    <a class="search-btn" href="https://www.bing.com/search?q=site%3Aedu.cn%20%E5%8C%97%E4%BA%AC%E5%B8%88%E8%8C%83%E5%A4%A7%E5%AD%A6%20%E7%89%A9%E7%90%86%E4%B8%8E%E5%A4%A9%E6%96%87%E5%AD%A6%E9%99%A2%202027%20%E6%8E%A8%E8%8D%90%E5%85%8D%E8%AF%95%20%E9%A2%84%E6%8A%A5%E5%90%8D%202026%20%E7%90%86%E8%AE%BA%E7%89%A9%E7%90%86%20%E5%A4%A9%E6%96%87%E5%AD%A6%20%E5%BC%95%E5%8A%9B" target="_blank" rel="noopener">定向复查</a>
+  </td>
+  <td class="conclusion" contenteditable="true">未检索到2027级物理与天文学院预推免通知；应持续关注学院和研招网。</td>
+  <td class="status-cell"><select class="status-select"><option value="未申请" selected>未申请</option><option value="准备材料">准备材料</option><option value="已报名-等待初审">已报名-等待初审</option><option value="已通过初审">已通过初审</option><option value="已参加考核">已参加考核</option><option value="已获offer">已获offer</option><option value="未通过">未通过</option><option value="不申请">不申请</option><option value="放弃">放弃</option></select></td>
+  <td contenteditable="true">与你的黑洞、引力与天文兴趣高度匹配。</td>
+</tr>
+
+<tr class="notice-partial status-unapplied" data-notice="校级已发布-院系细则待核验" data-tier="补充">
+  <td class="num">7</td>
+  <td contenteditable="true">北京</td>
+  <td class="school" contenteditable="true"><strong>中国农业大学</strong></td>
+  <td class="unit" contenteditable="true">理学院（物理学相关方向）</td>
+  <td><span class="rel rel-b">B</span></td>
+  <td contenteditable="true"><span class="tier-tag">补充</span></td>
+  <td class="notice-cell"><span class="notice-chip partial">校级已发布-院系细则待核验</span></td>
+  <td class="direction" contenteditable="true">物理学及交叉方向；引力波物理是否招生须以学院目录为准</td>
+  <td contenteditable="true">2026-07-14</td>
+  <td class="deadline-cell" contenteditable="true">各学院另行规定</td>
+  <td contenteditable="true">学院分批审核/考核</td>
+  <td class="policy-cell" contenteditable="true">校级通知要求推免资格及外语、成绩、科研等证明；具体材料以学院项目为准。</td>
+  <td class="link-cell">
+    <a class="open-btn" href="https://yt.cau.edu.cn/art/2026/7/14/art_43337_1122495.html" target="_blank" rel="noopener">校级通知转发页</a>
+    <a class="search-btn" href="https://www.bing.com/search?q=site%3Aedu.cn%20%E4%B8%AD%E5%9B%BD%E5%86%9C%E4%B8%9A%E5%A4%A7%E5%AD%A6%20%E7%90%86%E5%AD%A6%E9%99%A2%EF%BC%88%E7%89%A9%E7%90%86%E5%AD%A6%E7%9B%B8%E5%85%B3%E6%96%B9%E5%90%91%EF%BC%89%202027%20%E6%8E%A8%E8%8D%90%E5%85%8D%E8%AF%95%20%E9%A2%84%E6%8A%A5%E5%90%8D%202026%20%E7%90%86%E8%AE%BA%E7%89%A9%E7%90%86%20%E5%A4%A9%E6%96%87%E5%AD%A6%20%E5%BC%95%E5%8A%9B" target="_blank" rel="noopener">定向复查</a>
+  </td>
+  <td class="conclusion" contenteditable="true">学校接收2027级推免报名已启动；理学院物理项目和截止时间需进入系统核验。</td>
+  <td class="status-cell"><select class="status-select"><option value="未申请" selected>未申请</option><option value="准备材料">准备材料</option><option value="已报名-等待初审">已报名-等待初审</option><option value="已通过初审">已通过初审</option><option value="已参加考核">已参加考核</option><option value="已获offer">已获offer</option><option value="未通过">未通过</option><option value="不申请">不申请</option><option value="放弃">放弃</option></select></td>
+  <td contenteditable="true">不是传统引力理论强校，作为方向交叉补充。</td>
+</tr>
+
+<tr class="notice-missing status-unapplied" data-notice="截至2026-07-21未检索到" data-tier="低优先">
+  <td class="num">8</td>
+  <td contenteditable="true">北京</td>
+  <td class="school" contenteditable="true"><strong>中央民族大学</strong></td>
+  <td class="unit" contenteditable="true">理学院</td>
+  <td><span class="rel rel-c">C</span></td>
+  <td contenteditable="true"><span class="tier-tag">低优先</span></td>
+  <td class="notice-cell"><span class="notice-chip missing">截至2026-07-21未检索到</span></td>
+  <td class="direction" contenteditable="true">物理学；理论物理相关方向需查看当年目录</td>
+  <td contenteditable="true">—</td>
+  <td class="deadline-cell" contenteditable="true">待官方通知</td>
+  <td contenteditable="true">待官方通知</td>
+  <td class="policy-cell" contenteditable="true">待正式通知。</td>
+  <td class="link-cell">
+    <a class="open-btn" href="https://grs.muc.edu.cn/" target="_blank" rel="noopener">研究生院官方入口</a>
+    <a class="search-btn" href="https://www.bing.com/search?q=site%3Aedu.cn%20%E4%B8%AD%E5%A4%AE%E6%B0%91%E6%97%8F%E5%A4%A7%E5%AD%A6%20%E7%90%86%E5%AD%A6%E9%99%A2%202027%20%E6%8E%A8%E8%8D%90%E5%85%8D%E8%AF%95%20%E9%A2%84%E6%8A%A5%E5%90%8D%202026%20%E7%90%86%E8%AE%BA%E7%89%A9%E7%90%86%20%E5%A4%A9%E6%96%87%E5%AD%A6%20%E5%BC%95%E5%8A%9B" target="_blank" rel="noopener">定向复查</a>
+  </td>
+  <td class="conclusion" contenteditable="true">未检索到2027级理学院预推免通知。</td>
+  <td class="status-cell"><select class="status-select"><option value="未申请" selected>未申请</option><option value="准备材料">准备材料</option><option value="已报名-等待初审">已报名-等待初审</option><option value="已通过初审">已通过初审</option><option value="已参加考核">已参加考核</option><option value="已获offer">已获offer</option><option value="未通过">未通过</option><option value="不申请">不申请</option><option value="放弃">放弃</option></select></td>
+  <td contenteditable="true">与你的引力研究主线匹配有限。</td>
+</tr>
+
+<tr class="notice-missing status-unapplied region-start" data-notice="截至2026-07-21未检索到" data-tier="主申">
+  <td class="num">9</td>
+  <td contenteditable="true">天津</td>
+  <td class="school" contenteditable="true"><strong>南开大学</strong></td>
+  <td class="unit" contenteditable="true">物理科学学院</td>
+  <td><span class="rel rel-a">A</span></td>
+  <td contenteditable="true"><span class="tier-tag">主申</span></td>
+  <td class="notice-cell"><span class="notice-chip missing">截至2026-07-21未检索到</span></td>
+  <td class="direction" contenteditable="true">理论物理、粒子物理与核物理、天体物理相关交叉</td>
+  <td contenteditable="true">—</td>
+  <td class="deadline-cell" contenteditable="true">待官方通知</td>
+  <td contenteditable="true">待官方通知</td>
+  <td class="policy-cell" contenteditable="true">待正式通知；可按往年准备申请表、成绩排名、英语与科研证明。</td>
+  <td class="link-cell">
+    <a class="open-btn" href="https://yzb.nankai.edu.cn/" target="_blank" rel="noopener">官方研招入口</a>
+    <a class="search-btn" href="https://www.bing.com/search?q=site%3Aedu.cn%20%E5%8D%97%E5%BC%80%E5%A4%A7%E5%AD%A6%20%E7%89%A9%E7%90%86%E7%A7%91%E5%AD%A6%E5%AD%A6%E9%99%A2%202027%20%E6%8E%A8%E8%8D%90%E5%85%8D%E8%AF%95%20%E9%A2%84%E6%8A%A5%E5%90%8D%202026%20%E7%90%86%E8%AE%BA%E7%89%A9%E7%90%86%20%E5%A4%A9%E6%96%87%E5%AD%A6%20%E5%BC%95%E5%8A%9B" target="_blank" rel="noopener">定向复查</a>
+  </td>
+  <td class="conclusion" contenteditable="true">未检索到2027级物理科学学院预推免通知。</td>
+  <td class="status-cell"><select class="status-select"><option value="未申请" selected>未申请</option><option value="准备材料">准备材料</option><option value="已报名-等待初审">已报名-等待初审</option><option value="已通过初审">已通过初审</option><option value="已参加考核">已参加考核</option><option value="已获offer">已获offer</option><option value="未通过">未通过</option><option value="不申请">不申请</option><option value="放弃">放弃</option></select></td>
+  <td contenteditable="true">理论物理基础较强，建议持续追踪。</td>
+</tr>
+
+<tr class="notice-published status-unapplied" data-notice="校级已发布-报名中" data-tier="补充">
+  <td class="num">10</td>
+  <td contenteditable="true">天津</td>
+  <td class="school" contenteditable="true"><strong>天津大学</strong></td>
+  <td class="unit" contenteditable="true">理学院</td>
+  <td><span class="rel rel-b">B</span></td>
+  <td contenteditable="true"><span class="tier-tag">补充</span></td>
+  <td class="notice-cell"><span class="notice-chip published">校级已发布-报名中</span></td>
+  <td class="direction" contenteditable="true">物理学、理论与计算物理等；具体方向以理学院项目为准</td>
+  <td contenteditable="true">2026-07-02</td>
+  <td class="deadline-cell" contenteditable="true">理学院分批：2026-09-01、2026-09-15（以系统为准）</td>
+  <td contenteditable="true">学院分批审核与考核</td>
+  <td class="policy-cell" contenteditable="true">网上报名并上传电子材料；具体清单以理学院和系统要求为准。</td>
+  <td class="link-cell">
+    <a class="open-btn" href="https://yzb.tju.edu.cn/xwzx/tkss_xw/202607/t20260702_324675.htm" target="_blank" rel="noopener">校级官方通知</a>
+    <a class="search-btn" href="https://www.bing.com/search?q=site%3Aedu.cn%20%E5%A4%A9%E6%B4%A5%E5%A4%A7%E5%AD%A6%20%E7%90%86%E5%AD%A6%E9%99%A2%202027%20%E6%8E%A8%E8%8D%90%E5%85%8D%E8%AF%95%20%E9%A2%84%E6%8A%A5%E5%90%8D%202026%20%E7%90%86%E8%AE%BA%E7%89%A9%E7%90%86%20%E5%A4%A9%E6%96%87%E5%AD%A6%20%E5%BC%95%E5%8A%9B" target="_blank" rel="noopener">定向复查</a>
+  </td>
+  <td class="conclusion" contenteditable="true">2027级推免预报名已开放；应在系统确认理学院具体批次。</td>
+  <td class="status-cell"><select class="status-select"><option value="未申请" selected>未申请</option><option value="准备材料">准备材料</option><option value="已报名-等待初审">已报名-等待初审</option><option value="已通过初审">已通过初审</option><option value="已参加考核">已参加考核</option><option value="已获offer">已获offer</option><option value="未通过">未通过</option><option value="不申请">不申请</option><option value="放弃">放弃</option></select></td>
+  <td contenteditable="true">理论物理方向需进一步核验导师与培养点。</td>
+</tr>
+
+<tr class="notice-published status-unapplied region-start" data-notice="官方已发布-报名中" data-tier="主申">
+  <td class="num">11</td>
+  <td contenteditable="true">辽宁</td>
+  <td class="school" contenteditable="true"><strong>大连理工大学</strong></td>
+  <td class="unit" contenteditable="true">物理学院</td>
+  <td><span class="rel rel-a">A</span></td>
+  <td contenteditable="true"><span class="tier-tag">主申</span></td>
+  <td class="notice-cell"><span class="notice-chip published">官方已发布-报名中</span></td>
+  <td class="direction" contenteditable="true">理论物理、粒子物理、凝聚态、光学等</td>
+  <td contenteditable="true">2026-07-14</td>
+  <td class="deadline-cell" contenteditable="true">2026-09-14 24:00</td>
+  <td contenteditable="true">学院分批审核；具体安排见系统</td>
+  <td class="policy-cell" contenteditable="true">预计可获2027年推免资格；材料和具体要求见预报名系统。</td>
+  <td class="link-cell">
+    <a class="open-btn" href="https://gs.dlut.edu.cn/info/1173/51492.htm" target="_blank" rel="noopener">研究生院官方通知</a>
+    <a class="search-btn" href="https://www.bing.com/search?q=site%3Aedu.cn%20%E5%A4%A7%E8%BF%9E%E7%90%86%E5%B7%A5%E5%A4%A7%E5%AD%A6%20%E7%89%A9%E7%90%86%E5%AD%A6%E9%99%A2%202027%20%E6%8E%A8%E8%8D%90%E5%85%8D%E8%AF%95%20%E9%A2%84%E6%8A%A5%E5%90%8D%202026%20%E7%90%86%E8%AE%BA%E7%89%A9%E7%90%86%20%E5%A4%A9%E6%96%87%E5%AD%A6%20%E5%BC%95%E5%8A%9B" target="_blank" rel="noopener">定向复查</a>
+  </td>
+  <td class="conclusion" contenteditable="true">物理学院预报名已明确开放，截止日期清晰。</td>
+  <td class="status-cell"><select class="status-select"><option value="未申请" selected>未申请</option><option value="准备材料">准备材料</option><option value="已报名-等待初审">已报名-等待初审</option><option value="已通过初审">已通过初审</option><option value="已参加考核">已参加考核</option><option value="已获offer">已获offer</option><option value="未通过">未通过</option><option value="不申请">不申请</option><option value="放弃">放弃</option></select></td>
+  <td contenteditable="true">当前可直接行动的主申院校。</td>
+</tr>
+
+<tr class="notice-published status-unapplied" data-notice="校级已发布-报名中" data-tier="补充">
+  <td class="num">12</td>
+  <td contenteditable="true">辽宁</td>
+  <td class="school" contenteditable="true"><strong>东北大学</strong></td>
+  <td class="unit" contenteditable="true">理学院/物理学相关培养单位</td>
+  <td><span class="rel rel-b">B</span></td>
+  <td contenteditable="true"><span class="tier-tag">补充</span></td>
+  <td class="notice-cell"><span class="notice-chip published">校级已发布-报名中</span></td>
+  <td class="direction" contenteditable="true">物理学及相关交叉方向</td>
+  <td contenteditable="true">2026-07-20</td>
+  <td class="deadline-cell" contenteditable="true">各学院自行确定</td>
+  <td contenteditable="true">以面试为主，学院另行通知</td>
+  <td class="policy-cell" contenteditable="true">申请表与自述、成绩单、英语/荣誉/论文证明、思想政治考查材料，合并PDF上传。</td>
+  <td class="link-cell">
+    <a class="open-btn" href="https://yz.neu.edu.cn/2026/0720/c5932a458191/pagem.htm" target="_blank" rel="noopener">校级官方办法</a>
+    <a class="search-btn" href="https://www.bing.com/search?q=site%3Aedu.cn%20%E4%B8%9C%E5%8C%97%E5%A4%A7%E5%AD%A6%20%E7%90%86%E5%AD%A6%E9%99%A2/%E7%89%A9%E7%90%86%E5%AD%A6%E7%9B%B8%E5%85%B3%E5%9F%B9%E5%85%BB%E5%8D%95%E4%BD%8D%202027%20%E6%8E%A8%E8%8D%90%E5%85%8D%E8%AF%95%20%E9%A2%84%E6%8A%A5%E5%90%8D%202026%20%E7%90%86%E8%AE%BA%E7%89%A9%E7%90%86%20%E5%A4%A9%E6%96%87%E5%AD%A6%20%E5%BC%95%E5%8A%9B" target="_blank" rel="noopener">定向复查</a>
+  </td>
+  <td class="conclusion" contenteditable="true">学校预报名平台已开放；物理方向截止和复试时间需咨询学院。</td>
+  <td class="status-cell"><select class="status-select"><option value="未申请" selected>未申请</option><option value="准备材料">准备材料</option><option value="已报名-等待初审">已报名-等待初审</option><option value="已通过初审">已通过初审</option><option value="已参加考核">已参加考核</option><option value="已获offer">已获offer</option><option value="未通过">未通过</option><option value="不申请">不申请</option><option value="放弃">放弃</option></select></td>
+  <td contenteditable="true">原则上CET-4≥425。</td>
+</tr>
+
+<tr class="notice-missing status-unapplied region-start" data-notice="截至2026-07-21未检索到" data-tier="主申">
+  <td class="num">13</td>
+  <td contenteditable="true">吉林</td>
+  <td class="school" contenteditable="true"><strong>吉林大学</strong></td>
+  <td class="unit" contenteditable="true">物理学院</td>
+  <td><span class="rel rel-a">A</span></td>
+  <td contenteditable="true"><span class="tier-tag">主申</span></td>
+  <td class="notice-cell"><span class="notice-chip missing">截至2026-07-21未检索到</span></td>
+  <td class="direction" contenteditable="true">理论物理、粒子物理与核物理、凝聚态、光学</td>
+  <td contenteditable="true">—</td>
+  <td class="deadline-cell" contenteditable="true">待官方通知</td>
+  <td contenteditable="true">待官方通知</td>
+  <td class="policy-cell" contenteditable="true">待正式通知。</td>
+  <td class="link-cell">
+    <a class="open-btn" href="https://zsb.jlu.edu.cn/" target="_blank" rel="noopener">官方研招入口</a>
+    <a class="search-btn" href="https://www.bing.com/search?q=site%3Aedu.cn%20%E5%90%89%E6%9E%97%E5%A4%A7%E5%AD%A6%20%E7%89%A9%E7%90%86%E5%AD%A6%E9%99%A2%202027%20%E6%8E%A8%E8%8D%90%E5%85%8D%E8%AF%95%20%E9%A2%84%E6%8A%A5%E5%90%8D%202026%20%E7%90%86%E8%AE%BA%E7%89%A9%E7%90%86%20%E5%A4%A9%E6%96%87%E5%AD%A6%20%E5%BC%95%E5%8A%9B" target="_blank" rel="noopener">定向复查</a>
+  </td>
+  <td class="conclusion" contenteditable="true">未检索到2027级物理学院正式预推免通知。</td>
+  <td class="status-cell"><select class="status-select"><option value="未申请" selected>未申请</option><option value="准备材料">准备材料</option><option value="已报名-等待初审">已报名-等待初审</option><option value="已通过初审">已通过初审</option><option value="已参加考核">已参加考核</option><option value="已获offer">已获offer</option><option value="未通过">未通过</option><option value="不申请">不申请</option><option value="放弃">放弃</option></select></td>
+  <td contenteditable="true">理论物理方向值得保留。</td>
+</tr>
+
+<tr class="notice-published status-unapplied region-start" data-notice="校级已发布-报名中" data-tier="主申">
+  <td class="num">14</td>
+  <td contenteditable="true">黑龙江</td>
+  <td class="school" contenteditable="true"><strong>哈尔滨工业大学</strong></td>
+  <td class="unit" contenteditable="true">物理学院</td>
+  <td><span class="rel rel-a">A</span></td>
+  <td contenteditable="true"><span class="tier-tag">主申</span></td>
+  <td class="notice-cell"><span class="notice-chip published">校级已发布-报名中</span></td>
+  <td class="direction" contenteditable="true">理论物理、粒子物理、凝聚态、光学等</td>
+  <td contenteditable="true">2026-07-17</td>
+  <td class="deadline-cell" contenteditable="true">2026-07-20起开放；学院自行确定截止</td>
+  <td contenteditable="true">学院组织复试/考核</td>
+  <td class="policy-cell" contenteditable="true">成绩单、成绩排名、证书等；直博需两封相关领域专家推荐信。</td>
+  <td class="link-cell">
+    <a class="open-btn" href="https://yzb.hit.edu.cn/2026/0717/c22276a397589/page.htm" target="_blank" rel="noopener">校级官方通知</a>
+    <a class="search-btn" href="https://www.bing.com/search?q=site%3Aedu.cn%20%E5%93%88%E5%B0%94%E6%BB%A8%E5%B7%A5%E4%B8%9A%E5%A4%A7%E5%AD%A6%20%E7%89%A9%E7%90%86%E5%AD%A6%E9%99%A2%202027%20%E6%8E%A8%E8%8D%90%E5%85%8D%E8%AF%95%20%E9%A2%84%E6%8A%A5%E5%90%8D%202026%20%E7%90%86%E8%AE%BA%E7%89%A9%E7%90%86%20%E5%A4%A9%E6%96%87%E5%AD%A6%20%E5%BC%95%E5%8A%9B" target="_blank" rel="noopener">定向复查</a>
+  </td>
+  <td class="conclusion" contenteditable="true">校级推免信息采集系统已经开放，需立即查看物理学院项目。</td>
+  <td class="status-cell"><select class="status-select"><option value="未申请" selected>未申请</option><option value="准备材料">准备材料</option><option value="已报名-等待初审">已报名-等待初审</option><option value="已通过初审">已通过初审</option><option value="已参加考核">已参加考核</option><option value="已获offer">已获offer</option><option value="未通过">未通过</option><option value="不申请">不申请</option><option value="放弃">放弃</option></select></td>
+  <td contenteditable="true">适合直博冲刺；院系细则是决定性文件。</td>
+</tr>
+
+<tr class="notice-partial status-unapplied region-start" data-notice="校级已发布-院系细则待核验" data-tier="冲刺">
+  <td class="num">15</td>
+  <td contenteditable="true">上海</td>
+  <td class="school" contenteditable="true"><strong>复旦大学</strong></td>
+  <td class="unit" contenteditable="true">物理学系、现代物理研究所</td>
+  <td><span class="rel rel-s">S</span></td>
+  <td contenteditable="true"><span class="tier-tag">冲刺</span></td>
+  <td class="notice-cell"><span class="notice-chip partial">校级已发布-院系细则待核验</span></td>
+  <td class="direction" contenteditable="true">理论物理、粒子物理与核物理、宇宙学相关方向</td>
+  <td contenteditable="true">2026-07-03</td>
+  <td class="deadline-cell" contenteditable="true">院系另行规定</td>
+  <td contenteditable="true">院系组织</td>
+  <td class="policy-cell" contenteditable="true">按复旦推免报名系统及院系要求提交。</td>
+  <td class="link-cell">
+    <a class="open-btn" href="https://gsao.fudan.edu.cn/fb/0b/c15029a785163/page.htm" target="_blank" rel="noopener">校级官方通知</a>
+    <a class="search-btn" href="https://www.bing.com/search?q=site%3Aedu.cn%20%E5%A4%8D%E6%97%A6%E5%A4%A7%E5%AD%A6%20%E7%89%A9%E7%90%86%E5%AD%A6%E7%B3%BB%E3%80%81%E7%8E%B0%E4%BB%A3%E7%89%A9%E7%90%86%E7%A0%94%E7%A9%B6%E6%89%80%202027%20%E6%8E%A8%E8%8D%90%E5%85%8D%E8%AF%95%20%E9%A2%84%E6%8A%A5%E5%90%8D%202026%20%E7%90%86%E8%AE%BA%E7%89%A9%E7%90%86%20%E5%A4%A9%E6%96%87%E5%AD%A6%20%E5%BC%95%E5%8A%9B" target="_blank" rel="noopener">定向复查</a>
+  </td>
+  <td class="conclusion" contenteditable="true">2027级校级报名通知已发布；物理学系/现代物理所的具体项目与截止需继续核验。</td>
+  <td class="status-cell"><select class="status-select"><option value="未申请" selected>未申请</option><option value="准备材料">准备材料</option><option value="已报名-等待初审">已报名-等待初审</option><option value="已通过初审">已通过初审</option><option value="已参加考核">已参加考核</option><option value="已获offer">已获offer</option><option value="未通过">未通过</option><option value="不申请">不申请</option><option value="放弃">放弃</option></select></td>
+  <td contenteditable="true">理论物理竞争极强；不要等院系截止前才准备材料。</td>
+</tr>
+
+<tr class="notice-missing status-unapplied" data-notice="截至2026-07-21未检索到" data-tier="冲刺">
+  <td class="num">16</td>
+  <td contenteditable="true">上海</td>
+  <td class="school" contenteditable="true"><strong>上海交通大学</strong></td>
+  <td class="unit" contenteditable="true">物理与天文学院</td>
+  <td><span class="rel rel-s">S</span></td>
+  <td contenteditable="true"><span class="tier-tag">冲刺</span></td>
+  <td class="notice-cell"><span class="notice-chip missing">截至2026-07-21未检索到</span></td>
+  <td class="direction" contenteditable="true">理论物理、天文学、宇宙学、引力波与极端天体</td>
+  <td contenteditable="true">—</td>
+  <td class="deadline-cell" contenteditable="true">待官方通知</td>
+  <td contenteditable="true">待官方通知</td>
+  <td class="policy-cell" contenteditable="true">待正式通知；通常需成绩排名、英语、科研材料和个人陈述。</td>
+  <td class="link-cell">
+    <a class="open-btn" href="https://yzb.sjtu.edu.cn/" target="_blank" rel="noopener">官方研招入口</a>
+    <a class="search-btn" href="https://www.bing.com/search?q=site%3Aedu.cn%20%E4%B8%8A%E6%B5%B7%E4%BA%A4%E9%80%9A%E5%A4%A7%E5%AD%A6%20%E7%89%A9%E7%90%86%E4%B8%8E%E5%A4%A9%E6%96%87%E5%AD%A6%E9%99%A2%202027%20%E6%8E%A8%E8%8D%90%E5%85%8D%E8%AF%95%20%E9%A2%84%E6%8A%A5%E5%90%8D%202026%20%E7%90%86%E8%AE%BA%E7%89%A9%E7%90%86%20%E5%A4%A9%E6%96%87%E5%AD%A6%20%E5%BC%95%E5%8A%9B" target="_blank" rel="noopener">定向复查</a>
+  </td>
+  <td class="conclusion" contenteditable="true">未检索到物理与天文学院2027级正式预推免通知；当前检索到的专项直博并非该学院通用通知。</td>
+  <td class="status-cell"><select class="status-select"><option value="未申请" selected>未申请</option><option value="准备材料">准备材料</option><option value="已报名-等待初审">已报名-等待初审</option><option value="已通过初审">已通过初审</option><option value="已参加考核">已参加考核</option><option value="已获offer">已获offer</option><option value="未通过">未通过</option><option value="不申请">不申请</option><option value="放弃">放弃</option></select></td>
+  <td contenteditable="true">与你的方向高度匹配，应高频追踪。</td>
+</tr>
+
+<tr class="notice-partial status-unapplied" data-notice="校级已发布-院系截止待定" data-tier="补充">
+  <td class="num">17</td>
+  <td contenteditable="true">上海</td>
+  <td class="school" contenteditable="true"><strong>同济大学</strong></td>
+  <td class="unit" contenteditable="true">物理科学与工程学院</td>
+  <td><span class="rel rel-b">B</span></td>
+  <td contenteditable="true"><span class="tier-tag">补充</span></td>
+  <td class="notice-cell"><span class="notice-chip partial">校级已发布-院系截止待定</span></td>
+  <td class="direction" contenteditable="true">物理学、光学、凝聚态及相关理论方向</td>
+  <td contenteditable="true">2026-07-06</td>
+  <td class="deadline-cell" contenteditable="true">物理学院栏位尚待更新/以系统为准</td>
+  <td contenteditable="true">学院另行通知</td>
+  <td class="policy-cell" contenteditable="true">按校级预报名系统和学院通知提交。</td>
+  <td class="link-cell">
+    <a class="open-btn" href="https://yz.tongji.edu.cn/info/1010/4219.htm" target="_blank" rel="noopener">校级官方通知</a>
+    <a class="search-btn" href="https://www.bing.com/search?q=site%3Aedu.cn%20%E5%90%8C%E6%B5%8E%E5%A4%A7%E5%AD%A6%20%E7%89%A9%E7%90%86%E7%A7%91%E5%AD%A6%E4%B8%8E%E5%B7%A5%E7%A8%8B%E5%AD%A6%E9%99%A2%202027%20%E6%8E%A8%E8%8D%90%E5%85%8D%E8%AF%95%20%E9%A2%84%E6%8A%A5%E5%90%8D%202026%20%E7%90%86%E8%AE%BA%E7%89%A9%E7%90%86%20%E5%A4%A9%E6%96%87%E5%AD%A6%20%E5%BC%95%E5%8A%9B" target="_blank" rel="noopener">定向复查</a>
+  </td>
+  <td class="conclusion" contenteditable="true">2027级校级预报名已启动；物理学院具体截止尚需持续查看汇总页。</td>
+  <td class="status-cell"><select class="status-select"><option value="未申请" selected>未申请</option><option value="准备材料">准备材料</option><option value="已报名-等待初审">已报名-等待初审</option><option value="已通过初审">已通过初审</option><option value="已参加考核">已参加考核</option><option value="已获offer">已获offer</option><option value="未通过">未通过</option><option value="不申请">不申请</option><option value="放弃">放弃</option></select></td>
+  <td contenteditable="true">引力/天文不是主线，作为物理学补充。</td>
+</tr>
+
+<tr class="notice-missing status-unapplied" data-notice="截至2026-07-21未检索到" data-tier="主申">
+  <td class="num">18</td>
+  <td contenteditable="true">上海</td>
+  <td class="school" contenteditable="true"><strong>华东师范大学</strong></td>
+  <td class="unit" contenteditable="true">物理与电子科学学院、精密光谱科学与技术国家重点实验室</td>
+  <td><span class="rel rel-a">A</span></td>
+  <td contenteditable="true"><span class="tier-tag">主申</span></td>
+  <td class="notice-cell"><span class="notice-chip missing">截至2026-07-21未检索到</span></td>
+  <td class="direction" contenteditable="true">理论物理、粒子物理、天体物理/精密测量交叉</td>
+  <td contenteditable="true">—</td>
+  <td class="deadline-cell" contenteditable="true">待官方通知</td>
+  <td contenteditable="true">待官方通知</td>
+  <td class="policy-cell" contenteditable="true">待正式通知。</td>
+  <td class="link-cell">
+    <a class="open-btn" href="https://yjszs.ecnu.edu.cn/tzgg_43463/list.htm" target="_blank" rel="noopener">官方通知列表</a>
+    <a class="search-btn" href="https://www.bing.com/search?q=site%3Aedu.cn%20%E5%8D%8E%E4%B8%9C%E5%B8%88%E8%8C%83%E5%A4%A7%E5%AD%A6%20%E7%89%A9%E7%90%86%E4%B8%8E%E7%94%B5%E5%AD%90%E7%A7%91%E5%AD%A6%E5%AD%A6%E9%99%A2%E3%80%81%E7%B2%BE%E5%AF%86%E5%85%89%E8%B0%B1%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF%E5%9B%BD%E5%AE%B6%E9%87%8D%E7%82%B9%E5%AE%9E%E9%AA%8C%E5%AE%A4%202027%20%E6%8E%A8%E8%8D%90%E5%85%8D%E8%AF%95%20%E9%A2%84%E6%8A%A5%E5%90%8D%202026%20%E7%90%86%E8%AE%BA%E7%89%A9%E7%90%86%20%E5%A4%A9%E6%96%87%E5%AD%A6%20%E5%BC%95%E5%8A%9B" target="_blank" rel="noopener">定向复查</a>
+  </td>
+  <td class="conclusion" contenteditable="true">未检索到2027级接收推免预报名通知；官网目前仍以2026级通知为最新。</td>
+  <td class="status-cell"><select class="status-select"><option value="未申请" selected>未申请</option><option value="准备材料">准备材料</option><option value="已报名-等待初审">已报名-等待初审</option><option value="已通过初审">已通过初审</option><option value="已参加考核">已参加考核</option><option value="已获offer">已获offer</option><option value="未通过">未通过</option><option value="不申请">不申请</option><option value="放弃">放弃</option></select></td>
+  <td contenteditable="true">理论与精密测量均有潜在匹配。</td>
+</tr>
+
+<tr class="notice-missing status-unapplied region-start" data-notice="截至2026-07-21未检索到" data-tier="冲刺">
+  <td class="num">19</td>
+  <td contenteditable="true">江苏</td>
+  <td class="school" contenteditable="true"><strong>南京大学</strong></td>
+  <td class="unit" contenteditable="true">物理学院、天文与空间科学学院</td>
+  <td><span class="rel rel-s">S</span></td>
+  <td contenteditable="true"><span class="tier-tag">冲刺</span></td>
+  <td class="notice-cell"><span class="notice-chip missing">截至2026-07-21未检索到</span></td>
+  <td class="direction" contenteditable="true">理论物理、粒子宇宙学、天体物理、引力与黑洞</td>
+  <td contenteditable="true">—</td>
+  <td class="deadline-cell" contenteditable="true">待官方通知</td>
+  <td contenteditable="true">待官方通知</td>
+  <td class="policy-cell" contenteditable="true">待正式通知；可预先准备完整推免材料包。</td>
+  <td class="link-cell">
+    <a class="open-btn" href="https://yzb.nju.edu.cn/xlyxx/list.htm" target="_blank" rel="noopener">官方夏令营/推免栏目</a>
+    <a class="search-btn" href="https://www.bing.com/search?q=site%3Aedu.cn%20%E5%8D%97%E4%BA%AC%E5%A4%A7%E5%AD%A6%20%E7%89%A9%E7%90%86%E5%AD%A6%E9%99%A2%E3%80%81%E5%A4%A9%E6%96%87%E4%B8%8E%E7%A9%BA%E9%97%B4%E7%A7%91%E5%AD%A6%E5%AD%A6%E9%99%A2%202027%20%E6%8E%A8%E8%8D%90%E5%85%8D%E8%AF%95%20%E9%A2%84%E6%8A%A5%E5%90%8D%202026%20%E7%90%86%E8%AE%BA%E7%89%A9%E7%90%86%20%E5%A4%A9%E6%96%87%E5%AD%A6%20%E5%BC%95%E5%8A%9B" target="_blank" rel="noopener">定向复查</a>
+  </td>
+  <td class="conclusion" contenteditable="true">官方栏目截至核验日仍显示2026级预推免信息，未见2027级通知。</td>
+  <td class="status-cell"><select class="status-select"><option value="未申请" selected>未申请</option><option value="准备材料">准备材料</option><option value="已报名-等待初审">已报名-等待初审</option><option value="已通过初审">已通过初审</option><option value="已参加考核">已参加考核</option><option value="已获offer">已获offer</option><option value="未通过">未通过</option><option value="不申请">不申请</option><option value="放弃">放弃</option></select></td>
+  <td contenteditable="true">与你的理论物理和天文方向高度匹配。</td>
+</tr>
+
+<tr class="notice-published status-unapplied" data-notice="官方已发布-报名中" data-tier="主申">
+  <td class="num">20</td>
+  <td contenteditable="true">江苏</td>
+  <td class="school" contenteditable="true"><strong>东南大学</strong></td>
+  <td class="unit" contenteditable="true">物理学院</td>
+  <td><span class="rel rel-a">A</span></td>
+  <td contenteditable="true"><span class="tier-tag">主申</span></td>
+  <td class="notice-cell"><span class="notice-chip published">官方已发布-报名中</span></td>
+  <td class="direction" contenteditable="true">物理学；具体理论方向和导师以学院目录为准</td>
+  <td contenteditable="true">2026-07-07</td>
+  <td class="deadline-cell" contenteditable="true">2026-08-07 12:00</td>
+  <td contenteditable="true">学院另行通知</td>
+  <td class="policy-cell" contenteditable="true">按学院通知和报名系统提交成绩、排名、英语与科研材料。</td>
+  <td class="link-cell">
+    <a class="open-btn" href="https://physics.seu.edu.cn/2026/0707/c23142a575759/pagem.htm" target="_blank" rel="noopener">物理学院官方通知</a>
+    <a class="search-btn" href="https://www.bing.com/search?q=site%3Aedu.cn%20%E4%B8%9C%E5%8D%97%E5%A4%A7%E5%AD%A6%20%E7%89%A9%E7%90%86%E5%AD%A6%E9%99%A2%202027%20%E6%8E%A8%E8%8D%90%E5%85%8D%E8%AF%95%20%E9%A2%84%E6%8A%A5%E5%90%8D%202026%20%E7%90%86%E8%AE%BA%E7%89%A9%E7%90%86%20%E5%A4%A9%E6%96%87%E5%AD%A6%20%E5%BC%95%E5%8A%9B" target="_blank" rel="noopener">定向复查</a>
+  </td>
+  <td class="conclusion" contenteditable="true">物理学院2027级预推免已开放，属于当前明确可报名项目。</td>
+  <td class="status-cell"><select class="status-select"><option value="未申请" selected>未申请</option><option value="准备材料">准备材料</option><option value="已报名-等待初审">已报名-等待初审</option><option value="已通过初审">已通过初审</option><option value="已参加考核">已参加考核</option><option value="已获offer">已获offer</option><option value="未通过">未通过</option><option value="不申请">不申请</option><option value="放弃">放弃</option></select></td>
+  <td contenteditable="true">需要尽快核验理论物理导师名单。</td>
+</tr>
+
+<tr class="notice-policy status-unapplied region-start" data-notice="重要政策已发布-硕士受限" data-tier="冲刺">
+  <td class="num">21</td>
+  <td contenteditable="true">浙江</td>
+  <td class="school" contenteditable="true"><strong>浙江大学</strong></td>
+  <td class="unit" contenteditable="true">物理学院</td>
+  <td><span class="rel rel-s">S</span></td>
+  <td contenteditable="true"><span class="tier-tag">冲刺</span></td>
+  <td class="notice-cell"><span class="notice-chip policy">重要政策已发布-硕士受限</span></td>
+  <td class="direction" contenteditable="true">理论物理、粒子物理、凝聚态、光学；普通学术硕士招生政策发生重大变化</td>
+  <td contenteditable="true">2026-06-15</td>
+  <td class="deadline-cell" contenteditable="true">待直博/国优计划具体通知</td>
+  <td contenteditable="true">待具体项目通知</td>
+  <td class="policy-cell" contenteditable="true">按直博或国优计划要求准备。</td>
+  <td class="link-cell">
+    <a class="open-btn" href="https://physics.zju.edu.cn/2026/0615/c69706a3178903/page.htm" target="_blank" rel="noopener">物理学院政策公告</a>
+    <a class="search-btn" href="https://www.bing.com/search?q=site%3Aedu.cn%20%E6%B5%99%E6%B1%9F%E5%A4%A7%E5%AD%A6%20%E7%89%A9%E7%90%86%E5%AD%A6%E9%99%A2%202027%20%E6%8E%A8%E8%8D%90%E5%85%8D%E8%AF%95%20%E9%A2%84%E6%8A%A5%E5%90%8D%202026%20%E7%90%86%E8%AE%BA%E7%89%A9%E7%90%86%20%E5%A4%A9%E6%96%87%E5%AD%A6%20%E5%BC%95%E5%8A%9B" target="_blank" rel="noopener">定向复查</a>
+  </td>
+  <td class="conclusion" contenteditable="true">2027年除“国优计划”外不再招收硕士研究生；普通物理研究方向应重点关注直博通道。</td>
+  <td class="status-cell"><select class="status-select"><option value="未申请" selected>未申请</option><option value="准备材料">准备材料</option><option value="已报名-等待初审">已报名-等待初审</option><option value="已通过初审">已通过初审</option><option value="已参加考核">已参加考核</option><option value="已获offer">已获offer</option><option value="未通过">未通过</option><option value="不申请">不申请</option><option value="放弃">放弃</option></select></td>
+  <td contenteditable="true">这是申请策略层面的硬约束，不应按普通学硕预推免理解。</td>
+</tr>
+
+<tr class="notice-missing status-unapplied region-start" data-notice="截至2026-07-21未检索到" data-tier="冲刺">
+  <td class="num">22</td>
+  <td contenteditable="true">安徽</td>
+  <td class="school" contenteditable="true"><strong>中国科学技术大学</strong></td>
+  <td class="unit" contenteditable="true">物理学院、天文学系</td>
+  <td><span class="rel rel-s">S</span></td>
+  <td contenteditable="true"><span class="tier-tag">冲刺</span></td>
+  <td class="notice-cell"><span class="notice-chip missing">截至2026-07-21未检索到</span></td>
+  <td class="direction" contenteditable="true">理论物理、粒子与宇宙学、天体物理、引力波</td>
+  <td contenteditable="true">—</td>
+  <td class="deadline-cell" contenteditable="true">待官方通知</td>
+  <td contenteditable="true">待官方通知</td>
+  <td class="policy-cell" contenteditable="true">待正式通知。</td>
+  <td class="link-cell">
+    <a class="open-btn" href="https://yz.ustc.edu.cn/" target="_blank" rel="noopener">官方研招入口</a>
+    <a class="search-btn" href="https://www.bing.com/search?q=site%3Aedu.cn%20%E4%B8%AD%E5%9B%BD%E7%A7%91%E5%AD%A6%E6%8A%80%E6%9C%AF%E5%A4%A7%E5%AD%A6%20%E7%89%A9%E7%90%86%E5%AD%A6%E9%99%A2%E3%80%81%E5%A4%A9%E6%96%87%E5%AD%A6%E7%B3%BB%202027%20%E6%8E%A8%E8%8D%90%E5%85%8D%E8%AF%95%20%E9%A2%84%E6%8A%A5%E5%90%8D%202026%20%E7%90%86%E8%AE%BA%E7%89%A9%E7%90%86%20%E5%A4%A9%E6%96%87%E5%AD%A6%20%E5%BC%95%E5%8A%9B" target="_blank" rel="noopener">定向复查</a>
+  </td>
+  <td class="conclusion" contenteditable="true">未检索到2027级外校推免接收/预报名通知；当前官网有强基转段公示，不等同于外校预推免。</td>
+  <td class="status-cell"><select class="status-select"><option value="未申请" selected>未申请</option><option value="准备材料">准备材料</option><option value="已报名-等待初审">已报名-等待初审</option><option value="已通过初审">已通过初审</option><option value="已参加考核">已参加考核</option><option value="已获offer">已获offer</option><option value="未通过">未通过</option><option value="不申请">不申请</option><option value="放弃">放弃</option></select></td>
+  <td contenteditable="true">与你的方向高度匹配，建议持续盯物理学院与天文学系。</td>
+</tr>
+
+<tr class="notice-closed status-unapplied region-start" data-notice="官方已发布-已截止" data-tier="主申">
+  <td class="num">23</td>
+  <td contenteditable="true">福建</td>
+  <td class="school" contenteditable="true"><strong>厦门大学</strong></td>
+  <td class="unit" contenteditable="true">物理科学与技术学院</td>
+  <td><span class="rel rel-a">A</span></td>
+  <td contenteditable="true"><span class="tier-tag">主申</span></td>
+  <td class="notice-cell"><span class="notice-chip closed">官方已发布-已截止</span></td>
+  <td class="direction" contenteditable="true">物理学及相关方向</td>
+  <td contenteditable="true">2026-06-30；延期通知2026-07-09</td>
+  <td class="deadline-cell" contenteditable="true">2026-07-10 18:00</td>
+  <td contenteditable="true">另行通知</td>
+  <td class="policy-cell" contenteditable="true">申请表、两封副教授及以上推荐信、成绩单与排名、英语证明、科研成果、证件等，合并PDF。</td>
+  <td class="link-cell">
+    <a class="open-btn" href="https://cpst.xmu.edu.cn/info/1045/43051.htm" target="_blank" rel="noopener">延期官方通知</a>
+    <a class="search-btn" href="https://www.bing.com/search?q=site%3Aedu.cn%20%E5%8E%A6%E9%97%A8%E5%A4%A7%E5%AD%A6%20%E7%89%A9%E7%90%86%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF%E5%AD%A6%E9%99%A2%202027%20%E6%8E%A8%E8%8D%90%E5%85%8D%E8%AF%95%20%E9%A2%84%E6%8A%A5%E5%90%8D%202026%20%E7%90%86%E8%AE%BA%E7%89%A9%E7%90%86%20%E5%A4%A9%E6%96%87%E5%AD%A6%20%E5%BC%95%E5%8A%9B" target="_blank" rel="noopener">定向复查</a>
+  </td>
+  <td class="conclusion" contenteditable="true">预报名已经截止；可关注是否补报或国家系统阶段仍接受申请。</td>
+  <td class="status-cell"><select class="status-select"><option value="未申请" selected>未申请</option><option value="准备材料">准备材料</option><option value="已报名-等待初审">已报名-等待初审</option><option value="已通过初审">已通过初审</option><option value="已参加考核">已参加考核</option><option value="已获offer">已获offer</option><option value="未通过">未通过</option><option value="不申请">不申请</option><option value="放弃">放弃</option></select></td>
+  <td contenteditable="true">已明确要求至少一封拟申请导师组成员推荐信。</td>
+</tr>
+
+<tr class="notice-missing status-unapplied region-start" data-notice="截至2026-07-21未检索到" data-tier="冲刺">
+  <td class="num">24</td>
+  <td contenteditable="true">山东</td>
+  <td class="school" contenteditable="true"><strong>山东大学</strong></td>
+  <td class="unit" contenteditable="true">物理学院、空间科学与技术学院、前沿交叉科学青岛研究院</td>
+  <td><span class="rel rel-s">S</span></td>
+  <td contenteditable="true"><span class="tier-tag">冲刺</span></td>
+  <td class="notice-cell"><span class="notice-chip missing">截至2026-07-21未检索到</span></td>
+  <td class="direction" contenteditable="true">理论物理、粒子物理、空间科学、引力波与天体物理</td>
+  <td contenteditable="true">—</td>
+  <td class="deadline-cell" contenteditable="true">待官方通知</td>
+  <td contenteditable="true">待官方通知</td>
+  <td class="policy-cell" contenteditable="true">待正式通知。</td>
+  <td class="link-cell">
+    <a class="open-btn" href="https://www.yz.sdu.edu.cn/" target="_blank" rel="noopener">官方研招入口</a>
+    <a class="search-btn" href="https://www.bing.com/search?q=site%3Aedu.cn%20%E5%B1%B1%E4%B8%9C%E5%A4%A7%E5%AD%A6%20%E7%89%A9%E7%90%86%E5%AD%A6%E9%99%A2%E3%80%81%E7%A9%BA%E9%97%B4%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF%E5%AD%A6%E9%99%A2%E3%80%81%E5%89%8D%E6%B2%BF%E4%BA%A4%E5%8F%89%E7%A7%91%E5%AD%A6%E9%9D%92%E5%B2%9B%E7%A0%94%E7%A9%B6%E9%99%A2%202027%20%E6%8E%A8%E8%8D%90%E5%85%8D%E8%AF%95%20%E9%A2%84%E6%8A%A5%E5%90%8D%202026%20%E7%90%86%E8%AE%BA%E7%89%A9%E7%90%86%20%E5%A4%A9%E6%96%87%E5%AD%A6%20%E5%BC%95%E5%8A%9B" target="_blank" rel="noopener">定向复查</a>
+  </td>
+  <td class="conclusion" contenteditable="true">未检索到三个相关单位的2027级正式预推免通知。</td>
+  <td class="status-cell"><select class="status-select"><option value="未申请" selected>未申请</option><option value="准备材料">准备材料</option><option value="已报名-等待初审">已报名-等待初审</option><option value="已通过初审">已通过初审</option><option value="已参加考核">已参加考核</option><option value="已获offer">已获offer</option><option value="未通过">未通过</option><option value="不申请">不申请</option><option value="放弃">放弃</option></select></td>
+  <td contenteditable="true">你有山大交流经历，材料叙事与导师沟通具有现实优势。</td>
+</tr>
+
+<tr class="notice-missing status-unapplied" data-notice="截至2026-07-21未检索到" data-tier="低优先">
+  <td class="num">25</td>
+  <td contenteditable="true">山东</td>
+  <td class="school" contenteditable="true"><strong>中国海洋大学</strong></td>
+  <td class="unit" contenteditable="true">物理与光电工程学院/相关理工单位</td>
+  <td><span class="rel rel-c">C</span></td>
+  <td contenteditable="true"><span class="tier-tag">低优先</span></td>
+  <td class="notice-cell"><span class="notice-chip missing">截至2026-07-21未检索到</span></td>
+  <td class="direction" contenteditable="true">物理、光电、海洋遥感等；引力理论匹配较弱</td>
+  <td contenteditable="true">—</td>
+  <td class="deadline-cell" contenteditable="true">待官方通知</td>
+  <td contenteditable="true">待官方通知</td>
+  <td class="policy-cell" contenteditable="true">待正式通知。</td>
+  <td class="link-cell">
+    <a class="open-btn" href="https://yz.ouc.edu.cn/" target="_blank" rel="noopener">官方研招入口</a>
+    <a class="search-btn" href="https://www.bing.com/search?q=site%3Aedu.cn%20%E4%B8%AD%E5%9B%BD%E6%B5%B7%E6%B4%8B%E5%A4%A7%E5%AD%A6%20%E7%89%A9%E7%90%86%E4%B8%8E%E5%85%89%E7%94%B5%E5%B7%A5%E7%A8%8B%E5%AD%A6%E9%99%A2/%E7%9B%B8%E5%85%B3%E7%90%86%E5%B7%A5%E5%8D%95%E4%BD%8D%202027%20%E6%8E%A8%E8%8D%90%E5%85%8D%E8%AF%95%20%E9%A2%84%E6%8A%A5%E5%90%8D%202026%20%E7%90%86%E8%AE%BA%E7%89%A9%E7%90%86%20%E5%A4%A9%E6%96%87%E5%AD%A6%20%E5%BC%95%E5%8A%9B" target="_blank" rel="noopener">定向复查</a>
+  </td>
+  <td class="conclusion" contenteditable="true">未检索到2027级相关预推免通知。</td>
+  <td class="status-cell"><select class="status-select"><option value="未申请" selected>未申请</option><option value="准备材料">准备材料</option><option value="已报名-等待初审">已报名-等待初审</option><option value="已通过初审">已通过初审</option><option value="已参加考核">已参加考核</option><option value="已获offer">已获offer</option><option value="未通过">未通过</option><option value="不申请">不申请</option><option value="放弃">放弃</option></select></td>
+  <td contenteditable="true">非理论物理/引力主线。</td>
+</tr>
+
+<tr class="notice-missing status-unapplied region-start" data-notice="截至2026-07-21未检索到" data-tier="主申">
+  <td class="num">26</td>
+  <td contenteditable="true">湖北</td>
+  <td class="school" contenteditable="true"><strong>武汉大学</strong></td>
+  <td class="unit" contenteditable="true">物理科学与技术学院</td>
+  <td><span class="rel rel-a">A</span></td>
+  <td contenteditable="true"><span class="tier-tag">主申</span></td>
+  <td class="notice-cell"><span class="notice-chip missing">截至2026-07-21未检索到</span></td>
+  <td class="direction" contenteditable="true">物理学、粒子物理、精密测量；引力方向需导师核验</td>
+  <td contenteditable="true">—</td>
+  <td class="deadline-cell" contenteditable="true">待官方通知</td>
+  <td contenteditable="true">待官方通知</td>
+  <td class="policy-cell" contenteditable="true">待正式通知。</td>
+  <td class="link-cell">
+    <a class="open-btn" href="https://physics.whu.edu.cn/" target="_blank" rel="noopener">学院官方入口</a>
+    <a class="search-btn" href="https://www.bing.com/search?q=site%3Aedu.cn%20%E6%AD%A6%E6%B1%89%E5%A4%A7%E5%AD%A6%20%E7%89%A9%E7%90%86%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF%E5%AD%A6%E9%99%A2%202027%20%E6%8E%A8%E8%8D%90%E5%85%8D%E8%AF%95%20%E9%A2%84%E6%8A%A5%E5%90%8D%202026%20%E7%90%86%E8%AE%BA%E7%89%A9%E7%90%86%20%E5%A4%A9%E6%96%87%E5%AD%A6%20%E5%BC%95%E5%8A%9B" target="_blank" rel="noopener">定向复查</a>
+  </td>
+  <td class="conclusion" contenteditable="true">未检索到2027级物理学院正式预推免通知。</td>
+  <td class="status-cell"><select class="status-select"><option value="未申请" selected>未申请</option><option value="准备材料">准备材料</option><option value="已报名-等待初审">已报名-等待初审</option><option value="已通过初审">已通过初审</option><option value="已参加考核">已参加考核</option><option value="已获offer">已获offer</option><option value="未通过">未通过</option><option value="不申请">不申请</option><option value="放弃">放弃</option></select></td>
+  <td contenteditable="true">物理学平台强，但与你的引力方向匹配取决于具体导师。</td>
+</tr>
+
+<tr class="notice-missing status-unapplied" data-notice="截至2026-07-21未检索到" data-tier="冲刺">
+  <td class="num">27</td>
+  <td contenteditable="true">湖北</td>
+  <td class="school" contenteditable="true"><strong>华中科技大学</strong></td>
+  <td class="unit" contenteditable="true">物理学院、引力中心/精密重力测量研究设施、强磁场中心</td>
+  <td><span class="rel rel-s">S</span></td>
+  <td contenteditable="true"><span class="tier-tag">冲刺</span></td>
+  <td class="notice-cell"><span class="notice-chip missing">截至2026-07-21未检索到</span></td>
+  <td class="direction" contenteditable="true">引力实验与理论、精密测量、物理学、强磁场</td>
+  <td contenteditable="true">—</td>
+  <td class="deadline-cell" contenteditable="true">待官方通知</td>
+  <td contenteditable="true">待官方通知</td>
+  <td class="policy-cell" contenteditable="true">待正式通知。</td>
+  <td class="link-cell">
+    <a class="open-btn" href="https://gszs.hust.edu.cn/" target="_blank" rel="noopener">官方研招入口</a>
+    <a class="search-btn" href="https://www.bing.com/search?q=site%3Aedu.cn%20%E5%8D%8E%E4%B8%AD%E7%A7%91%E6%8A%80%E5%A4%A7%E5%AD%A6%20%E7%89%A9%E7%90%86%E5%AD%A6%E9%99%A2%E3%80%81%E5%BC%95%E5%8A%9B%E4%B8%AD%E5%BF%83/%E7%B2%BE%E5%AF%86%E9%87%8D%E5%8A%9B%E6%B5%8B%E9%87%8F%E7%A0%94%E7%A9%B6%E8%AE%BE%E6%96%BD%E3%80%81%E5%BC%BA%E7%A3%81%E5%9C%BA%E4%B8%AD%E5%BF%83%202027%20%E6%8E%A8%E8%8D%90%E5%85%8D%E8%AF%95%20%E9%A2%84%E6%8A%A5%E5%90%8D%202026%20%E7%90%86%E8%AE%BA%E7%89%A9%E7%90%86%20%E5%A4%A9%E6%96%87%E5%AD%A6%20%E5%BC%95%E5%8A%9B" target="_blank" rel="noopener">定向复查</a>
+  </td>
+  <td class="conclusion" contenteditable="true">未检索到2027级相关单位正式预推免通知。</td>
+  <td class="status-cell"><select class="status-select"><option value="未申请" selected>未申请</option><option value="准备材料">准备材料</option><option value="已报名-等待初审">已报名-等待初审</option><option value="已通过初审">已通过初审</option><option value="已参加考核">已参加考核</option><option value="已获offer">已获offer</option><option value="未通过">未通过</option><option value="不申请">不申请</option><option value="放弃">放弃</option></select></td>
+  <td contenteditable="true">引力与精密测量高度相关，但方向可能偏实验。</td>
+</tr>
+
+<tr class="notice-watch status-unapplied region-start" data-notice="仅校内推荐办法-外校接收待发" data-tier="补充">
+  <td class="num">28</td>
+  <td contenteditable="true">湖南</td>
+  <td class="school" contenteditable="true"><strong>湖南大学</strong></td>
+  <td class="unit" contenteditable="true">物理与微电子科学学院</td>
+  <td><span class="rel rel-b">B</span></td>
+  <td contenteditable="true"><span class="tier-tag">补充</span></td>
+  <td class="notice-cell"><span class="notice-chip watch">仅校内推荐办法-外校接收待发</span></td>
+  <td class="direction" contenteditable="true">理论物理、凝聚态、光电等</td>
+  <td contenteditable="true">2026年校内推免工作通知</td>
+  <td class="deadline-cell" contenteditable="true">外校接收待官方通知</td>
+  <td contenteditable="true">待官方通知</td>
+  <td class="policy-cell" contenteditable="true">校内推荐通知不能替代外校接收报名通知。</td>
+  <td class="link-cell">
+    <a class="open-btn" href="https://gra.hnu.edu.cn/" target="_blank" rel="noopener">研究生院官方入口</a>
+    <a class="search-btn" href="https://www.bing.com/search?q=site%3Aedu.cn%20%E6%B9%96%E5%8D%97%E5%A4%A7%E5%AD%A6%20%E7%89%A9%E7%90%86%E4%B8%8E%E5%BE%AE%E7%94%B5%E5%AD%90%E7%A7%91%E5%AD%A6%E5%AD%A6%E9%99%A2%202027%20%E6%8E%A8%E8%8D%90%E5%85%8D%E8%AF%95%20%E9%A2%84%E6%8A%A5%E5%90%8D%202026%20%E7%90%86%E8%AE%BA%E7%89%A9%E7%90%86%20%E5%A4%A9%E6%96%87%E5%AD%A6%20%E5%BC%95%E5%8A%9B" target="_blank" rel="noopener">定向复查</a>
+  </td>
+  <td class="conclusion" contenteditable="true">检索到的是本校学生推免资格遴选信息，不是面向外校的接收预报名。</td>
+  <td class="status-cell"><select class="status-select"><option value="未申请" selected>未申请</option><option value="准备材料">准备材料</option><option value="已报名-等待初审">已报名-等待初审</option><option value="已通过初审">已通过初审</option><option value="已参加考核">已参加考核</option><option value="已获offer">已获offer</option><option value="未通过">未通过</option><option value="不申请">不申请</option><option value="放弃">放弃</option></select></td>
+  <td contenteditable="true">注意区分“推荐资格”与“接收预报名”。</td>
+</tr>
+
+<tr class="notice-missing status-unapplied" data-notice="截至2026-07-21未检索到" data-tier="补充">
+  <td class="num">29</td>
+  <td contenteditable="true">湖南</td>
+  <td class="school" contenteditable="true"><strong>中南大学</strong></td>
+  <td class="unit" contenteditable="true">物理学院</td>
+  <td><span class="rel rel-b">B</span></td>
+  <td contenteditable="true"><span class="tier-tag">补充</span></td>
+  <td class="notice-cell"><span class="notice-chip missing">截至2026-07-21未检索到</span></td>
+  <td class="direction" contenteditable="true">理论物理、凝聚态、光学等</td>
+  <td contenteditable="true">—</td>
+  <td class="deadline-cell" contenteditable="true">待官方通知</td>
+  <td contenteditable="true">待官方通知</td>
+  <td class="policy-cell" contenteditable="true">待正式通知。</td>
+  <td class="link-cell">
+    <a class="open-btn" href="https://gra.csu.edu.cn/" target="_blank" rel="noopener">研究生院官方入口</a>
+    <a class="search-btn" href="https://www.bing.com/search?q=site%3Aedu.cn%20%E4%B8%AD%E5%8D%97%E5%A4%A7%E5%AD%A6%20%E7%89%A9%E7%90%86%E5%AD%A6%E9%99%A2%202027%20%E6%8E%A8%E8%8D%90%E5%85%8D%E8%AF%95%20%E9%A2%84%E6%8A%A5%E5%90%8D%202026%20%E7%90%86%E8%AE%BA%E7%89%A9%E7%90%86%20%E5%A4%A9%E6%96%87%E5%AD%A6%20%E5%BC%95%E5%8A%9B" target="_blank" rel="noopener">定向复查</a>
+  </td>
+  <td class="conclusion" contenteditable="true">未检索到2027级物理学院预推免通知。</td>
+  <td class="status-cell"><select class="status-select"><option value="未申请" selected>未申请</option><option value="准备材料">准备材料</option><option value="已报名-等待初审">已报名-等待初审</option><option value="已通过初审">已通过初审</option><option value="已参加考核">已参加考核</option><option value="已获offer">已获offer</option><option value="未通过">未通过</option><option value="不申请">不申请</option><option value="放弃">放弃</option></select></td>
+  <td contenteditable="true">引力方向不是显著主线。</td>
+</tr>
+
+<tr class="notice-missing status-unapplied" data-notice="截至2026-07-21未检索到" data-tier="补充">
+  <td class="num">30</td>
+  <td contenteditable="true">湖南</td>
+  <td class="school" contenteditable="true"><strong>国防科技大学</strong></td>
+  <td class="unit" contenteditable="true">理学院/物理学相关方向</td>
+  <td><span class="rel rel-b">B</span></td>
+  <td contenteditable="true"><span class="tier-tag">补充</span></td>
+  <td class="notice-cell"><span class="notice-chip missing">截至2026-07-21未检索到</span></td>
+  <td class="direction" contenteditable="true">理论物理、量子、空间科学及国防交叉；招生身份条件需特别核验</td>
+  <td contenteditable="true">—</td>
+  <td class="deadline-cell" contenteditable="true">待官方通知</td>
+  <td contenteditable="true">待官方通知</td>
+  <td class="policy-cell" contenteditable="true">除学业材料外，需重点核验身份、政治审查、体检等要求。</td>
+  <td class="link-cell">
+    <a class="open-btn" href="https://yjszs.nudt.edu.cn/" target="_blank" rel="noopener">官方研招入口</a>
+    <a class="search-btn" href="https://www.bing.com/search?q=site%3Aedu.cn%20%E5%9B%BD%E9%98%B2%E7%A7%91%E6%8A%80%E5%A4%A7%E5%AD%A6%20%E7%90%86%E5%AD%A6%E9%99%A2/%E7%89%A9%E7%90%86%E5%AD%A6%E7%9B%B8%E5%85%B3%E6%96%B9%E5%90%91%202027%20%E6%8E%A8%E8%8D%90%E5%85%8D%E8%AF%95%20%E9%A2%84%E6%8A%A5%E5%90%8D%202026%20%E7%90%86%E8%AE%BA%E7%89%A9%E7%90%86%20%E5%A4%A9%E6%96%87%E5%AD%A6%20%E5%BC%95%E5%8A%9B" target="_blank" rel="noopener">定向复查</a>
+  </td>
+  <td class="conclusion" contenteditable="true">未检索到2027级面向外校物理方向预推免通知。</td>
+  <td class="status-cell"><select class="status-select"><option value="未申请" selected>未申请</option><option value="准备材料">准备材料</option><option value="已报名-等待初审">已报名-等待初审</option><option value="已通过初审">已通过初审</option><option value="已参加考核">已参加考核</option><option value="已获offer">已获offer</option><option value="未通过">未通过</option><option value="不申请">不申请</option><option value="放弃">放弃</option></select></td>
+  <td contenteditable="true">政策和身份要求与普通高校不同。</td>
+</tr>
+
+<tr class="notice-missing status-unapplied region-start" data-notice="截至2026-07-21未检索到" data-tier="冲刺">
+  <td class="num">31</td>
+  <td contenteditable="true">广东</td>
+  <td class="school" contenteditable="true"><strong>中山大学</strong></td>
+  <td class="unit" contenteditable="true">物理与天文学院、物理学院</td>
+  <td><span class="rel rel-s">S</span></td>
+  <td contenteditable="true"><span class="tier-tag">冲刺</span></td>
+  <td class="notice-cell"><span class="notice-chip missing">截至2026-07-21未检索到</span></td>
+  <td class="direction" contenteditable="true">天文学、宇宙学、引力波、黑洞物理、理论物理</td>
+  <td contenteditable="true">—</td>
+  <td class="deadline-cell" contenteditable="true">待官方通知</td>
+  <td contenteditable="true">待官方通知</td>
+  <td class="policy-cell" contenteditable="true">待正式通知。</td>
+  <td class="link-cell">
+    <a class="open-btn" href="https://graduate.sysu.edu.cn/zsw/" target="_blank" rel="noopener">官方研招入口</a>
+    <a class="search-btn" href="https://www.bing.com/search?q=site%3Aedu.cn%20%E4%B8%AD%E5%B1%B1%E5%A4%A7%E5%AD%A6%20%E7%89%A9%E7%90%86%E4%B8%8E%E5%A4%A9%E6%96%87%E5%AD%A6%E9%99%A2%E3%80%81%E7%89%A9%E7%90%86%E5%AD%A6%E9%99%A2%202027%20%E6%8E%A8%E8%8D%90%E5%85%8D%E8%AF%95%20%E9%A2%84%E6%8A%A5%E5%90%8D%202026%20%E7%90%86%E8%AE%BA%E7%89%A9%E7%90%86%20%E5%A4%A9%E6%96%87%E5%AD%A6%20%E5%BC%95%E5%8A%9B" target="_blank" rel="noopener">定向复查</a>
+  </td>
+  <td class="conclusion" contenteditable="true">未检索到两个相关学院的2027级正式预推免通知。</td>
+  <td class="status-cell"><select class="status-select"><option value="未申请" selected>未申请</option><option value="准备材料">准备材料</option><option value="已报名-等待初审">已报名-等待初审</option><option value="已通过初审">已通过初审</option><option value="已参加考核">已参加考核</option><option value="已获offer">已获offer</option><option value="未通过">未通过</option><option value="不申请">不申请</option><option value="放弃">放弃</option></select></td>
+  <td contenteditable="true">物理与天文学院与你的方向高度匹配。</td>
+</tr>
+
+<tr class="notice-missing status-unapplied" data-notice="截至2026-07-21未检索到" data-tier="补充">
+  <td class="num">32</td>
+  <td contenteditable="true">广东</td>
+  <td class="school" contenteditable="true"><strong>华南理工大学</strong></td>
+  <td class="unit" contenteditable="true">物理与光电学院</td>
+  <td><span class="rel rel-b">B</span></td>
+  <td contenteditable="true"><span class="tier-tag">补充</span></td>
+  <td class="notice-cell"><span class="notice-chip missing">截至2026-07-21未检索到</span></td>
+  <td class="direction" contenteditable="true">物理学、光学、光电；引力理论匹配较弱</td>
+  <td contenteditable="true">—</td>
+  <td class="deadline-cell" contenteditable="true">待官方通知</td>
+  <td contenteditable="true">待官方通知</td>
+  <td class="policy-cell" contenteditable="true">待正式通知。</td>
+  <td class="link-cell">
+    <a class="open-btn" href="https://yz.scut.edu.cn/" target="_blank" rel="noopener">官方研招入口</a>
+    <a class="search-btn" href="https://www.bing.com/search?q=site%3Aedu.cn%20%E5%8D%8E%E5%8D%97%E7%90%86%E5%B7%A5%E5%A4%A7%E5%AD%A6%20%E7%89%A9%E7%90%86%E4%B8%8E%E5%85%89%E7%94%B5%E5%AD%A6%E9%99%A2%202027%20%E6%8E%A8%E8%8D%90%E5%85%8D%E8%AF%95%20%E9%A2%84%E6%8A%A5%E5%90%8D%202026%20%E7%90%86%E8%AE%BA%E7%89%A9%E7%90%86%20%E5%A4%A9%E6%96%87%E5%AD%A6%20%E5%BC%95%E5%8A%9B" target="_blank" rel="noopener">定向复查</a>
+  </td>
+  <td class="conclusion" contenteditable="true">未检索到2027级物理与光电学院预推免通知。</td>
+  <td class="status-cell"><select class="status-select"><option value="未申请" selected>未申请</option><option value="准备材料">准备材料</option><option value="已报名-等待初审">已报名-等待初审</option><option value="已通过初审">已通过初审</option><option value="已参加考核">已参加考核</option><option value="已获offer">已获offer</option><option value="未通过">未通过</option><option value="不申请">不申请</option><option value="放弃">放弃</option></select></td>
+  <td contenteditable="true">更偏光电与凝聚态相关方向。</td>
+</tr>
+
+<tr class="notice-partial status-unapplied region-start" data-notice="官方平台开放-项目待核验" data-tier="主申">
+  <td class="num">33</td>
+  <td contenteditable="true">四川</td>
+  <td class="school" contenteditable="true"><strong>四川大学</strong></td>
+  <td class="unit" contenteditable="true">物理学院</td>
+  <td><span class="rel rel-a">A</span></td>
+  <td contenteditable="true"><span class="tier-tag">主申</span></td>
+  <td class="notice-cell"><span class="notice-chip partial">官方平台开放-项目待核验</span></td>
+  <td class="direction" contenteditable="true">理论物理、粒子物理、核物理、天体物理相关方向</td>
+  <td contenteditable="true">平台开放：2026-06-08</td>
+  <td class="deadline-cell" contenteditable="true">平台显示至2026-07-31 22:00</td>
+  <td contenteditable="true">具体项目另行通知</td>
+  <td class="policy-cell" contenteditable="true">先注册夏令营/预推免共用平台；是否存在物理学院预推免项目须在系统内确认。</td>
+  <td class="link-cell">
+    <a class="open-btn" href="https://yz.scu.edu.cn/xly/login/" target="_blank" rel="noopener">官方夏令营/预推免平台</a>
+    <a class="search-btn" href="https://www.bing.com/search?q=site%3Aedu.cn%20%E5%9B%9B%E5%B7%9D%E5%A4%A7%E5%AD%A6%20%E7%89%A9%E7%90%86%E5%AD%A6%E9%99%A2%202027%20%E6%8E%A8%E8%8D%90%E5%85%8D%E8%AF%95%20%E9%A2%84%E6%8A%A5%E5%90%8D%202026%20%E7%90%86%E8%AE%BA%E7%89%A9%E7%90%86%20%E5%A4%A9%E6%96%87%E5%AD%A6%20%E5%BC%95%E5%8A%9B" target="_blank" rel="noopener">定向复查</a>
+  </td>
+  <td class="conclusion" contenteditable="true">官方平台处于开放期，但公开页面未检索到物理学院2027级独立预推免通知。</td>
+  <td class="status-cell"><select class="status-select"><option value="未申请" selected>未申请</option><option value="准备材料">准备材料</option><option value="已报名-等待初审">已报名-等待初审</option><option value="已通过初审">已通过初审</option><option value="已参加考核">已参加考核</option><option value="已获offer">已获offer</option><option value="未通过">未通过</option><option value="不申请">不申请</option><option value="放弃">放弃</option></select></td>
+  <td contenteditable="true">当前应登录系统核验项目，而不是仅等待网页公告。</td>
+</tr>
+
+<tr class="notice-missing status-unapplied" data-notice="截至2026-07-21未检索到" data-tier="主申">
+  <td class="num">34</td>
+  <td contenteditable="true">四川</td>
+  <td class="school" contenteditable="true"><strong>电子科技大学</strong></td>
+  <td class="unit" contenteditable="true">物理学院、基础与前沿研究院</td>
+  <td><span class="rel rel-a">A</span></td>
+  <td contenteditable="true"><span class="tier-tag">主申</span></td>
+  <td class="notice-cell"><span class="notice-chip missing">截至2026-07-21未检索到</span></td>
+  <td class="direction" contenteditable="true">理论物理、量子、凝聚态、交叉前沿；引力方向需导师核验</td>
+  <td contenteditable="true">—</td>
+  <td class="deadline-cell" contenteditable="true">待官方通知</td>
+  <td contenteditable="true">待官方通知</td>
+  <td class="policy-cell" contenteditable="true">待正式通知。</td>
+  <td class="link-cell">
+    <a class="open-btn" href="https://yz.uestc.edu.cn/" target="_blank" rel="noopener">官方研招入口</a>
+    <a class="search-btn" href="https://www.bing.com/search?q=site%3Aedu.cn%20%E7%94%B5%E5%AD%90%E7%A7%91%E6%8A%80%E5%A4%A7%E5%AD%A6%20%E7%89%A9%E7%90%86%E5%AD%A6%E9%99%A2%E3%80%81%E5%9F%BA%E7%A1%80%E4%B8%8E%E5%89%8D%E6%B2%BF%E7%A0%94%E7%A9%B6%E9%99%A2%202027%20%E6%8E%A8%E8%8D%90%E5%85%8D%E8%AF%95%20%E9%A2%84%E6%8A%A5%E5%90%8D%202026%20%E7%90%86%E8%AE%BA%E7%89%A9%E7%90%86%20%E5%A4%A9%E6%96%87%E5%AD%A6%20%E5%BC%95%E5%8A%9B" target="_blank" rel="noopener">定向复查</a>
+  </td>
+  <td class="conclusion" contenteditable="true">未检索到2027级接收推免通用通知或相关学院预报名通知。</td>
+  <td class="status-cell"><select class="status-select"><option value="未申请" selected>未申请</option><option value="准备材料">准备材料</option><option value="已报名-等待初审">已报名-等待初审</option><option value="已通过初审">已通过初审</option><option value="已参加考核">已参加考核</option><option value="已获offer">已获offer</option><option value="未通过">未通过</option><option value="不申请">不申请</option><option value="放弃">放弃</option></select></td>
+  <td contenteditable="true">基础与前沿研究院需按导师研究主题筛选。</td>
+</tr>
+
+<tr class="notice-published status-unapplied region-start" data-notice="校级已发布-报名中" data-tier="主申">
+  <td class="num">35</td>
+  <td contenteditable="true">重庆</td>
+  <td class="school" contenteditable="true"><strong>重庆大学</strong></td>
+  <td class="unit" contenteditable="true">物理学院</td>
+  <td><span class="rel rel-a">A</span></td>
+  <td contenteditable="true"><span class="tier-tag">主申</span></td>
+  <td class="notice-cell"><span class="notice-chip published">校级已发布-报名中</span></td>
+  <td class="direction" contenteditable="true">物理学、理论与计算物理等；学院项目以系统为准</td>
+  <td contenteditable="true">2026-06-22</td>
+  <td class="deadline-cell" contenteditable="true">校级系统：2026-09-30 18:00；学院自行设定</td>
+  <td contenteditable="true">预计2026年9月初起按学院细则考核</td>
+  <td class="policy-cell" contenteditable="true">成绩单、外语水平证明、获奖证书、论文及其他能力证明。</td>
+  <td class="link-cell">
+    <a class="open-btn" href="https://yz.cqu.edu.cn/news/2026-06/2553.html" target="_blank" rel="noopener">校级官方公告</a>
+    <a class="search-btn" href="https://www.bing.com/search?q=site%3Aedu.cn%20%E9%87%8D%E5%BA%86%E5%A4%A7%E5%AD%A6%20%E7%89%A9%E7%90%86%E5%AD%A6%E9%99%A2%202027%20%E6%8E%A8%E8%8D%90%E5%85%8D%E8%AF%95%20%E9%A2%84%E6%8A%A5%E5%90%8D%202026%20%E7%90%86%E8%AE%BA%E7%89%A9%E7%90%86%20%E5%A4%A9%E6%96%87%E5%AD%A6%20%E5%BC%95%E5%8A%9B" target="_blank" rel="noopener">定向复查</a>
+  </td>
+  <td class="conclusion" contenteditable="true">2027级校级预报名已开放；必须再核对物理学院在系统中的起止时间。</td>
+  <td class="status-cell"><select class="status-select"><option value="未申请" selected>未申请</option><option value="准备材料">准备材料</option><option value="已报名-等待初审">已报名-等待初审</option><option value="已通过初审">已通过初审</option><option value="已参加考核">已参加考核</option><option value="已获offer">已获offer</option><option value="未通过">未通过</option><option value="不申请">不申请</option><option value="放弃">放弃</option></select></td>
+  <td contenteditable="true">本地院校，申请成本低；可作为稳定主申。</td>
+</tr>
+
+<tr class="notice-missing status-unapplied region-start" data-notice="截至2026-07-21未检索到" data-tier="主申">
+  <td class="num">36</td>
+  <td contenteditable="true">陕西</td>
+  <td class="school" contenteditable="true"><strong>西安交通大学</strong></td>
+  <td class="unit" contenteditable="true">物理学院</td>
+  <td><span class="rel rel-a">A</span></td>
+  <td contenteditable="true"><span class="tier-tag">主申</span></td>
+  <td class="notice-cell"><span class="notice-chip missing">截至2026-07-21未检索到</span></td>
+  <td class="direction" contenteditable="true">理论物理、粒子物理、凝聚态、光学</td>
+  <td contenteditable="true">—</td>
+  <td class="deadline-cell" contenteditable="true">待官方通知</td>
+  <td contenteditable="true">待官方通知</td>
+  <td class="policy-cell" contenteditable="true">待正式通知。</td>
+  <td class="link-cell">
+    <a class="open-btn" href="https://yz.xjtu.edu.cn/" target="_blank" rel="noopener">官方研招入口</a>
+    <a class="search-btn" href="https://www.bing.com/search?q=site%3Aedu.cn%20%E8%A5%BF%E5%AE%89%E4%BA%A4%E9%80%9A%E5%A4%A7%E5%AD%A6%20%E7%89%A9%E7%90%86%E5%AD%A6%E9%99%A2%202027%20%E6%8E%A8%E8%8D%90%E5%85%8D%E8%AF%95%20%E9%A2%84%E6%8A%A5%E5%90%8D%202026%20%E7%90%86%E8%AE%BA%E7%89%A9%E7%90%86%20%E5%A4%A9%E6%96%87%E5%AD%A6%20%E5%BC%95%E5%8A%9B" target="_blank" rel="noopener">定向复查</a>
+  </td>
+  <td class="conclusion" contenteditable="true">未检索到物理学院2027级预推免通知；当前研招网仍主要展示2026级推免信息。</td>
+  <td class="status-cell"><select class="status-select"><option value="未申请" selected>未申请</option><option value="准备材料">准备材料</option><option value="已报名-等待初审">已报名-等待初审</option><option value="已通过初审">已通过初审</option><option value="已参加考核">已参加考核</option><option value="已获offer">已获offer</option><option value="未通过">未通过</option><option value="不申请">不申请</option><option value="放弃">放弃</option></select></td>
+  <td contenteditable="true">物理学平台较强，建议持续追踪。</td>
+</tr>
+
+<tr class="notice-missing status-unapplied" data-notice="截至2026-07-21未检索到" data-tier="补充">
+  <td class="num">37</td>
+  <td contenteditable="true">陕西</td>
+  <td class="school" contenteditable="true"><strong>西北工业大学</strong></td>
+  <td class="unit" contenteditable="true">物理科学与技术学院</td>
+  <td><span class="rel rel-b">B</span></td>
+  <td contenteditable="true"><span class="tier-tag">补充</span></td>
+  <td class="notice-cell"><span class="notice-chip missing">截至2026-07-21未检索到</span></td>
+  <td class="direction" contenteditable="true">物理学、光学、凝聚态与航天交叉</td>
+  <td contenteditable="true">—</td>
+  <td class="deadline-cell" contenteditable="true">待官方通知</td>
+  <td contenteditable="true">待官方通知</td>
+  <td class="policy-cell" contenteditable="true">待正式通知。</td>
+  <td class="link-cell">
+    <a class="open-btn" href="https://yzb.nwpu.edu.cn/" target="_blank" rel="noopener">官方研招入口</a>
+    <a class="search-btn" href="https://www.bing.com/search?q=site%3Aedu.cn%20%E8%A5%BF%E5%8C%97%E5%B7%A5%E4%B8%9A%E5%A4%A7%E5%AD%A6%20%E7%89%A9%E7%90%86%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF%E5%AD%A6%E9%99%A2%202027%20%E6%8E%A8%E8%8D%90%E5%85%8D%E8%AF%95%20%E9%A2%84%E6%8A%A5%E5%90%8D%202026%20%E7%90%86%E8%AE%BA%E7%89%A9%E7%90%86%20%E5%A4%A9%E6%96%87%E5%AD%A6%20%E5%BC%95%E5%8A%9B" target="_blank" rel="noopener">定向复查</a>
+  </td>
+  <td class="conclusion" contenteditable="true">未检索到2027级物理相关预推免通知。</td>
+  <td class="status-cell"><select class="status-select"><option value="未申请" selected>未申请</option><option value="准备材料">准备材料</option><option value="已报名-等待初审">已报名-等待初审</option><option value="已通过初审">已通过初审</option><option value="已参加考核">已参加考核</option><option value="已获offer">已获offer</option><option value="未通过">未通过</option><option value="不申请">不申请</option><option value="放弃">放弃</option></select></td>
+  <td contenteditable="true">引力理论不是主要特色。</td>
+</tr>
+
+<tr class="notice-missing status-unapplied" data-notice="截至2026-07-21未检索到" data-tier="低优先">
+  <td class="num">38</td>
+  <td contenteditable="true">陕西</td>
+  <td class="school" contenteditable="true"><strong>西北农林科技大学</strong></td>
+  <td class="unit" contenteditable="true">理学院</td>
+  <td><span class="rel rel-c">C</span></td>
+  <td contenteditable="true"><span class="tier-tag">低优先</span></td>
+  <td class="notice-cell"><span class="notice-chip missing">截至2026-07-21未检索到</span></td>
+  <td class="direction" contenteditable="true">物理学/光电及农业交叉；引力方向匹配较弱</td>
+  <td contenteditable="true">—</td>
+  <td class="deadline-cell" contenteditable="true">待官方通知</td>
+  <td contenteditable="true">待官方通知</td>
+  <td class="policy-cell" contenteditable="true">待正式通知。</td>
+  <td class="link-cell">
+    <a class="open-btn" href="https://yz.nwafu.edu.cn/tzgg/index.htm" target="_blank" rel="noopener">官方通知列表</a>
+    <a class="search-btn" href="https://www.bing.com/search?q=site%3Aedu.cn%20%E8%A5%BF%E5%8C%97%E5%86%9C%E6%9E%97%E7%A7%91%E6%8A%80%E5%A4%A7%E5%AD%A6%20%E7%90%86%E5%AD%A6%E9%99%A2%202027%20%E6%8E%A8%E8%8D%90%E5%85%8D%E8%AF%95%20%E9%A2%84%E6%8A%A5%E5%90%8D%202026%20%E7%90%86%E8%AE%BA%E7%89%A9%E7%90%86%20%E5%A4%A9%E6%96%87%E5%AD%A6%20%E5%BC%95%E5%8A%9B" target="_blank" rel="noopener">定向复查</a>
+  </td>
+  <td class="conclusion" contenteditable="true">官方页面最新可检索到的是2026级推免预报名，尚未见2027级。</td>
+  <td class="status-cell"><select class="status-select"><option value="未申请" selected>未申请</option><option value="准备材料">准备材料</option><option value="已报名-等待初审">已报名-等待初审</option><option value="已通过初审">已通过初审</option><option value="已参加考核">已参加考核</option><option value="已获offer">已获offer</option><option value="未通过">未通过</option><option value="不申请">不申请</option><option value="放弃">放弃</option></select></td>
+  <td contenteditable="true">非理论物理主线。</td>
+</tr>
+
+<tr class="notice-missing status-unapplied region-start" data-notice="截至2026-07-21未检索到" data-tier="主申">
+  <td class="num">39</td>
+  <td contenteditable="true">甘肃</td>
+  <td class="school" contenteditable="true"><strong>兰州大学</strong></td>
+  <td class="unit" contenteditable="true">物理科学与技术学院</td>
+  <td><span class="rel rel-a">A</span></td>
+  <td contenteditable="true"><span class="tier-tag">主申</span></td>
+  <td class="notice-cell"><span class="notice-chip missing">截至2026-07-21未检索到</span></td>
+  <td class="direction" contenteditable="true">理论物理、粒子物理与核物理、凝聚态等</td>
+  <td contenteditable="true">—</td>
+  <td class="deadline-cell" contenteditable="true">待官方通知</td>
+  <td contenteditable="true">待官方通知</td>
+  <td class="policy-cell" contenteditable="true">待正式通知。</td>
+  <td class="link-cell">
+    <a class="open-btn" href="https://phy.lzu.edu.cn/" target="_blank" rel="noopener">学院官方入口</a>
+    <a class="search-btn" href="https://www.bing.com/search?q=site%3Aedu.cn%20%E5%85%B0%E5%B7%9E%E5%A4%A7%E5%AD%A6%20%E7%89%A9%E7%90%86%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF%E5%AD%A6%E9%99%A2%202027%20%E6%8E%A8%E8%8D%90%E5%85%8D%E8%AF%95%20%E9%A2%84%E6%8A%A5%E5%90%8D%202026%20%E7%90%86%E8%AE%BA%E7%89%A9%E7%90%86%20%E5%A4%A9%E6%96%87%E5%AD%A6%20%E5%BC%95%E5%8A%9B" target="_blank" rel="noopener">定向复查</a>
+  </td>
+  <td class="conclusion" contenteditable="true">未检索到2027级推免生/直博生复试录取实施细则；官网当前仍以2026级为最新。</td>
+  <td class="status-cell"><select class="status-select"><option value="未申请" selected>未申请</option><option value="准备材料">准备材料</option><option value="已报名-等待初审">已报名-等待初审</option><option value="已通过初审">已通过初审</option><option value="已参加考核">已参加考核</option><option value="已获offer">已获offer</option><option value="未通过">未通过</option><option value="不申请">不申请</option><option value="放弃">放弃</option></select></td>
+  <td contenteditable="true">理论物理学科强，但地域与你既往偏好存在冲突，可自行调整状态。</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<section class="card">
+<h2>检索口径</h2>
+<div class="note">
+<b>关键词组合：</b>高校或研究单位名 + 2027 + 推荐免试/推免生/预报名/接收推免 + 物理学院/天文学院/理论物理/引力/宇宙学。<br>
+<b>判定规则：</b>只有高校研招网、学院官网、研究所官网或正式报名系统可将状态标为“已发布”；夏令营、招生宣传、校内推免资格遴选与外校接收预推免分别标注，不相互替代。<br>
+<b>时效限制：</b>“未检索到”仅表示截至2026-07-21公开页面未发现，不代表该校本年度一定不举办预推免。
+</div>
+</section>
+
+<div class="footer">自动更新架构：Python + 官方网页 + Serper发现候选链接 + GitHub Actions｜人工申请状态仍保存在浏览器本地</div>
+</main>
+
+<script src="data/notices.js"></script>
+<script>
+const STORAGE_KEY='pre985_20260721_v1';
+function appClass(v){
+  if(v==='准备材料') return 'status-preparing';
+  if(v==='已报名-等待初审') return 'status-applied';
+  if(v==='已通过初审'||v==='已参加考核') return 'status-pass';
+  if(v==='已获offer') return 'status-offer';
+  if(v==='未通过') return 'status-fail';
+  if(v==='不申请'||v==='放弃') return 'status-stop';
+  return 'status-unapplied';
+}
+function applyStatusRow(tr){
+  [...tr.classList].filter(x=>x.startsWith('status-')).forEach(x=>tr.classList.remove(x));
+  const v=tr.querySelector('.status-select')?.value||'未申请';
+  tr.classList.add(appClass(v));
+}
+function serialize(){
+  return [...document.querySelectorAll('#preTable tbody tr')].map(tr=>({
+    cells:[...tr.querySelectorAll('td')].map(td=>td.classList.contains('status-cell')?null:td.innerHTML),
+    status:tr.querySelector('.status-select').value
+  }));
+}
+function scheduleSave(){
+  clearTimeout(window.__saveTimer);
+  window.__saveTimer=setTimeout(()=>{
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(serialize()));
+    document.getElementById('editStatus').textContent='已自动保存：'+new Date().toLocaleTimeString();
+  },250);
+}
+function restore(){
+  const raw=localStorage.getItem(STORAGE_KEY);
+  if(raw){
+    try{
+      const data=JSON.parse(raw), rows=[...document.querySelectorAll('#preTable tbody tr')];
+      data.forEach((r,i)=>{
+        if(!rows[i]) return;
+        const cells=[...rows[i].querySelectorAll('td')];
+        r.cells.forEach((html,j)=>{if(html!==null&&cells[j]) cells[j].innerHTML=html;});
+        rows[i].querySelector('.status-select').value=r.status||'未申请';
+      });
+    }catch(e){console.warn(e);}
+  }
+  document.querySelectorAll('#preTable tbody tr').forEach(applyStatusRow);
+}
+function applyFilter(){
+  const q=document.getElementById('search').value.trim().toLowerCase();
+  const nf=document.getElementById('noticeFilter').value;
+  const tf=document.getElementById('tierFilter').value;
+  const af=document.getElementById('appFilter').value;
+  document.querySelectorAll('#preTable tbody tr').forEach(tr=>{
+    const text=tr.innerText.toLowerCase();
+    const okQ=!q||text.includes(q);
+    const okN=!nf||tr.dataset.notice===nf;
+    const okT=!tf||tr.dataset.tier===tf;
+    const okA=!af||tr.querySelector('.status-select').value===af;
+    tr.style.display=(okQ&&okN&&okT&&okA)?'':'none';
+  });
+}
+function resetFilter(){
+  document.getElementById('search').value='';
+  document.getElementById('noticeFilter').value='';
+  document.getElementById('tierFilter').value='';
+  document.getElementById('appFilter').value='';
+  applyFilter();
+}
+function exportEditedHTML(){
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(serialize()));
+  const clone=document.documentElement.cloneNode(true);
+  clone.querySelectorAll('.edited').forEach(x=>x.classList.remove('edited'));
+  clone.querySelectorAll('.status-select').forEach(sel=>{
+    [...sel.options].forEach(o=>o.removeAttribute('selected'));
+    const o=[...sel.options].find(x=>x.value===sel.value);
+    if(o)o.setAttribute('selected','selected');
+  });
+  const blob=new Blob(['<!doctype html>\n'+clone.outerHTML],{type:'text/html;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='2026年985高校预推免通知_理论物理天文引力_修改后.html';
+  a.click();URL.revokeObjectURL(a.href);
+}
+function csvEscape(v){return '"'+String(v??'').replaceAll('"','""')+'"';}
+function exportCSV(){
+  const rows=[];
+  rows.push([...document.querySelectorAll('#preTable thead th')].map(x=>csvEscape(x.innerText.trim())).join(','));
+  document.querySelectorAll('#preTable tbody tr').forEach(tr=>{
+    const vals=[...tr.querySelectorAll('td')].map(td=>{
+      if(td.classList.contains('status-cell'))return tr.querySelector('.status-select').value;
+      if(td.classList.contains('link-cell'))return [...td.querySelectorAll('a')].map(a=>a.href).join(' | ');
+      return td.innerText.trim();
+    });
+    rows.push(vals.map(csvEscape).join(','));
+  });
+  const blob=new Blob(['\ufeff'+rows.join('\n')],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='2026年985高校预推免通知_理论物理天文引力.csv';
+  a.click();URL.revokeObjectURL(a.href);
+}
+function clearSavedEdits(){
+  if(confirm('确认清除本浏览器保存的所有修改？')){
+    localStorage.removeItem(STORAGE_KEY);location.reload();
+  }
+}
+document.addEventListener('input',e=>{
+  if(e.target.matches('[contenteditable="true"]')){e.target.classList.add('edited');scheduleSave();}
+});
+document.addEventListener('change',e=>{
+  if(e.target.matches('.status-select')){applyStatusRow(e.target.closest('tr'));scheduleSave();applyFilter();}
+});
+document.addEventListener('DOMContentLoaded',restore);
+
+let AUTO_ROUTE='';
+function escAuto(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function verifyClass(v){if(v==='高'||v==='人工核验基线')return 'verify-high';if(v==='中')return 'verify-mid';return 'verify-low';}
+function renderCrawlerTable(){
+  const data=window.CRAWLER_DATA||{meta:{},notices:[],report:{}};
+  const type=document.getElementById('autoType')?.value||'';
+  const major=document.getElementById('autoMajor')?.value||'';
+  const verify=document.getElementById('autoVerify')?.value||'';
+  const q=(document.getElementById('autoSearch')?.value||'').trim().toLowerCase();
+  let items=(data.notices||[]).filter(x=>(!AUTO_ROUTE||x.route===AUTO_ROUTE)&&(!type||x.institution_type===type)&&(!major||(x.majors||[]).includes(major))&&(!verify||x.verification===verify));
+  if(q)items=items.filter(x=>JSON.stringify(x).toLowerCase().includes(q));
+  const tbody=document.querySelector('#crawlerTable tbody');
+  if(!tbody)return;
+  if(!items.length){tbody.innerHTML='<tr><td colspan="14" class="empty-state">当前筛选条件下没有结果。先运行 <span class="code-inline">python crawler.py --all</span>，或等待 GitHub Actions 更新。</td></tr>';return;}
+  tbody.innerHTML=items.map((x,i)=>{
+    const routeClass=x.route==='夏令营'?'route-summer':'route-pre';
+    const majors=(x.majors||[]).map(v=>`<span class="major-chip">${escAuto(v)}</span>`).join('');
+    const kws=(x.matched_keywords||[]).map(v=>`<span class="major-chip">${escAuto(v)}</span>`).join('');
+    return `<tr><td class="num">${i+1}</td><td><span class="route-chip ${routeClass}">${escAuto(x.route)}</span></td><td><span class="major-chip">${escAuto(x.institution_type||'其他')}</span></td><td class="school"><strong>${escAuto(x.school)}</strong></td><td>${escAuto(x.college)}</td><td>${majors}${kws}</td><td class="title-col"><b>${escAuto(x.title)}</b></td><td>${escAuto(x.published_at||'待识别')}</td><td class="deadline-cell">${escAuto(x.deadline||'待人工核验')}</td><td>${escAuto(x.status||'待人工确认')}</td><td>${escAuto(x.score)}</td><td><span class="verify-chip ${verifyClass(x.verification)}">${escAuto(x.verification)}</span></td><td><a class="open-btn" href="${escAuto(x.url)}" target="_blank" rel="noopener">打开官方原文</a></td><td class="excerpt-col">${escAuto(x.deadline_context||x.excerpt||'')}</td></tr>`;
+  }).join('');
+}
+function initCrawlerPanel(){
+  const data=window.CRAWLER_DATA||{meta:{},notices:[],report:{}};
+  const rep=data.report||{}, items=data.notices||[];
+  document.getElementById('autoTotal').textContent=items.length;
+  document.getElementById('autoNew').textContent=rep.new_notices||0;
+  document.getElementById('autoReview').textContent=items.filter(x=>x.verification!=='高'&&x.verification!=='人工核验基线').length;
+  document.getElementById('autoSchools').textContent=rep.institutions_checked||rep.schools_checked||data.meta?.monitored_units||0;
+  document.getElementById('autoErrors').textContent=(rep.errors||[]).length;
+  document.getElementById('autoUpdated').textContent='最近数据：'+(data.meta?.generated_at||rep.run_at||'未知')+'｜发现方式：'+(rep.search_provider||'none');
+  document.querySelectorAll('#routeTabs button').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('#routeTabs button').forEach(x=>x.classList.remove('active'));btn.classList.add('active');AUTO_ROUTE=btn.dataset.route||'';renderCrawlerTable();}));
+  ['autoType','autoMajor','autoVerify'].forEach(id=>document.getElementById(id)?.addEventListener('change',renderCrawlerTable));
+  document.getElementById('autoSearch')?.addEventListener('input',renderCrawlerTable);
+  renderCrawlerTable();
+}
+document.addEventListener('DOMContentLoaded',initCrawlerPanel);
+
+</script>
+</body>
+</html>

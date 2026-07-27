@@ -1,0 +1,10 @@
+{
+  "run_at": "2026-07-27T12:00:00+08:00",
+  "schools_checked": 51,
+  "institutions_checked": 51,
+  "candidates_kept": 26,
+  "new_notices": 11,
+  "errors": [],
+  "school_stats": [],
+  "search_provider": "serper（未配置密钥时退化为官网入口抓取）"
+}
