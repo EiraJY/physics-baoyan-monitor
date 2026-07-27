@@ -14,6 +14,7 @@ import argparse
 import concurrent.futures as cf
 import datetime as dt
 import hashlib
+import html as html_lib
 import json
 import os
 import re
@@ -129,6 +130,30 @@ def extract_links(html: str, base_url: str, domains: list[str], max_links: int) 
     return out
 
 
+DETAIL_PATH_RE = re.compile(r"/publish/s03/s0302/detail/[0-9a-fA-F-]{20,}(?:\?[^\"'<>\s\\]*)?")
+
+
+def is_detail_notice_url(url: str) -> bool:
+    path = (urlsplit(url).path or "").lower()
+    return "/detail/" in path or bool(re.search(r"/(?:info/\d+/\d+|20\d{2}/\d{2,}|t20\d{4,}|[^/]+\.(?:htm|html|shtml))$", path, re.I))
+
+
+def extract_embedded_detail_urls(html: str, base_url: str, domains: list[str]) -> list[str]:
+    """从页面源码、内嵌 JSON 和 JS 事件中抽取详情页 URL。
+
+    部分招生系统的列表项不是标准 <a href>，而是 onclick / 路由 JSON。
+    BeautifulSoup 的 a[href] 会漏掉这些链接，因此额外扫描源码。
+    """
+    raw = html_lib.unescape(html or "")
+    raw = raw.replace("\\/", "/").replace("\u0026", "&")
+    out: list[str] = []
+    for m in DETAIL_PATH_RE.finditer(raw):
+        url = canonical_url(urljoin(base_url, m.group(0)))
+        if url and allowed_domain(url, domains):
+            out.append(url)
+    return list(dict.fromkeys(out))
+
+
 def likely_link(text: str, url: str, cfg: dict[str, Any], school: dict[str, Any] | None = None) -> bool:
     """判断列表页链接是否值得进入正文抓取。
 
@@ -223,12 +248,17 @@ def search_web(session: requests.Session, query: str, cfg: dict[str, Any]) -> li
 def build_queries(school: dict[str, Any], cfg: dict[str, Any]) -> list[str]:
     """每个院系/研究单位只发1条定向查询。
 
-    查询必须包含院系名称，避免把学校级总办法误锁定为物理系或天文系通知。
+    对配置了 unit_id 的院系，优先搜索精确的院系招生简章标题；
+    搜索 API 找到列表页后，再由列表源码解析出具体详情页。
     """
     pyear, ayear = cfg["target"]["publish_year"], cfg["target"]["admission_year"]
     domain = school.get("official_domains", [""])[0]
     domain_part = f"site:{domain}" if domain else ""
-    unit = school.get("required_title_terms", []) or [school.get("college", "")]
+    college = str(school.get("college", "")).strip()
+    if school.get("unit_id") and college:
+        exact = f'{school["name"]}{college}{ayear}年博士研究生招生简章'
+        return [f'{domain_part} "{exact}"'.strip()]
+    unit = school.get("required_title_terms", []) or [college]
     unit_part = " OR ".join(f'"{x}"' for x in unit if x)
     route = '("夏令营" OR "预推免" OR "推免" OR "推荐免试" OR "博士研究生招生简章" OR "硕士研究生招生简章")'
     years = f"({pyear} OR {ayear})"
@@ -590,43 +620,74 @@ def process_candidate(session: requests.Session, url: str, school: dict[str, Any
         return None, f"{url}: {type(e).__name__}: {e}"
 
 
-def discover_school(session: requests.Session, school: dict[str, Any], cfg: dict[str, Any]) -> tuple[list[dict[str, Any]], list[str]]:
+def discover_school(session: requests.Session, school: dict[str, Any], cfg: dict[str, Any]) -> tuple[list[dict[str, Any]], list[str], dict[str, int]]:
     domains = school.get("official_domains", [])
     max_pages = int(cfg["crawler"]["max_pages_per_school"])
     max_links = int(cfg["crawler"]["max_links_per_page"])
-    seed_urls=set(canonical_url(u) for u in school.get("start_urls", []) if canonical_url(u))
-    candidates=set()
-    errors=[]
-    # Search API discovery (optional)
+    seed_urls = {canonical_url(u) for u in school.get("start_urls", []) if canonical_url(u)}
+    direct_urls = {canonical_url(u) for u in school.get("direct_notice_urls", []) if canonical_url(u)}
+    candidates = set(direct_urls)
+    # 旧版的关键错误：start_urls 中已经给出的详情页只被当作“列表入口”，从未进入正文处理。
+    candidates.update(u for u in seed_urls if is_detail_notice_url(u))
+    errors: list[str] = []
+    search_count = 0
+    embedded_count = 0
+
     for q in build_queries(school, cfg):
         try:
             for u in search_web(session, q, cfg):
-                cu=canonical_url(u)
-                if cu and allowed_domain(cu, domains): candidates.add(cu)
+                cu = canonical_url(u)
+                if cu and allowed_domain(cu, domains):
+                    candidates.add(cu)
+                    search_count += 1
         except Exception as e:
-            errors.append(f"search {school['name']}: {type(e).__name__}: {e}")
-    # Crawl seed/list pages one hop and retain likely links.
-    # 官网入口只用于发现链接，不直接作为通知写入结果。
-    seeds=list(seed_urls | candidates)
-    for seed in seeds[:18]:
+            errors.append(f"search {school['name']}｜{school.get('college','')}: {type(e).__name__}: {e}")
+
+    # 列表入口、搜索结果页和直接详情页都进行一轮链接发现。
+    seeds = list(seed_urls | candidates)
+    for seed in seeds[:30]:
         try:
-            final, html = fetch(session, seed, int(cfg["crawler"]["timeout_seconds"]))
-            if not html: continue
-            for u, atext in extract_links(html, final, domains, max_links):
-                if likely_link(atext, u, cfg, school): candidates.add(u)
+            final, page_html = fetch(session, seed, int(cfg["crawler"]["timeout_seconds"]))
+            if not page_html:
+                continue
+            # 标准超链接。
+            for u, atext in extract_links(page_html, final, domains, max_links):
+                if likely_link(atext, u, cfg, school) or is_detail_notice_url(u):
+                    candidates.add(u)
+            # onclick、内嵌 JSON、前端路由中的详情链接。
+            embedded = extract_embedded_detail_urls(page_html, final, domains)
+            embedded_count += len(embedded)
+            candidates.update(embedded)
         except Exception as e:
             errors.append(f"seed {seed}: {type(e).__name__}: {e}")
         time.sleep(float(cfg["crawler"].get("request_interval_seconds", 0.25)))
-    urls=list(candidates)[:max_pages]
-    found=[]
-    with cf.ThreadPoolExecutor(max_workers=int(cfg["crawler"]["max_workers"])) as ex:
-        futs=[ex.submit(process_candidate, session, u, school, cfg) for u in urls]
-        for fut in cf.as_completed(futs):
-            item, err=fut.result()
-            if item: found.append(item)
-            if err: errors.append(err)
-    return found, errors
 
+    # 只处理详情页或明确配置的直达页；避免把列表页自身误写成通知。
+    urls = [u for u in candidates if is_detail_notice_url(u) or u in direct_urls][:max_pages]
+    found: list[dict[str, Any]] = []
+    with cf.ThreadPoolExecutor(max_workers=int(cfg["crawler"]["max_workers"])) as ex:
+        futs = [ex.submit(process_candidate, session, u, school, cfg) for u in urls]
+        for fut in cf.as_completed(futs):
+            item, err = fut.result()
+            if item:
+                found.append(item)
+            if err:
+                errors.append(err)
+
+    label = f"{school['name']}｜{school.get('college','')}".strip("｜")
+    if not urls:
+        errors.append(f"discovery {label}: 未发现任何可处理的详情页；seed={len(seed_urls)} search={search_count} embedded={embedded_count}")
+    elif not found:
+        errors.append(f"classification {label}: 已处理{len(urls)}个详情候选，但均未通过院系/年份/路径/专业筛选")
+
+    diag = {
+        "seed_count": len(seed_urls),
+        "direct_count": len(direct_urls),
+        "search_candidates": search_count,
+        "embedded_details": embedded_count,
+        "candidate_details": len(urls),
+    }
+    return found, errors, diag
 
 def load_existing() -> list[dict[str, Any]]:
     if not JSON_PATH.exists(): return []
@@ -645,9 +706,12 @@ def is_generic_school_baseline(item: dict[str, Any]) -> bool:
             and (url.endswith("/zxgg.htm") or not item.get("material_items")))
 
 
-def merge_notices(old: list[dict[str, Any]], new: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], int]:
-    # 清理旧版本产生的官网首页、栏目页和活动报道误报；人工核验基线不受影响。
-    old = [x for x in old if not is_old_noise(x)]
+def merge_notices(old: list[dict[str, Any]], new: list[dict[str, Any]], cfg: dict[str, Any]) -> tuple[list[dict[str, Any]], int]:
+    # 清理旧版本产生的官网首页、栏目页和活动报道误报。
+    # 对已拆分为院系级 unit_id 的学校，删除“物理系、天文系/相关方向”这类混合基线，
+    # 防止它继续冒充可申请项目。
+    unit_schools = {x.get("name") for x in cfg.get("schools", []) if x.get("unit_id")}
+    old = [x for x in old if not is_old_noise(x) and not (is_generic_school_baseline(x) and x.get("school") in unit_schools)]
     by_url={canonical_url(x.get("url", "")): x for x in old if canonical_url(x.get("url", ""))}
     new_count=0
     for item in new:
@@ -709,11 +773,11 @@ def main() -> int:
     for i, school in enumerate(selected, 1):
         unit_label=f"{school['name']}｜{school.get('college','')}".strip("｜")
         print(f"[{i}/{len(selected)}] {unit_label}")
-        found, errs=discover_school(session, school, cfg)
+        found, errs, diag=discover_school(session, school, cfg)
         all_new.extend(found); errors.extend(errs)
-        school_stats.append({"school": school["name"], "college": school.get("college", ""), "unit_id": school.get("unit_id", ""), "institution_type": school.get("institution_type", "其他"), "found": len(found), "errors": len(errs)})
+        school_stats.append({"school": school["name"], "college": school.get("college", ""), "unit_id": school.get("unit_id", ""), "institution_type": school.get("institution_type", "其他"), "found": len(found), "errors": len(errs), **diag})
     old=load_existing()
-    merged,new_count=merge_notices(old,all_new)
+    merged,new_count=merge_notices(old,all_new,cfg)
     report={"run_at": now_iso(), "schools_checked": len(selected), "institutions_checked": len(selected), "candidates_kept": len(all_new),
             "new_notices": new_count, "errors": errors[:300], "school_stats": school_stats,
             "search_provider": os.getenv("SEARCH_PROVIDER", cfg.get("search", {}).get("provider", "none"))}
