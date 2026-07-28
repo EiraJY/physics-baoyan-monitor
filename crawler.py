@@ -36,6 +36,7 @@ CONFIG_PATH = ROOT / "config.yaml"
 JSON_PATH = DATA_DIR / "notices.json"
 JS_PATH = DATA_DIR / "notices.js"
 REPORT_PATH = DATA_DIR / "crawl_report.json"
+IGNORE_PATH = DATA_DIR / "ignored_units.json"
 
 DATE_PATTERNS = [
     re.compile(r"(?P<y>20\d{2})[年\-/\.](?P<m>\d{1,2})[月\-/\.](?P<d>\d{1,2})日?"),
@@ -51,6 +52,52 @@ def now_iso() -> str:
 def load_config() -> dict[str, Any]:
     with CONFIG_PATH.open("r", encoding="utf-8") as f:
         return yaml.safe_load(f)
+
+
+def unit_key(school: dict[str, Any]) -> str:
+    return str(school.get("unit_id") or f"{school.get('name','')}::{school.get('college','')}").strip()
+
+
+def load_ignored_units() -> tuple[set[str], set[str]]:
+    """读取前端导出的忽略单位清单。
+
+    支持：
+    - ignored_unit_ids: ["ictp-ap"]
+    - ignored_unit_keys: ["学校::学院"]
+    - ignored_units: [{unit_id, school, college}]
+    """
+    ids: set[str] = set()
+    keys: set[str] = set()
+    if not IGNORE_PATH.exists():
+        return ids, keys
+    try:
+        data = json.loads(IGNORE_PATH.read_text(encoding="utf-8"))
+    except Exception:
+        return ids, keys
+    for value in data.get("ignored_unit_ids", []):
+        if value:
+            ids.add(str(value).strip())
+    for value in data.get("ignored_unit_keys", []):
+        if value:
+            keys.add(str(value).strip())
+    for item in data.get("ignored_units", []):
+        if isinstance(item, str):
+            keys.add(item.strip())
+            continue
+        if not isinstance(item, dict):
+            continue
+        if item.get("unit_id"):
+            ids.add(str(item["unit_id"]).strip())
+        key = f"{item.get('school','')}::{item.get('college','')}".strip(":")
+        if key:
+            keys.add(key)
+    return ids, keys
+
+
+def is_ignored_unit(school: dict[str, Any], ignored_ids: set[str], ignored_keys: set[str]) -> bool:
+    uid = str(school.get("unit_id") or "").strip()
+    key = f"{school.get('name','')}::{school.get('college','')}"
+    return bool((uid and uid in ignored_ids) or key in ignored_keys or unit_key(school) in ignored_keys)
 
 
 def make_session(user_agent: str) -> requests.Session:
@@ -306,14 +353,57 @@ def extract_date(text: str, target_year: int | None = None) -> str:
     return ""
 
 
-def extract_published(soup: BeautifulSoup, text: str, target_year: int) -> str:
-    for key in ("article:published_time", "pubdate", "publishdate", "date"):
+def _explicit_years(text: str) -> set[int]:
+    return {int(x) for x in re.findall(r"(?<!\d)(20\d{2})(?!\d)", text or "")}
+
+
+def cycle_relevant(title: str, text: str, url: str, cfg: dict[str, Any]) -> bool:
+    """排除明确属于往年周期的通知。
+
+    标题有年份时，必须命中发布年或招生年；标题没有年份时允许继续，
+    但发布日期只接受当前发布年。
+    """
+    pyear = int(cfg["target"]["publish_year"])
+    ayear = int(cfg["target"]["admission_year"])
+    title_years = _explicit_years(title)
+    if title_years and not (title_years & {pyear, ayear}):
+        return False
+    top_years = _explicit_years((text or "")[:2600] + " " + (url or ""))
+    if not title_years and top_years and not (top_years & {pyear, ayear}):
+        return False
+    return True
+
+
+def extract_published(soup: BeautifulSoup, text: str, title: str, target_year: int, admission_year: int) -> str:
+    """只接受当前发布年的发布日期，避免把上一级栏目或往年文章日期当成本年日期。"""
+    candidates: list[str] = []
+    for key in ("article:published_time", "pubdate", "publishdate", "date", "dc.date", "dcterms.date"):
         n = soup.find("meta", attrs={"property": key}) or soup.find("meta", attrs={"name": key})
         if n and n.get("content"):
             d = extract_date(n["content"], target_year)
-            if d: return d
-    head = text[:1500]
-    return extract_date(head, target_year)
+            if d:
+                candidates.append(d)
+    for sel in (".publishdate", ".publish-date", ".date", ".time", ".arti_update", ".article-date", ".news-date"):
+        for n in soup.select(sel)[:4]:
+            d = extract_date(n.get_text(" ", strip=True), target_year)
+            if d:
+                candidates.append(d)
+    head = text[:1800]
+    d = extract_date(head, target_year)
+    if d:
+        candidates.append(d)
+    title_years = _explicit_years(title)
+    for value in candidates:
+        try:
+            y = int(value[:4])
+        except Exception:
+            continue
+        if y != int(target_year):
+            continue
+        if title_years and not (title_years & {int(target_year), int(admission_year)}):
+            continue
+        return value
+    return ""
 
 
 DATE_TIME_POINT_RE = re.compile(
@@ -593,6 +683,28 @@ def is_old_noise(item: dict[str, Any]) -> bool:
     return record_quality(item.get("title", ""), item.get("excerpt", ""), item.get("url", ""), item.get("school", "")) != "notice"
 
 
+def sanitize_cycle_item(item: dict[str, Any], cfg: dict[str, Any]) -> dict[str, Any] | None:
+    """清除往年通知和明显错误的发布日期。"""
+    pyear = int(cfg["target"]["publish_year"])
+    ayear = int(cfg["target"]["admission_year"])
+    title = str(item.get("title", ""))
+    title_years = _explicit_years(title)
+    if item.get("origin") == "crawler" and title_years and not (title_years & {pyear, ayear}):
+        return None
+    pub = str(item.get("published_at", ""))
+    if re.match(r"^20\d{2}-", pub):
+        py = int(pub[:4])
+        if py != pyear:
+            # 标题明确属于当前周期时，日期多半来自栏目导航或上一级文章，清空等待人工核验。
+            if title_years & {pyear, ayear}:
+                item = dict(item)
+                item["published_at"] = ""
+                item["published_date_warning"] = f"自动发布日期 {pub} 与当前周期冲突，已清空等待人工核验"
+            elif item.get("origin") == "crawler":
+                return None
+    return item
+
+
 def process_candidate(session: requests.Session, url: str, school: dict[str, Any], cfg: dict[str, Any]) -> tuple[dict[str, Any] | None, str | None]:
     try:
         if not candidate_allowed_for_unit(url, school):
@@ -613,7 +725,13 @@ def process_candidate(session: requests.Session, url: str, school: dict[str, Any
         # 首页、栏目页和活动报道不再写入正式通知数据。
         if quality != "notice":
             return None, None
-        pub = extract_published(soup, text, int(cfg["target"]["publish_year"]))
+        if not cycle_relevant(title, text, final, cfg):
+            return None, None
+        pub = extract_published(
+            soup, text, title,
+            int(cfg["target"]["publish_year"]),
+            int(cfg["target"]["admission_year"]),
+        )
         deadline, deadline_display, deadline_context = extract_deadline(text, int(cfg["target"]["publish_year"]))
         status = "待人工确认"
         if deadline:
@@ -759,11 +877,13 @@ def _logical_notice_key(item: dict[str, Any]) -> str:
     return f"{unit}|{item.get('route','')}|{title}"
 
 
-def _record_value(item: dict[str, Any]) -> tuple[int, int, int, int]:
+def _record_value(item: dict[str, Any]) -> tuple[int, int, int, int, int]:
+    pub = str(item.get("published_at", ""))
     return (
         1 if item.get("builder_ready") else 0,
         len(item.get("material_items") or []),
         1 if item.get("source_scope") in {"院系具体通知", "培养单位具体通知"} else 0,
+        1 if pub.startswith("2026-") else 0,
         int(item.get("score") or 0),
     )
 
@@ -772,7 +892,7 @@ def dedupe_logical_notices(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
     chosen: dict[str, dict[str, Any]] = {}
     passthrough: list[dict[str, Any]] = []
     for item in items:
-        if item.get("record_type") != "notice" or not item.get("unit_id"):
+        if item.get("record_type") not in {"notice", "school_policy"}:
             passthrough.append(item)
             continue
         key = _logical_notice_key(item)
@@ -785,12 +905,17 @@ def dedupe_logical_notices(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
 def merge_notices(old: list[dict[str, Any]], new: list[dict[str, Any]], cfg: dict[str, Any]) -> tuple[list[dict[str, Any]], int]:
     unit_schools = {x.get("name") for x in cfg.get("schools", []) if x.get("unit_id")}
     # 删除历史目录卡片、官网栏目误报和院系混合基线。
-    old = [
-        x for x in old
-        if not is_old_noise(x)
-        and not is_catalog_page(str(x.get("title", "")), str(x.get("url", "")))
-        and not (is_generic_school_baseline(x) and x.get("school") in unit_schools)
-    ]
+    cleaned_old: list[dict[str, Any]] = []
+    for x in old:
+        if is_old_noise(x) or is_catalog_page(str(x.get("title", "")), str(x.get("url", ""))):
+            continue
+        if is_generic_school_baseline(x) and x.get("school") in unit_schools:
+            continue
+        sx = sanitize_cycle_item(dict(x), cfg)
+        if sx is not None:
+            cleaned_old.append(sx)
+    old = cleaned_old
+    new = [sx for x in new if (sx := sanitize_cycle_item(dict(x), cfg)) is not None]
     by_url = {canonical_url(x.get("url", "")): x for x in old if canonical_url(x.get("url", ""))}
     new_count = 0
     for item in new:
@@ -849,8 +974,11 @@ def main() -> int:
     selected=cfg.get("schools", [])
     if args.school:
         selected=[x for x in selected if args.school in x.get("name", "")]
+    ignored_ids, ignored_keys = load_ignored_units()
+    ignored_selected = [x for x in selected if is_ignored_unit(x, ignored_ids, ignored_keys)]
+    selected = [x for x in selected if not is_ignored_unit(x, ignored_ids, ignored_keys)]
     if not selected:
-        print("没有匹配的高校或研究单位", file=sys.stderr); return 2
+        print("没有匹配的高校或研究单位（或全部已忽略）", file=sys.stderr); return 2
     session=make_session(cfg["crawler"]["user_agent"])
     all_new=[]; errors=[]; school_stats=[]
     for i, school in enumerate(selected, 1):
@@ -863,6 +991,8 @@ def main() -> int:
     merged,new_count=merge_notices(old,all_new,cfg)
     report={"run_at": now_iso(), "schools_checked": len(selected), "institutions_checked": len(selected), "candidates_kept": len(all_new),
             "new_notices": new_count, "errors": errors[:300], "school_stats": school_stats,
+            "ignored_units_skipped": [unit_key(x) for x in ignored_selected],
+            "ignored_units_count": len(ignored_selected),
             "search_provider": os.getenv("SEARCH_PROVIDER", cfg.get("search", {}).get("provider", "none"))}
     write_data(merged, report, cfg)
     print(f"完成：保留{len(merged)}条，新增{new_count}条，错误{len(errors)}条")

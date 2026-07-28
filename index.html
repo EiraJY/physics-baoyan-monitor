@@ -169,6 +169,14 @@ tr:hover td{filter:brightness(.992)}
 @media(max-width:1050px){.notice-grid{grid-template-columns:1fr}.crawler-grid{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:700px){.crawler-panel-head{display:block}.view-switch{justify-content:flex-start;margin-top:10px}.crawler-grid{grid-template-columns:1fr 1fr}.auto-filter-shell{position:static}.auto-filter-row{align-items:stretch}.auto-filter-row>*{width:100%}.auto-filter-row input[type=search]{min-width:0}.notice-meta{grid-template-columns:1fr}.detail-grid{grid-template-columns:1fr}.raw-excerpt{grid-column:auto}.result-bar{display:block}.auto-status{margin-left:0}.notice-card{padding:13px}}
 
+
+/* v4: 人工核验、申请状态与忽略单位 */
+.notice-card.progress-follow{border-left-color:#2563eb;background:#f8fbff}.notice-card.progress-prepare{border-left-color:#f59e0b;background:#fffaf0}.notice-card.progress-applied{border-left-color:#16a34a;background:#f4fff7}.notice-card.progress-ignore{border-left-color:#94a3b8;background:#f3f4f6;opacity:.68;filter:grayscale(.18)}
+.progress-chip{display:inline-flex;border-radius:999px;padding:3px 8px;font-size:11px;font-weight:850}.progress-unprocessed{background:#eef2f7;color:#536174}.progress-follow{background:#e8f1ff;color:#1d4ed8}.progress-prepare{background:#fff1d6;color:#9a5709}.progress-applied{background:#e4f8eb;color:#137044}.progress-ignore{background:#e5e7eb;color:#667085}
+.local-status.progress-follow{border-color:#8bb2f5;background:#edf4ff;color:#1d4ed8}.local-status.progress-prepare{border-color:#eac276;background:#fff7e8;color:#8a5208}.local-status.progress-applied{border-color:#95d6ae;background:#ecfbf2;color:#12633f}.local-status.progress-ignore{border-color:#cbd1d9;background:#eef0f3;color:#596273}
+.manual-editor{margin-top:12px;border:1px solid #cfd9e7;border-radius:12px;padding:12px;background:#f8fbff}.manual-editor h5{margin:0 0 10px;font-size:14px}.manual-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.manual-field label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}.manual-field input,.manual-field select,.manual-field textarea{width:100%;border:1px solid var(--line);border-radius:8px;padding:8px;background:#fff}.manual-field textarea{min-height:72px;resize:vertical}.manual-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.manual-actions button{border:1px solid var(--line);border-radius:8px;padding:7px 10px;background:#fff;cursor:pointer;font-weight:750}.manual-actions .primary{background:#17345f;color:#fff;border-color:#17345f}.manual-note{font-size:12px;color:#6b7280;margin-top:8px}.manual-badge{background:#e8f5ff;color:#16609b}.sync-warning{border-left:4px solid #d97706;background:#fff7e6;padding:9px 12px;border-radius:9px;font-size:12px;color:#7a4b0b}.state-tools{display:flex;gap:8px;flex-wrap:wrap}.state-tools button,.state-tools label{border:1px solid var(--line);border-radius:8px;padding:7px 10px;background:#fff;cursor:pointer;font-weight:750;font-size:12px}.state-tools input{display:none}
+@media(max-width:700px){.manual-grid{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -266,8 +274,9 @@ tr:hover td{filter:brightness(.992)}
   <div class="auto-filter-row">
     <select id="autoType"><option value="">全部单位类型</option><option>985高校</option><option>中科院研究所</option><option>国科大培养单位</option></select>
     <select id="autoMajor"><option value="">全部专业</option><option>理论物理</option><option>天文学</option></select>
-    <select id="autoStatus"><option value="">全部状态</option><option value="报名中">报名中</option><option value="已截止">已截止</option><option value="待人工确认">待人工确认</option></select>
-    <select id="autoSort"><option value="priority">优先级排序</option><option value="published">发布日期最新</option><option value="deadline">截止时间最早</option><option value="score">相关度最高</option><option value="school">单位名称</option></select>
+    <select id="autoStatus"><option value="">全部自动状态</option><option value="报名中">报名中</option><option value="已截止">已截止</option><option value="待人工确认">待人工确认</option></select>
+    <select id="autoProgressFilter"><option value="">全部申请状态</option><option value="未处理">未处理</option><option value="关注">关注</option><option value="准备申请">准备申请</option><option value="已申请">已申请</option><option value="忽略">忽略</option></select>
+    <select id="autoSort"><option value="deadline" selected>截止时间最早</option><option value="school">学校/单位名称</option><option value="published">发布日期最新</option><option value="score">相关度最高</option><option value="priority">优先级排序</option></select>
     <input id="autoSearch" type="search" placeholder="搜索学校、学院、通知标题、理论/引力/宇宙/黑洞……">
   </div>
   <div class="auto-filter-row">
@@ -275,14 +284,16 @@ tr:hover td{filter:brightness(.992)}
     <label><input id="autoOpenOnly" type="checkbox"> 只看报名中</label>
     <label><input id="autoReviewOnly" type="checkbox"> 只看需复核</label>
     <label><input id="autoFollowOnly" type="checkbox"> 只看已关注</label>
+    <label><input id="autoShowIgnored" type="checkbox"> 显示已忽略</label>
     <button class="filter-chip" type="button" onclick="resetAutoFilters()">清空筛选</button>
     <button class="filter-chip" type="button" onclick="location.reload()">重新载入数据</button>
+    <div class="state-tools"><button type="button" onclick="exportVerificationState()">导出核验记录</button><label>导入核验记录<input id="verificationImport" type="file" accept="application/json"></label><button type="button" onclick="exportIgnoredUnits()">导出忽略清单</button></div>
   </div>
 </div>
 
 <div class="result-bar">
   <span id="autoResultText">正在整理结果……</span>
-  <span>提示：点击星标可本地关注；申请进度仅保存在当前浏览器。</span>
+  <span>提示：人工核验与申请状态保存在当前浏览器；“忽略”要导出并上传 data/ignored_units.json 后，GitHub Actions 才会停止搜索该单位。</span>
 </div>
 <div id="noticeCards" class="notice-grid"></div>
 <div id="autoEmpty" class="empty-state" hidden>当前筛选条件下没有结果。</div>
@@ -1299,152 +1310,68 @@ document.addEventListener('change',e=>{
 document.addEventListener('DOMContentLoaded',restore);
 
 let AUTO_STATE={route:'',view:'cards',pageSize:12,visible:12};
-const AUTO_STORE='physics_baoyan_auto_status_v2';
+const AUTO_STORE='physics_baoyan_auto_status_v3';
+const OLD_AUTO_STORE='physics_baoyan_auto_status_v2';
 function escAuto(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function normalizeText(s){return String(s??'').replace(/\s+/g,' ').trim();}
-function isCatalogRecord(x){
-  const title=normalizeText(x?.title),url=String(x?.url||'');
-  return /(招生专业目录|专业目录[_｜| -]*推荐免试|博士研究生招生目录|硕士研究生招生目录|导师目录)/.test(title)||/\/publish\/(?:s01\/s0103|s03\/s0303)\//.test(url);
-}
-function recordValue(x){return [(x?.builder_ready===true)?1:0,Array.isArray(x?.material_items)?x.material_items.length:0,/具体通知/.test(String(x?.source_scope||''))?1:0,Number(x?.score||0)];}
+function unitKey(x){return String(x?.unit_id||`${x?.school||''}::${x?.college||''}`);}
+function isCatalogRecord(x){const title=normalizeText(x?.title),url=String(x?.url||'');return /(招生专业目录|专业目录[_｜| -]*推荐免试|博士研究生招生目录|硕士研究生招生目录|导师目录)/.test(title)||/\/publish\/(?:s01\/s0103|s03\/s0303)\//.test(url);}
+function titleYears(x){return [...normalizeText(x?.title).matchAll(/(?<!\d)(20\d{2})(?!\d)/g)].map(m=>Number(m[1]));}
+function rawDateYear(v){const m=String(v||'').match(/(20\d{2})/);return m?Number(m[1]):0;}
+function isCurrentCycleRecord(x){const meta=window.CRAWLER_DATA?.meta||{},py=Number(meta.publish_year||new Date().getFullYear()),ay=Number(meta.admission_year||py+1),ys=titleYears(x);if(ys.length&&!ys.some(y=>y===py||y===ay))return false;const pyear=rawDateYear(x?.published_at);if(x?.origin==='crawler'&&x?.route==='夏令营'&&!ys.length&&pyear&&pyear!==py)return false;return true;}
+function recordValue(x){const py=Number(window.CRAWLER_DATA?.meta?.publish_year||new Date().getFullYear());return [(x?.builder_ready===true)?1:0,Array.isArray(x?.material_items)?x.material_items.length:0,/具体通知/.test(String(x?.source_scope||''))?1:0,rawDateYear(x?.published_at)===py?1:0,Number(x?.score||0)];}
 function betterRecord(a,b){const av=recordValue(a),bv=recordValue(b);for(let i=0;i<av.length;i++){if(av[i]!==bv[i])return av[i]>bv[i]?a:b;}return a;}
-function autoSourceItems(){
-  const raw=window.CRAWLER_DATA?.notices||[],map=new Map(),rest=[];
-  for(const x of raw){
-    if(isCatalogRecord(x))continue;
-    if(x?.record_type==='notice'&&x?.unit_id){
-      const title=normalizeText(x.title).replace(/[\s_｜|—–-]+/g,''),key=`${x.unit_id}|${x.route||''}|${title}`;
-      map.set(key,map.has(key)?betterRecord(map.get(key),x):x);
-    }else rest.push(x);
-  }
-  return [...rest,...map.values()];
-}
+function logicalKey(x){const title=normalizeText(x?.title).replace(/[\s_｜|—–-]+/g,''),base=`${unitKey(x)}|${x?.route||''}|${title}`;return base;}
+function autoSourceItems(){const raw=window.CRAWLER_DATA?.notices||[],map=new Map(),rest=[];for(const x of raw){if(isCatalogRecord(x)||!isCurrentCycleRecord(x))continue;const kind=recordKind(x);if(['notice','baseline','policy'].includes(kind)){const key=logicalKey(x);map.set(key,map.has(key)?betterRecord(map.get(key),x):x);}else rest.push(x);}return [...rest,...map.values()];}
 function clipText(s,n=180){const t=normalizeText(s);return t.length>n?t.slice(0,n)+'…':t;}
 function verifyClass(v){if(v==='高'||v==='人工核验基线')return 'verify-high';if(v==='中')return 'verify-mid';return 'verify-low';}
 function routeClass(v){return v==='夏令营'?'route-summer':'route-pre';}
-function isGenericTitle(t,school=''){
-  const x=normalizeText(t).replace(/[｜|_-].*$/,'');
-  const generic=['首页','学院动态','研招办','研究生院','招生信息','通知公告','招生就业','物理科学学院 物理学院','中国科学院理论物理研究所'];
-  return !x||x===school||generic.includes(x)||x.length<4;
-}
-function recordKind(x){
-  if(isCatalogRecord(x))return 'catalog';
-  if(x.record_type==='school_policy')return 'policy';
-  if(x.record_type==='notice'&&x.origin==='crawler')return 'notice';
-  if(x.origin==='existing_dashboard'||x.verification==='人工核验基线')return 'baseline';
-  const title=normalizeText(x.title), body=normalizeText(x.excerpt), url=String(x.url||'');
-  const action=/(报名|申请|接收|招生|推荐免试|推免|夏令营.{0,12}(通知|公告|简章)|优秀大学生.{0,12}夏令营)/;
-  const recap=/(成功举办|圆满举行|开营仪式|活动期间|齐聚|顺利举行|圆满结束)/;
-  const path=(()=>{try{return new URL(url).pathname}catch{return ''}})();
-  if(recap.test(title+' '+body)&&!/(报名|申请|截止)/.test(title+' '+body))return 'report';
-  if(path==='/'||path==='')return 'lead';
-  const detailUrl=/(?:\/info\/\d+\/\d+|\/20\d{2}\/\d{2,}|\/t20\d{4,}|\/\d{4,}[-_][^/]+|\/[^/]+\.(?:htm|html|shtml))$/i.test(path);
-  if(action.test(title)||(detailUrl&&action.test(body.slice(0,2400))))return 'notice';
-  if(isGenericTitle(title,x.school))return 'lead';
-  return 'lead';
-}
+function isGenericTitle(t,school=''){const x=normalizeText(t).replace(/[｜|_-].*$/,'');const generic=['首页','学院动态','研招办','研究生院','招生信息','通知公告','招生就业','物理科学学院 物理学院','中国科学院理论物理研究所'];return !x||x===school||generic.includes(x)||x.length<4;}
+function recordKind(x){if(isCatalogRecord(x))return 'catalog';if(x.record_type==='school_policy')return 'policy';if(x.record_type==='notice'&&x.origin==='crawler')return 'notice';if(x.origin==='existing_dashboard'||x.verification==='人工核验基线')return 'baseline';const title=normalizeText(x.title),body=normalizeText(x.excerpt),url=String(x.url||'');const action=/(报名|申请|接收|招生|推荐免试|推免|夏令营.{0,12}(通知|公告|简章)|优秀大学生.{0,12}夏令营)/;const recap=/(成功举办|圆满举行|开营仪式|活动期间|齐聚|顺利举行|圆满结束)/;const path=(()=>{try{return new URL(url).pathname}catch{return ''}})();if(recap.test(title+' '+body)&&!/(报名|申请|截止)/.test(title+' '+body))return 'report';if(path==='/'||path==='')return 'lead';const detailUrl=/(?:\/info\/\d+\/\d+|\/20\d{2}\/\d{2,}|\/t20\d{4,}|\/\d{4,}[-_][^/]+|\/[^/]+\.(?:htm|html|shtml))$/i.test(path);if(action.test(title)||(detailUrl&&action.test(body.slice(0,2400))))return 'notice';if(isGenericTitle(title,x.school))return 'lead';return 'lead';}
 function kindLabel(k){return {baseline:'人工核验',notice:'院系正式通知',policy:'校级总办法',catalog:'招生目录',report:'活动报道',lead:'栏目线索'}[k]||'线索';}
 function kindClass(k){return {baseline:'kind-baseline',notice:'kind-notice',policy:'kind-policy',catalog:'kind-lead',report:'kind-report',lead:'kind-lead'}[k]||'kind-lead';}
 function displayTitle(x){const k=recordKind(x);if(k==='policy')return `${x.school}｜学校级总办法（仅作政策参考）`;if(k==='lead'&&isGenericTitle(x.title,x.school))return `${x.school}｜官网栏目线索（尚未定位具体通知）`;return normalizeText(x.title)||`${x.school} ${x.route}通知`;}
-function usefulSnippet(x){
-  const k=recordKind(x);
-  if(k==='lead')return '自动抓取到了官网首页或招生栏目，但尚未定位到具体报名通知。该条默认隐藏，可打开原文或等待后续更新。';
-  if(k==='report')return '该页面更像夏令营活动报道，而不是当前可报名通知。保留作历史线索，默认不纳入可操作结果。';
-  const preferred=normalizeText(x.deadline_context||x.excerpt||x.remark||'');
-  if(preferred.length<=220)return preferred||'暂无摘要，请打开官方原文核验。';
-  const keys=['报名','申请','截止','预推免','推荐免试','夏令营','理论物理','天文学'];
-  let idx=-1;for(const key of keys){const p=preferred.indexOf(key,60);if(p>=0&&(idx<0||p<idx))idx=p;}
-  if(idx<0)return clipText(preferred,220);
-  return (idx>28?'…':'')+clipText(preferred.slice(Math.max(0,idx-28)),220);
-}
-function parseDateValue(v){
-  const m=String(v||'').match(/20\d{2}[-/.年]\d{1,2}[-/.月]\d{1,2}/);if(!m)return null;
-  const s=m[0].replace('年','-').replace('月','-').replace('日','').replace(/[/.]/g,'-');const d=new Date(s+'T00:00:00+08:00');return Number.isNaN(d.getTime())?null:d;
-}
-function deadlineInfo(x){
-  const raw=normalizeText(x.deadline_display||x.deadline)||'待人工核验';const d=parseDateValue(raw);if(!d)return {raw,cls:''};
-  const days=Math.ceil((d-new Date())/86400000);if(days<0)return {raw,cls:'deadline-urgent'};if(days<=7)return {raw,cls:'deadline-urgent'};return {raw,cls:'deadline-open'};
-}
-function statusClass(x){if(x.status==='报名中')return 'open';if(x.status==='已截止')return 'closed';return 'review';}
-function statusChipClass(x){if(x.status==='报名中')return 'status-open';if(x.status==='已截止')return 'status-closed';return 'status-review';}
-function loadLocalMap(){try{return JSON.parse(localStorage.getItem(AUTO_STORE)||'{}')}catch{return {}}}
-function saveLocalMap(map){localStorage.setItem(AUTO_STORE,JSON.stringify(map));}
-function isFollowed(id){return Boolean(loadLocalMap()[id]?.followed);}
-function localProgress(id){return loadLocalMap()[id]?.progress||'未处理';}
-function toggleFollow(id){const m=loadLocalMap();m[id]={...(m[id]||{}),followed:!m[id]?.followed};saveLocalMap(m);renderAutoResults(false);}
-function setAutoProgress(id,value){const m=loadLocalMap();m[id]={...(m[id]||{}),progress:value};saveLocalMap(m);}
-function filteredAutoItems(){
-  const data=window.CRAWLER_DATA||{notices:[]};const type=document.getElementById('autoType')?.value||'';const major=document.getElementById('autoMajor')?.value||'';const status=document.getElementById('autoStatus')?.value||'';const q=normalizeText(document.getElementById('autoSearch')?.value).toLowerCase();
-  const actionable=document.getElementById('autoActionable')?.checked;const openOnly=document.getElementById('autoOpenOnly')?.checked;const reviewOnly=document.getElementById('autoReviewOnly')?.checked;const followOnly=document.getElementById('autoFollowOnly')?.checked;
-  let items=autoSourceItems().filter(x=>{
-    const kind=recordKind(x);if(AUTO_STATE.route&&x.route!==AUTO_STATE.route)return false;if(type&&x.institution_type!==type)return false;if(major&&!(x.majors||[]).includes(major))return false;if(status&&x.status!==status)return false;if(actionable&&!['baseline','notice'].includes(kind))return false;if(openOnly&&x.status!=='报名中')return false;if(reviewOnly&&(x.verification==='高'||x.verification==='人工核验基线'))return false;if(followOnly&&!isFollowed(x.id))return false;if(q&&!JSON.stringify(x).toLowerCase().includes(q))return false;return true;
-  });
-  const sort=document.getElementById('autoSort')?.value||'priority';
-  const rankKind=x=>({baseline:4,notice:3,report:1,lead:0}[recordKind(x)]||0);const rankStatus=x=>x.status==='报名中'?3:(x.status==='待人工确认'?2:1);
-  items.sort((a,b)=>{
-    if(sort==='published')return (parseDateValue(b.published_at)?.getTime()||0)-(parseDateValue(a.published_at)?.getTime()||0)||b.score-a.score;
-    if(sort==='deadline'){const ad=parseDateValue(a.deadline)?.getTime()||9e15,bd=parseDateValue(b.deadline)?.getTime()||9e15;return ad-bd||b.score-a.score;}
-    if(sort==='score')return (b.score||0)-(a.score||0);
-    if(sort==='school')return String(a.school).localeCompare(String(b.school),'zh-CN');
-    return rankStatus(b)-rankStatus(a)||rankKind(b)-rankKind(a)||(b.score||0)-(a.score||0)||(parseDateValue(b.published_at)?.getTime()||0)-(parseDateValue(a.published_at)?.getTime()||0);
-  });
-  return items;
-}
+function usefulSnippet(x){const k=recordKind(x);if(k==='lead')return '自动抓取到了官网首页或招生栏目，但尚未定位到具体报名通知。该条默认隐藏，可打开原文或等待后续更新。';if(k==='report')return '该页面更像夏令营活动报道，而不是当前可报名通知。保留作历史线索，默认不纳入可操作结果。';const preferred=normalizeText(x.deadline_context||x.excerpt||x.remark||'');if(preferred.length<=220)return preferred||'暂无摘要，请打开官方原文核验。';const keys=['报名','申请','截止','预推免','推荐免试','夏令营','理论物理','天文学'];let idx=-1;for(const key of keys){const p=preferred.indexOf(key,60);if(p>=0&&(idx<0||p<idx))idx=p;}if(idx<0)return clipText(preferred,220);return (idx>28?'…':'')+clipText(preferred.slice(Math.max(0,idx-28)),220);}
+function parseDateValue(v){const m=String(v||'').match(/20\d{2}[-/.年]\d{1,2}[-/.月]\d{1,2}/);if(!m)return null;const s=m[0].replace('年','-').replace('月','-').replace('日','').replace(/[/.]/g,'-');const d=new Date(s+'T00:00:00+08:00');return Number.isNaN(d.getTime())?null:d;}
+function loadLocalState(){let raw={};try{raw=JSON.parse(localStorage.getItem(AUTO_STORE)||'{}')}catch{}if(!raw.units&&!raw.notices){let old={};try{old=JSON.parse(localStorage.getItem(OLD_AUTO_STORE)||'{}')}catch{};raw={units:{},notices:{}};for(const [id,v] of Object.entries(old||{}))raw.notices[id]=v;}raw.units=raw.units||{};raw.notices=raw.notices||{};return raw;}
+function saveLocalState(state){localStorage.setItem(AUTO_STORE,JSON.stringify(state));}
+function unitState(x){return loadLocalState().units[unitKey(x)]||{};}
+function noticeState(x){return loadLocalState().notices[String(x.id)]||{};}
+function localProgress(x){return unitState(x).progress||noticeState(x).progress||'未处理';}
+function progressClass(v){return {'关注':'progress-follow','准备申请':'progress-prepare','已申请':'progress-applied','忽略':'progress-ignore'}[v]||'progress-unprocessed';}
+function isFollowed(x){return Boolean(unitState(x).followed||noticeState(x).followed);}
+function toggleFollow(id){const x=autoSourceItems().find(v=>String(v.id)===String(id));if(!x)return;const state=loadLocalState(),k=unitKey(x),u=state.units[k]||{};u.followed=!u.followed;if(u.followed&&(!u.progress||u.progress==='未处理'))u.progress='关注';state.units[k]=u;saveLocalState(state);renderAutoResults(false);}
+function setAutoProgress(id,value){const x=autoSourceItems().find(v=>String(v.id)===String(id));if(!x)return;const state=loadLocalState(),k=unitKey(x);state.units[k]={...(state.units[k]||{}),progress:value};saveLocalState(state);renderAutoResults(false);}
+function manualOverride(x){return noticeState(x).manual||{};}
+function effectivePublished(x){const m=manualOverride(x);if(m.publishedAt)return m.publishedAt;const raw=x.published_at||'',meta=window.CRAWLER_DATA?.meta||{},py=Number(meta.publish_year||new Date().getFullYear()),ay=Number(meta.admission_year||py+1),ry=rawDateYear(raw),ys=titleYears(x);if(ry&&ry!==py&&(ys.includes(py)||ys.includes(ay)||x.route==='夏令营'))return '';return raw;}
+function effectiveDeadline(x){const m=manualOverride(x);return m.deadline||x.deadline_display||x.deadline||'';}
+function effectiveStatus(x){const m=manualOverride(x);if(m.status&&m.status!=='自动判断')return m.status;const d=parseDateValue(effectiveDeadline(x));if(d){return d.getTime()>=new Date().setHours(0,0,0,0)?'报名中':'已截止';}return x.status||'待人工确认';}
+function hasManual(x){const m=manualOverride(x);return Boolean(m.publishedAt||m.deadline||m.status||m.note);}
+function deadlineInfo(x){const raw=normalizeText(effectiveDeadline(x))||'待人工核验';const d=parseDateValue(raw);if(!d)return {raw,cls:''};const days=Math.ceil((d-new Date())/86400000);if(days<0||days<=7)return {raw,cls:'deadline-urgent'};return {raw,cls:'deadline-open'};}
+function statusClass(x){const s=effectiveStatus(x);if(s==='报名中')return 'open';if(s==='已截止')return 'closed';return 'review';}
+function statusChipClass(x){const s=effectiveStatus(x);if(s==='报名中')return 'status-open';if(s==='已截止')return 'status-closed';return 'status-review';}
+function saveManualVerification(id){const x=autoSourceItems().find(v=>String(v.id)===String(id));if(!x)return;const state=loadLocalState(),n=state.notices[String(id)]||{};n.manual={publishedAt:document.getElementById(`mv_pub_${id}`)?.value||'',deadline:document.getElementById(`mv_dead_${id}`)?.value||'',status:document.getElementById(`mv_status_${id}`)?.value||'自动判断',note:document.getElementById(`mv_note_${id}`)?.value||'',verifiedAt:new Date().toISOString()};state.notices[String(id)]=n;saveLocalState(state);renderAutoResults(false);alert('人工核验记录已保存到当前浏览器。');}
+function clearManualVerification(id){const state=loadLocalState();if(state.notices[String(id)])delete state.notices[String(id)].manual;saveLocalState(state);renderAutoResults(false);}
+function manualEditorHtml(x){const m=manualOverride(x),id=escAuto(x.id);return `<div class="manual-editor"><h5>人工核验与记录</h5><div class="manual-grid"><div class="manual-field"><label>发布日期</label><input id="mv_pub_${id}" type="date" value="${escAuto(m.publishedAt||'')}"></div><div class="manual-field"><label>截止时间</label><input id="mv_dead_${id}" type="datetime-local" value="${escAuto(m.deadline||'')}"></div><div class="manual-field"><label>报名状态</label><select id="mv_status_${id}">${['自动判断','报名中','已截止','待人工确认'].map(v=>`<option ${m.status===v?'selected':''}>${v}</option>`).join('')}</select></div><div class="manual-field"><label>核验备注</label><textarea id="mv_note_${id}" placeholder="例如：院系系统截止早于校级截止；已电话确认……">${escAuto(m.note||'')}</textarea></div></div><div class="manual-actions"><button class="primary" type="button" onclick="saveManualVerification('${id}')">保存核验</button><button type="button" onclick="clearManualVerification('${id}')">清除核验</button></div><div class="manual-note">保存在当前浏览器；可用页面上方“导出核验记录”备份或迁移。</div></div>`;}
+function filteredAutoItems(){const type=document.getElementById('autoType')?.value||'',major=document.getElementById('autoMajor')?.value||'',status=document.getElementById('autoStatus')?.value||'',progress=document.getElementById('autoProgressFilter')?.value||'',q=normalizeText(document.getElementById('autoSearch')?.value).toLowerCase();const actionable=document.getElementById('autoActionable')?.checked,openOnly=document.getElementById('autoOpenOnly')?.checked,reviewOnly=document.getElementById('autoReviewOnly')?.checked,followOnly=document.getElementById('autoFollowOnly')?.checked,showIgnored=document.getElementById('autoShowIgnored')?.checked;let items=autoSourceItems().filter(x=>{const kind=recordKind(x),lp=localProgress(x),es=effectiveStatus(x);if(!showIgnored&&lp==='忽略')return false;if(AUTO_STATE.route&&x.route!==AUTO_STATE.route)return false;if(type&&x.institution_type!==type)return false;if(major&&!(x.majors||[]).includes(major))return false;if(status&&es!==status)return false;if(progress&&lp!==progress)return false;if(actionable&&!['baseline','notice'].includes(kind))return false;if(openOnly&&es!=='报名中')return false;if(reviewOnly&&(x.verification==='高'||x.verification==='人工核验基线')&&!hasManual(x))return false;if(followOnly&&!isFollowed(x))return false;if(q&&!JSON.stringify(x).toLowerCase().includes(q))return false;return true;});const sort=document.getElementById('autoSort')?.value||'deadline';const rankKind=x=>({baseline:4,notice:3,report:1,lead:0}[recordKind(x)]||0),rankStatus=x=>effectiveStatus(x)==='报名中'?3:(effectiveStatus(x)==='待人工确认'?2:1);items.sort((a,b)=>{if(sort==='published')return (parseDateValue(effectivePublished(b))?.getTime()||0)-(parseDateValue(effectivePublished(a))?.getTime()||0)||(b.score||0)-(a.score||0);if(sort==='deadline'){const ad=parseDateValue(effectiveDeadline(a))?.getTime()||9e15,bd=parseDateValue(effectiveDeadline(b))?.getTime()||9e15;return ad-bd||String(a.school).localeCompare(String(b.school),'zh-CN');}if(sort==='score')return (b.score||0)-(a.score||0);if(sort==='school')return String(a.school).localeCompare(String(b.school),'zh-CN')||String(a.college||'').localeCompare(String(b.college||''),'zh-CN')||(parseDateValue(effectiveDeadline(a))?.getTime()||9e15)-(parseDateValue(effectiveDeadline(b))?.getTime()||9e15);return rankStatus(b)-rankStatus(a)||rankKind(b)-rankKind(a)||(b.score||0)-(a.score||0);});return items;}
 function chipList(x){return [...(x.majors||[]),...(x.matched_keywords||[])].filter((v,i,a)=>a.indexOf(v)===i).map(v=>`<span class="major-chip">${escAuto(v)}</span>`).join('');}
-function builderHref(x){return `builder/?noticeId=${encodeURIComponent(x.id)}`;}
+function builderHref(x){const p=new URLSearchParams({noticeId:String(x.id)}),pub=effectivePublished(x),dead=effectiveDeadline(x);if(pub)p.set('publishedAt',pub);if(dead)p.set('deadline',dead);return `builder/?${p.toString()}`;}
 function noticeMaterialItems(x){return Array.isArray(x.material_items)?x.material_items:[];}
 function canBuildFromNotice(x){return recordKind(x)==='notice'&&x.builder_ready===true&&noticeMaterialItems(x).length>=3&&/具体通知/.test(String(x.source_scope||''));}
-function scopeChips(x){return `<div class="scope-line">${x.source_scope?`<span class="scope-chip">${escAuto(x.source_scope)}</span>`:''}${x.degree?`<span class="scope-chip">${escAuto(x.degree)}</span>`:''}${x.material_confidence?`<span class="scope-chip">材料识别：${escAuto(x.material_confidence)}</span>`:''}${noticeMaterialItems(x).length?`<span class="scope-chip">${noticeMaterialItems(x).length}项材料</span>`:''}</div>`;}
-function materialDetailHtml(x){
-  const items=noticeMaterialItems(x);
-  if(items.length)return `<ol class="material-list-auto">${items.map(m=>`<li><b>${escAuto(m.title||'未命名材料')}</b>${m.raw_text&&m.raw_text!==m.title?`<div class="compact-sub">${escAuto(m.raw_text)}</div>`:''}</li>`).join('')}</ol>`;
-  return `<div class="builder-warning">尚未从院系具体通知中提取出完整材料清单。请先打开官方原文，不会自动创建材料项目。</div>`;
-}
-function builderActionHtml(x,label='准备材料'){
-  if(canBuildFromNotice(x))return `<a class="builder-btn" href="${builderHref(x)}" onclick="setAutoProgress('${escAuto(x.id)}','准备申请')">${escAuto(label)}</a>`;
-  if(recordKind(x)==='notice'&&!isCatalogRecord(x))return `<a class="builder-btn manual" href="${builderHref(x)}" onclick="setAutoProgress('${escAuto(x.id)}','准备申请')" title="自动识别未完成，可进入生成器手动补充">手动整理材料</a>`;
-  return `<span class="builder-btn disabled" title="该条不是院系申请通知，不能据此生成材料">不可生成材料</span>`;
-}
-function renderNoticeCard(x){
-  const k=recordKind(x),dl=deadlineInfo(x),follow=isFollowed(x.id),summary=usefulSnippet(x);
-  return `<article class="notice-card ${statusClass(x)} ${['lead','report','policy'].includes(k)?'lead':''}">
-    <div class="notice-card-head"><div class="badge-line"><span class="route-chip ${routeClass(x.route)}">${escAuto(x.route)}</span><span class="kind-chip ${kindClass(k)}">${kindLabel(k)}</span><span class="verify-chip ${verifyClass(x.verification)}">${escAuto(x.verification||'待核验')}</span><span class="status-chip ${statusChipClass(x)}">${escAuto(x.status||'待人工确认')}</span></div><button class="follow-btn ${follow?'active':''}" type="button" title="本地关注" onclick="toggleFollow('${escAuto(x.id)}')">${follow?'★':'☆'}</button></div>
-    <h3 class="notice-institution">${escAuto(x.school)}</h3><div class="notice-college">${escAuto(x.college||x.region||'')}</div>
-    <div class="notice-title" title="${escAuto(displayTitle(x))}">${escAuto(displayTitle(x))}</div>
-    ${scopeChips(x)}
-    <div class="notice-meta"><div><span>发布日期</span><strong>${escAuto(x.published_at||'待识别')}</strong></div><div><span>截止时间</span><strong class="${dl.cls}">${escAuto(dl.raw)}</strong></div><div><span>相关度</span><strong>${escAuto(x.score??'—')} / 100</strong></div><div><span>单位类型</span><strong>${escAuto(x.institution_type||'其他')}</strong></div></div>
-    <div class="notice-keywords">${chipList(x)}</div><p class="notice-summary">${escAuto(summary)}</p>
-    <details class="notice-details"><summary>展开院系通知与材料清单</summary><div class="detail-grid"><div><b>考核安排</b>${escAuto(x.exam||'待人工核验')}</div><div><b>材料要求</b>${materialDetailHtml(x)}</div><div><b>备注</b>${escAuto(x.remark||'—')}</div><div><b>首次发现</b>${escAuto(x.first_seen||'—')}</div><div class="raw-excerpt"><b>抓取原文片段</b>${escAuto(clipText(x.excerpt||'',700)||'—')}</div></div></details>
-    <div class="notice-card-foot"><a class="open-btn" href="${escAuto(x.url)}" target="_blank" rel="noopener">打开官方原文</a>${builderActionHtml(x)}<button class="detail-btn" type="button" onclick="openNoticeDialog('${escAuto(x.id)}')">集中查看</button><select class="local-status" onchange="setAutoProgress('${escAuto(x.id)}',this.value)">${['未处理','关注','准备申请','已申请','忽略'].map(v=>`<option ${localProgress(x.id)===v?'selected':''}>${v}</option>`).join('')}</select></div>
-  </article>`;
-}
-function renderCompactRow(x){const k=recordKind(x),dl=deadlineInfo(x);return `<tr><td class="institution-cell"><b>${escAuto(x.school)}</b><div class="compact-sub">${escAuto(x.college||'')}</div></td><td class="notice-cell-compact"><div class="compact-title">${escAuto(displayTitle(x))}</div><div class="compact-sub">${escAuto(clipText(usefulSnippet(x),90))}</div></td><td><span class="route-chip ${routeClass(x.route)}">${escAuto(x.route)}</span><br><span class="kind-chip ${kindClass(k)}">${kindLabel(k)}</span></td><td class="date-cell">${escAuto(x.published_at||'待识别')}</td><td class="date-cell ${dl.cls}">${escAuto(dl.raw)}</td><td><span class="status-chip ${statusChipClass(x)}">${escAuto(x.status||'待确认')}</span></td><td>${escAuto(x.score??'—')}<br><span class="verify-chip ${verifyClass(x.verification)}">${escAuto(x.verification||'待核验')}</span></td><td class="action-cell"><a class="open-btn" href="${escAuto(x.url)}" target="_blank" rel="noopener">原文</a> ${builderActionHtml(x,'材料')} <button class="detail-btn" onclick="openNoticeDialog('${escAuto(x.id)}')">详情</button></td></tr>`;}
-function renderAutoResults(resetVisible=true){
-  if(resetVisible)AUTO_STATE.visible=12;const items=filteredAutoItems();const shown=items.slice(0,AUTO_STATE.visible);const cards=document.getElementById('noticeCards'),table=document.getElementById('compactTableWrap'),empty=document.getElementById('autoEmpty'),more=document.getElementById('loadMoreBtn');
-  document.getElementById('autoResultText').innerHTML=`筛选后 <strong>${items.length}</strong> 条，当前显示 <strong>${shown.length}</strong> 条`;
-  cards.innerHTML=shown.map(renderNoticeCard).join('');document.getElementById('compactTableBody').innerHTML=shown.map(renderCompactRow).join('');empty.hidden=items.length>0;more.parentElement.hidden=AUTO_STATE.view==='table'||shown.length>=items.length;
-  cards.hidden=AUTO_STATE.view!=='cards';table.hidden=AUTO_STATE.view!=='table';
-}
+function scopeChips(x){return `<div class="scope-line">${x.source_scope?`<span class="scope-chip">${escAuto(x.source_scope)}</span>`:''}${x.degree?`<span class="scope-chip">${escAuto(x.degree)}</span>`:''}${x.material_confidence?`<span class="scope-chip">材料识别：${escAuto(x.material_confidence)}</span>`:''}${noticeMaterialItems(x).length?`<span class="scope-chip">${noticeMaterialItems(x).length}项材料</span>`:''}${hasManual(x)?'<span class="scope-chip manual-badge">已人工核验</span>':''}</div>`;}
+function materialDetailHtml(x){const items=noticeMaterialItems(x);if(items.length)return `<ol class="material-list-auto">${items.map(m=>`<li><b>${escAuto(m.title||'未命名材料')}</b>${m.raw_text&&m.raw_text!==m.title?`<div class="compact-sub">${escAuto(m.raw_text)}</div>`:''}</li>`).join('')}</ol>`;return `<div class="builder-warning">尚未从院系具体通知中提取出完整材料清单。可打开官方原文并进入生成器手动补充。</div>`;}
+function builderActionHtml(x,label='准备材料'){if(canBuildFromNotice(x))return `<a class="builder-btn" href="${builderHref(x)}" onclick="setAutoProgress('${escAuto(x.id)}','准备申请')">${escAuto(label)}</a>`;if(recordKind(x)==='notice'&&!isCatalogRecord(x))return `<a class="builder-btn manual" href="${builderHref(x)}" onclick="setAutoProgress('${escAuto(x.id)}','准备申请')" title="自动识别未完成，可进入生成器手动补充">手动整理材料</a>`;return `<span class="builder-btn disabled" title="该条不是院系申请通知，不能据此生成材料">不可生成材料</span>`;}
+function renderNoticeCard(x){const k=recordKind(x),dl=deadlineInfo(x),follow=isFollowed(x),summary=usefulSnippet(x),lp=localProgress(x),pc=progressClass(lp),pub=effectivePublished(x)||'待人工核验',es=effectiveStatus(x);return `<article class="notice-card ${statusClass(x)} ${['lead','report','policy'].includes(k)?'lead':''} ${pc}"><div class="notice-card-head"><div class="badge-line"><span class="route-chip ${routeClass(x.route)}">${escAuto(x.route)}</span><span class="kind-chip ${kindClass(k)}">${kindLabel(k)}</span><span class="verify-chip ${verifyClass(x.verification)}">${escAuto(x.verification||'待核验')}</span><span class="status-chip ${statusChipClass(x)}">${escAuto(es)}</span><span class="progress-chip ${pc}">${escAuto(lp)}</span></div><button class="follow-btn ${follow?'active':''}" type="button" title="关注该单位" onclick="toggleFollow('${escAuto(x.id)}')">${follow?'★':'☆'}</button></div><h3 class="notice-institution">${escAuto(x.school)}</h3><div class="notice-college">${escAuto(x.college||x.region||'')}</div><div class="notice-title" title="${escAuto(displayTitle(x))}">${escAuto(displayTitle(x))}</div>${scopeChips(x)}<div class="notice-meta"><div><span>发布日期</span><strong>${escAuto(pub)}</strong></div><div><span>截止时间</span><strong class="${dl.cls}">${escAuto(dl.raw)}</strong></div><div><span>相关度</span><strong>${escAuto(x.score??'—')} / 100</strong></div><div><span>单位类型</span><strong>${escAuto(x.institution_type||'其他')}</strong></div></div><div class="notice-keywords">${chipList(x)}</div><p class="notice-summary">${escAuto(summary)}</p><details class="notice-details"><summary>展开院系通知、材料清单与人工核验</summary><div class="detail-grid"><div><b>考核安排</b>${escAuto(x.exam||'待人工核验')}</div><div><b>材料要求</b>${materialDetailHtml(x)}</div><div><b>备注</b>${escAuto(x.remark||'—')}</div><div><b>首次发现</b>${escAuto(x.first_seen||'—')}</div><div class="raw-excerpt"><b>抓取原文片段</b>${escAuto(clipText(x.excerpt||'',700)||'—')}</div></div>${manualEditorHtml(x)}</details><div class="notice-card-foot"><a class="open-btn" href="${escAuto(x.url)}" target="_blank" rel="noopener">打开官方原文</a>${builderActionHtml(x)}<button class="detail-btn" type="button" onclick="openNoticeDialog('${escAuto(x.id)}')">集中查看</button><select class="local-status ${pc}" onchange="setAutoProgress('${escAuto(x.id)}',this.value)">${['未处理','关注','准备申请','已申请','忽略'].map(v=>`<option ${lp===v?'selected':''}>${v}</option>`).join('')}</select></div></article>`;}
+function renderCompactRow(x){const k=recordKind(x),dl=deadlineInfo(x),lp=localProgress(x),pc=progressClass(lp);return `<tr class="${pc}"><td class="institution-cell"><b>${escAuto(x.school)}</b><div class="compact-sub">${escAuto(x.college||'')}</div></td><td class="notice-cell-compact"><div class="compact-title">${escAuto(displayTitle(x))}</div><div class="compact-sub">${escAuto(clipText(usefulSnippet(x),90))}</div></td><td><span class="route-chip ${routeClass(x.route)}">${escAuto(x.route)}</span><br><span class="kind-chip ${kindClass(k)}">${kindLabel(k)}</span></td><td class="date-cell">${escAuto(effectivePublished(x)||'待核验')}</td><td class="date-cell ${dl.cls}">${escAuto(dl.raw)}</td><td><span class="status-chip ${statusChipClass(x)}">${escAuto(effectiveStatus(x))}</span><br><span class="progress-chip ${pc}">${escAuto(lp)}</span></td><td>${escAuto(x.score??'—')}<br><span class="verify-chip ${verifyClass(x.verification)}">${escAuto(x.verification||'待核验')}</span></td><td class="action-cell"><a class="open-btn" href="${escAuto(x.url)}" target="_blank" rel="noopener">原文</a> ${builderActionHtml(x,'材料')} <button class="detail-btn" onclick="openNoticeDialog('${escAuto(x.id)}')">详情</button></td></tr>`;}
+function renderAutoResults(resetVisible=true){if(resetVisible)AUTO_STATE.visible=12;const items=filteredAutoItems(),shown=items.slice(0,AUTO_STATE.visible),cards=document.getElementById('noticeCards'),table=document.getElementById('compactTableWrap'),empty=document.getElementById('autoEmpty'),more=document.getElementById('loadMoreBtn');document.getElementById('autoResultText').innerHTML=`筛选后 <strong>${items.length}</strong> 条，当前显示 <strong>${shown.length}</strong> 条`;cards.innerHTML=shown.map(renderNoticeCard).join('');document.getElementById('compactTableBody').innerHTML=shown.map(renderCompactRow).join('');empty.hidden=items.length>0;more.parentElement.hidden=AUTO_STATE.view==='table'||shown.length>=items.length;cards.hidden=AUTO_STATE.view!=='cards';table.hidden=AUTO_STATE.view!=='table';}
 function loadMoreNotices(){AUTO_STATE.visible+=12;renderAutoResults(false);}
-function resetAutoFilters(){AUTO_STATE.route='';document.querySelectorAll('#routeTabs button').forEach((b,i)=>b.classList.toggle('active',i===0));['autoType','autoMajor','autoStatus'].forEach(id=>document.getElementById(id).value='');document.getElementById('autoSort').value='priority';document.getElementById('autoSearch').value='';document.getElementById('autoActionable').checked=true;document.getElementById('autoOpenOnly').checked=false;document.getElementById('autoReviewOnly').checked=false;document.getElementById('autoFollowOnly').checked=false;renderAutoResults();}
-function openNoticeDialog(id){const x=autoSourceItems().find(v=>String(v.id)===String(id));if(!x)return;const dl=deadlineInfo(x),k=recordKind(x);document.getElementById('dialogBody').innerHTML=`<div class="dialog-head"><div><div class="badge-line"><span class="route-chip ${routeClass(x.route)}">${escAuto(x.route)}</span><span class="kind-chip ${kindClass(k)}">${kindLabel(k)}</span><span class="verify-chip ${verifyClass(x.verification)}">${escAuto(x.verification)}</span></div><h3>${escAuto(x.school)}</h3><div class="notice-college">${escAuto(x.college||'')}</div>${scopeChips(x)}</div><button class="dialog-close" onclick="document.getElementById('noticeDialog').close()">×</button></div><div class="dialog-section"><h4>${escAuto(displayTitle(x))}</h4><p>${escAuto(usefulSnippet(x))}</p></div><div class="dialog-section"><h4>日期与状态</h4><p>发布日期：${escAuto(x.published_at||'待识别')}
-截止时间：${escAuto(dl.raw)}
-自动状态：${escAuto(x.status||'待确认')}
-相关度：${escAuto(x.score??'—')} / 100</p></div><div class="dialog-section"><h4>院系材料清单</h4>${materialDetailHtml(x)}</div><div class="dialog-section"><h4>考核与备注</h4><p>考核：${escAuto(x.exam||'待人工核验')}
-备注：${escAuto(x.remark||'—')}</p></div><div class="dialog-section"><h4>抓取原文片段</h4><p>${escAuto(clipText(x.excerpt||'',1600)||'—')}</p></div><div class="notice-card-foot"><a class="open-btn" href="${escAuto(x.url)}" target="_blank" rel="noopener">打开官方原文</a>${builderActionHtml(x,'创建材料项目')}</div>`;document.getElementById('noticeDialog').showModal();}
-function attachStaticBuilderButtons(){
-  document.querySelectorAll('#preTable tbody tr').forEach(tr=>{
-    const box=tr.querySelector('.link-cell');if(!box||box.querySelector('.builder-btn'))return;
-    const a=document.createElement('a');a.className='builder-btn';a.href='builder/';a.textContent='手动建项目';a.title='静态底表不是院系具体通知，不自动导入材料';box.appendChild(a);
-  });
-}
-function initCrawlerPanel(){
-  const data=window.CRAWLER_DATA||{meta:{},notices:[],report:{}};const rep=data.report||{},items=autoSourceItems();const actionable=items.filter(x=>['baseline','notice'].includes(recordKind(x)));document.getElementById('autoTotal').textContent=actionable.length;document.getElementById('autoOpen').textContent=actionable.filter(x=>x.status==='报名中').length;document.getElementById('autoReview').textContent=actionable.filter(x=>x.verification!=='高'&&x.verification!=='人工核验基线').length;document.getElementById('autoLeads').textContent=items.length-actionable.length;document.getElementById('autoErrors').textContent=(rep.errors||[]).length;document.getElementById('autoUpdated').textContent='最近数据：'+(data.meta?.generated_at||rep.run_at||'未知')+'｜发现方式：'+(rep.search_provider||'none');
-  document.querySelectorAll('#routeTabs button').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('#routeTabs button').forEach(x=>x.classList.remove('active'));btn.classList.add('active');AUTO_STATE.route=btn.dataset.route||'';renderAutoResults();}));
-  document.querySelectorAll('#viewSwitch button').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('#viewSwitch button').forEach(x=>x.classList.remove('active'));btn.classList.add('active');AUTO_STATE.view=btn.dataset.view;renderAutoResults(false);}));
-  ['autoType','autoMajor','autoStatus','autoSort','autoActionable','autoOpenOnly','autoReviewOnly','autoFollowOnly'].forEach(id=>document.getElementById(id)?.addEventListener('change',()=>renderAutoResults()));document.getElementById('autoSearch')?.addEventListener('input',()=>renderAutoResults());
-  document.getElementById('noticeDialog')?.addEventListener('click',e=>{if(e.target.id==='noticeDialog')e.target.close();});renderAutoResults();attachStaticBuilderButtons();
-}
+function resetAutoFilters(){AUTO_STATE.route='';document.querySelectorAll('#routeTabs button').forEach((b,i)=>b.classList.toggle('active',i===0));['autoType','autoMajor','autoStatus','autoProgressFilter'].forEach(id=>document.getElementById(id).value='');document.getElementById('autoSort').value='deadline';document.getElementById('autoSearch').value='';document.getElementById('autoActionable').checked=true;document.getElementById('autoOpenOnly').checked=false;document.getElementById('autoReviewOnly').checked=false;document.getElementById('autoFollowOnly').checked=false;document.getElementById('autoShowIgnored').checked=false;renderAutoResults();}
+function openNoticeDialog(id){const x=autoSourceItems().find(v=>String(v.id)===String(id));if(!x)return;const dl=deadlineInfo(x),k=recordKind(x),lp=localProgress(x),pc=progressClass(lp);document.getElementById('dialogBody').innerHTML=`<div class="dialog-head"><div><div class="badge-line"><span class="route-chip ${routeClass(x.route)}">${escAuto(x.route)}</span><span class="kind-chip ${kindClass(k)}">${kindLabel(k)}</span><span class="verify-chip ${verifyClass(x.verification)}">${escAuto(x.verification)}</span><span class="progress-chip ${pc}">${escAuto(lp)}</span></div><h3>${escAuto(x.school)}</h3><div class="notice-college">${escAuto(x.college||'')}</div>${scopeChips(x)}</div><button class="dialog-close" onclick="document.getElementById('noticeDialog').close()">×</button></div><div class="dialog-section"><h4>${escAuto(displayTitle(x))}</h4><p>${escAuto(usefulSnippet(x))}</p></div><div class="dialog-section"><h4>日期与状态</h4><p>发布日期：${escAuto(effectivePublished(x)||'待人工核验')}\n截止时间：${escAuto(dl.raw)}\n状态：${escAuto(effectiveStatus(x))}\n相关度：${escAuto(x.score??'—')} / 100</p></div><div class="dialog-section"><h4>院系材料清单</h4>${materialDetailHtml(x)}</div>${manualEditorHtml(x)}<div class="dialog-section"><h4>考核与备注</h4><p>考核：${escAuto(x.exam||'待人工核验')}\n备注：${escAuto(x.remark||'—')}</p></div><div class="dialog-section"><h4>抓取原文片段</h4><p>${escAuto(clipText(x.excerpt||'',1600)||'—')}</p></div><div class="notice-card-foot"><a class="open-btn" href="${escAuto(x.url)}" target="_blank" rel="noopener">打开官方原文</a>${builderActionHtml(x,'创建材料项目')}</div>`;document.getElementById('noticeDialog').showModal();}
+function exportVerificationState(){const state=loadLocalState(),blob=new Blob([JSON.stringify({format:'physics-baoyan-local-state-v3',exported_at:new Date().toISOString(),state},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='保研通知人工核验与申请状态.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);}
+async function importVerificationState(file){try{const data=JSON.parse(await file.text()),incoming=data.state||data;if(!incoming.units&&!incoming.notices)throw new Error('不是有效的核验记录文件。');saveLocalState({units:incoming.units||{},notices:incoming.notices||{}});renderAutoResults();alert('核验记录已导入。');}catch(err){alert(err.message||err);}}
+function exportIgnoredUnits(){const state=loadLocalState(),units=[];for(const [key,val] of Object.entries(state.units||{})){if(val.progress!=='忽略')continue;const x=autoSourceItems().find(v=>unitKey(v)===key);units.push({unit_id:x?.unit_id||'',school:x?.school||key.split('::')[0]||'',college:x?.college||key.split('::')[1]||'',unit_key:key});}const payload={format:'physics-baoyan-ignored-units-v1',updated_at:new Date().toISOString(),ignored_unit_ids:units.map(x=>x.unit_id).filter(Boolean),ignored_unit_keys:units.map(x=>x.unit_key),ignored_units:units};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='ignored_units.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);alert(`已导出 ${units.length} 个忽略单位。请把 ignored_units.json 上传覆盖到仓库 data/ 目录，下一次 Actions 将跳过这些单位。`);}
+function attachStaticBuilderButtons(){document.querySelectorAll('#preTable tbody tr').forEach(tr=>{const box=tr.querySelector('.link-cell');if(!box||box.querySelector('.builder-btn'))return;const a=document.createElement('a');a.className='builder-btn';a.href='builder/';a.textContent='手动建项目';a.title='静态底表不是院系具体通知，不自动导入材料';box.appendChild(a);});}
+function initCrawlerPanel(){const data=window.CRAWLER_DATA||{meta:{},notices:[],report:{}},rep=data.report||{},items=autoSourceItems(),actionable=items.filter(x=>['baseline','notice'].includes(recordKind(x)));document.getElementById('autoTotal').textContent=actionable.length;document.getElementById('autoOpen').textContent=actionable.filter(x=>effectiveStatus(x)==='报名中').length;document.getElementById('autoReview').textContent=actionable.filter(x=>x.verification!=='高'&&x.verification!=='人工核验基线').length;document.getElementById('autoLeads').textContent=items.length-actionable.length;document.getElementById('autoErrors').textContent=(rep.errors||[]).length;document.getElementById('autoUpdated').textContent='最近数据：'+(data.meta?.generated_at||rep.run_at||'未知')+'｜发现方式：'+(rep.search_provider||'none')+(rep.ignored_units_count?`｜已跳过 ${rep.ignored_units_count} 个忽略单位`:'');document.querySelectorAll('#routeTabs button').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('#routeTabs button').forEach(x=>x.classList.remove('active'));btn.classList.add('active');AUTO_STATE.route=btn.dataset.route||'';renderAutoResults();}));document.querySelectorAll('#viewSwitch button').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('#viewSwitch button').forEach(x=>x.classList.remove('active'));btn.classList.add('active');AUTO_STATE.view=btn.dataset.view;renderAutoResults(false);}));['autoType','autoMajor','autoStatus','autoProgressFilter','autoSort','autoActionable','autoOpenOnly','autoReviewOnly','autoFollowOnly','autoShowIgnored'].forEach(id=>document.getElementById(id)?.addEventListener('change',()=>renderAutoResults()));document.getElementById('autoSearch')?.addEventListener('input',()=>renderAutoResults());document.getElementById('verificationImport')?.addEventListener('change',e=>{if(e.target.files?.[0])importVerificationState(e.target.files[0]);e.target.value='';});document.getElementById('noticeDialog')?.addEventListener('click',e=>{if(e.target.id==='noticeDialog')e.target.close();});renderAutoResults();attachStaticBuilderButtons();}
 document.addEventListener('DOMContentLoaded',initCrawlerPanel);
 
 </script>
