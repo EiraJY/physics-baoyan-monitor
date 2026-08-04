@@ -1,5 +1,5 @@
 {
-  "run_at": "2026-08-03T13:09:42+08:00",
+  "run_at": "2026-08-04T12:48:16+08:00",
   "schools_checked": 53,
   "institutions_checked": 53,
   "candidates_kept": 58,
@@ -8,8 +8,8 @@
     "classification 北京大学｜物理学院（含天文学、粒子物理与核物理等方向）: 已处理26个招生简章候选，但均未通过院系标题/年份/专业筛选",
     "discovery 清华大学｜物理系: 未发现招生简章详情页；seed=1 search=0 embedded=0",
     "seed https://www.phys.ruc.edu.cn/: SSLError: HTTPSConnectionPool(host='www.phys.ruc.edu.cn', port=443): Max retries exceeded with url: / (Caused by SSLError(SSLCertVerificationError(1, \"[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'www.phys.ruc.edu.cn'. (_ssl.c:1010)\")))",
-    "seed https://www.phys.ruc.edu.cn/info/1055/: SSLError: HTTPSConnectionPool(host='www.phys.ruc.edu.cn', port=443): Max retries exceeded with url: /info/1055/ (Caused by SSLError(SSLCertVerificationError(1, \"[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'www.phys.ruc.edu.cn'. (_ssl.c:1010)\")))",
     "seed https://www.phys.ruc.edu.cn/info/1055/2892.htm: SSLError: HTTPSConnectionPool(host='www.phys.ruc.edu.cn', port=443): Max retries exceeded with url: /info/1055/2892.htm (Caused by SSLError(SSLCertVerificationError(1, \"[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'www.phys.ruc.edu.cn'. (_ssl.c:1010)\")))",
+    "seed https://www.phys.ruc.edu.cn/info/1055/: SSLError: HTTPSConnectionPool(host='www.phys.ruc.edu.cn', port=443): Max retries exceeded with url: /info/1055/ (Caused by SSLError(SSLCertVerificationError(1, \"[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'www.phys.ruc.edu.cn'. (_ssl.c:1010)\")))",
     "https://www.phys.ruc.edu.cn/info/1055/2892.htm: SSLError: HTTPSConnectionPool(host='www.phys.ruc.edu.cn', port=443): Max retries exceeded with url: /info/1055/2892.htm (Caused by SSLError(SSLCertVerificationError(1, \"[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'www.phys.ruc.edu.cn'. (_ssl.c:1010)\")))",
     "classification 中国人民大学｜物理学院: 已处理1个招生简章候选，但均未通过院系标题/年份/专业筛选",
     "seed https://yzb.buaa.edu.cn/info/1002/: HTTPError: 404 Client Error:  for url: https://yzb.buaa.edu.cn/info/1002/",
@@ -34,11 +34,8 @@
     "http://yjszs.ecnu.edu.cn/cf/b4/c43946a577460/page.htm: HTTPError: 410 Client Error:  for url: https://yjszs.ecnu.edu.cn:443/cf/b4/c43946a577460/page.psp",
     "https://yjszs.ecnu.edu.cn/af/89/c43836a700297/page.htm: HTTPError: 410 Client Error:  for url: https://yjszs.ecnu.edu.cn:443/af/89/c43836a700297/page.psp",
     "classification 华东师范大学｜物理与电子科学学院、精密光谱科学与技术国家重点实验室: 已处理66个招生简章候选，但均未通过院系标题/年份/专业筛选",
-    "seed https://physics.seu.edu.cn/2026/0707/c23142a575759/pagem.htm: HTTPError: 421 Client Error: Misdirected Request for url: https://physics.seu.edu.cn/2026/0707/c23142a575759/pagem.htm",
-    "seed https://physics.seu.edu.cn/2026/0707/c23142a575759/: HTTPError: 421 Client Error: Misdirected Request for url: https://physics.seu.edu.cn/2026/0707/c23142a575759/",
-    "seed https://physics.seu.edu.cn/: HTTPError: 421 Client Error: Misdirected Request for url: https://physics.seu.edu.cn/",
-    "https://physics.seu.edu.cn/2026/0707/c23142a575759/pagem.htm: HTTPError: 421 Client Error: Misdirected Request for url: https://physics.seu.edu.cn/2026/0707/c23142a575759/pagem.htm",
-    "classification 东南大学｜物理学院: 已处理1个招生简章候选，但均未通过院系标题/年份/专业筛选",
+    "seed https://physics.seu.edu.cn/2026/0707/c23142a575759/: HTTPError: 403 Client Error: Forbidden for url: https://physics.seu.edu.cn/2026/0707/c23142a575759/",
+    "classification 东南大学｜物理学院: 已处理80个招生简章候选，但均未通过院系标题/年份/专业筛选",
     "seed https://physics.zju.edu.cn/2026/0615/c69706a3178903/: HTTPError: 403 Client Error: Forbidden for url: https://physics.zju.edu.cn/2026/0615/c69706a3178903/",
     "classification 浙江大学｜物理学院: 已处理58个招生简章候选，但均未通过院系标题/年份/专业筛选",
     "discovery 中国科学技术大学｜物理学院、天文学系: 未发现招生简章详情页；seed=1 search=0 embedded=0",
@@ -61,9 +58,9 @@
     "discovery 中国科学院大学物理科学学院｜物理科学学院: 未发现招生简章详情页；seed=3 search=0 embedded=0",
     "discovery 中国科学院大学国际理论物理中心（亚太地区）｜ICTP-AP: 未发现招生简章详情页；seed=3 search=0 embedded=0",
     "classification 中国科学院上海天文台｜研究生部/招生信息: 已处理80个招生简章候选，但均未通过院系标题/年份/专业筛选",
-    "seed https://www.pmo.cas.cn/: SSLError: HTTPSConnectionPool(host='www.pmo.cas.cn', port=443): Max retries exceeded with url: / (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1010)')))",
     "seed https://www.pmo.cas.cn/gs/zs/zsjy/: SSLError: HTTPSConnectionPool(host='www.pmo.cas.cn', port=443): Max retries exceeded with url: /gs/zs/zsjy/ (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1010)')))",
     "seed https://www.pmo.cas.cn/gs/zs/xly/: SSLError: HTTPSConnectionPool(host='www.pmo.cas.cn', port=443): Max retries exceeded with url: /gs/zs/xly/ (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1010)')))",
+    "seed https://www.pmo.cas.cn/: SSLError: HTTPSConnectionPool(host='www.pmo.cas.cn', port=443): Max retries exceeded with url: / (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1010)')))",
     "discovery 中国科学院紫金山天文台｜中国科学技术大学天文与空间科学学院: 未发现招生简章详情页；seed=3 search=0 embedded=0",
     "seed https://www.xao.ac.cn/: SSLError: HTTPSConnectionPool(host='www.xao.ac.cn', port=443): Max retries exceeded with url: / (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1010)')))",
     "seed https://www.xao.ac.cn/xwdt/tzgg/: SSLError: HTTPSConnectionPool(host='www.xao.ac.cn', port=443): Max retries exceeded with url: /xwdt/tzgg/ (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1010)')))",
@@ -350,12 +347,12 @@
       "unit_id": "",
       "institution_type": "985高校",
       "found": 0,
-      "errors": 5,
+      "errors": 2,
       "seed_count": 3,
       "direct_count": 0,
       "search_candidates": 0,
       "embedded_details": 0,
-      "candidate_details": 1
+      "candidate_details": 80
     },
     {
       "school": "浙江大学",
@@ -615,7 +612,7 @@
       "direct_count": 0,
       "search_candidates": 0,
       "embedded_details": 0,
-      "candidate_details": 42
+      "candidate_details": 45
     },
     {
       "school": "中国科学院大学物理科学学院",
