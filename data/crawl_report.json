@@ -1,5 +1,5 @@
 {
-  "run_at": "2026-08-21T10:49:32+08:00",
+  "run_at": "2026-08-22T10:40:51+08:00",
   "schools_checked": 53,
   "institutions_checked": 53,
   "candidates_kept": 57,
@@ -8,8 +8,8 @@
     "classification 北京大学｜物理学院（含天文学、粒子物理与核物理等方向）: 已处理26个招生简章候选，但均未通过院系标题/年份/专业筛选",
     "discovery 清华大学｜物理系: 未发现招生简章详情页；seed=1 search=0 embedded=0",
     "seed https://www.phys.ruc.edu.cn/info/1055/2892.htm: SSLError: HTTPSConnectionPool(host='www.phys.ruc.edu.cn', port=443): Max retries exceeded with url: /info/1055/2892.htm (Caused by SSLError(SSLCertVerificationError(1, \"[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'www.phys.ruc.edu.cn'. (_ssl.c:1010)\")))",
-    "seed https://www.phys.ruc.edu.cn/: SSLError: HTTPSConnectionPool(host='www.phys.ruc.edu.cn', port=443): Max retries exceeded with url: / (Caused by SSLError(SSLCertVerificationError(1, \"[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'www.phys.ruc.edu.cn'. (_ssl.c:1010)\")))",
     "seed https://www.phys.ruc.edu.cn/info/1055/: SSLError: HTTPSConnectionPool(host='www.phys.ruc.edu.cn', port=443): Max retries exceeded with url: /info/1055/ (Caused by SSLError(SSLCertVerificationError(1, \"[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'www.phys.ruc.edu.cn'. (_ssl.c:1010)\")))",
+    "seed https://www.phys.ruc.edu.cn/: SSLError: HTTPSConnectionPool(host='www.phys.ruc.edu.cn', port=443): Max retries exceeded with url: / (Caused by SSLError(SSLCertVerificationError(1, \"[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'www.phys.ruc.edu.cn'. (_ssl.c:1010)\")))",
     "https://www.phys.ruc.edu.cn/info/1055/2892.htm: SSLError: HTTPSConnectionPool(host='www.phys.ruc.edu.cn', port=443): Max retries exceeded with url: /info/1055/2892.htm (Caused by SSLError(SSLCertVerificationError(1, \"[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'www.phys.ruc.edu.cn'. (_ssl.c:1010)\")))",
     "classification 中国人民大学｜物理学院: 已处理1个招生简章候选，但均未通过院系标题/年份/专业筛选",
     "seed https://yzb.buaa.edu.cn/info/1002/: HTTPError: 404 Client Error:  for url: https://yzb.buaa.edu.cn/info/1002/",
