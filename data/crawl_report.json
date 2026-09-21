@@ -1,15 +1,15 @@
 {
-  "run_at": "2026-09-20T14:49:14+08:00",
+  "run_at": "2026-09-21T14:52:21+08:00",
   "schools_checked": 53,
   "institutions_checked": 53,
-  "candidates_kept": 56,
+  "candidates_kept": 55,
   "new_notices": 16,
   "errors": [
     "classification 北京大学｜物理学院（含天文学、粒子物理与核物理等方向）: 已处理28个招生简章候选，但均未通过院系标题/年份/专业筛选",
     "discovery 清华大学｜物理系: 未发现招生简章详情页；seed=1 search=0 embedded=0",
+    "seed https://www.phys.ruc.edu.cn/info/1055/2892.htm: SSLError: HTTPSConnectionPool(host='www.phys.ruc.edu.cn', port=443): Max retries exceeded with url: /info/1055/2892.htm (Caused by SSLError(SSLCertVerificationError(1, \"[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'www.phys.ruc.edu.cn'. (_ssl.c:1010)\")))",
     "seed https://www.phys.ruc.edu.cn/info/1055/: SSLError: HTTPSConnectionPool(host='www.phys.ruc.edu.cn', port=443): Max retries exceeded with url: /info/1055/ (Caused by SSLError(SSLCertVerificationError(1, \"[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'www.phys.ruc.edu.cn'. (_ssl.c:1010)\")))",
     "seed https://www.phys.ruc.edu.cn/: SSLError: HTTPSConnectionPool(host='www.phys.ruc.edu.cn', port=443): Max retries exceeded with url: / (Caused by SSLError(SSLCertVerificationError(1, \"[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'www.phys.ruc.edu.cn'. (_ssl.c:1010)\")))",
-    "seed https://www.phys.ruc.edu.cn/info/1055/2892.htm: SSLError: HTTPSConnectionPool(host='www.phys.ruc.edu.cn', port=443): Max retries exceeded with url: /info/1055/2892.htm (Caused by SSLError(SSLCertVerificationError(1, \"[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'www.phys.ruc.edu.cn'. (_ssl.c:1010)\")))",
     "https://www.phys.ruc.edu.cn/info/1055/2892.htm: SSLError: HTTPSConnectionPool(host='www.phys.ruc.edu.cn', port=443): Max retries exceeded with url: /info/1055/2892.htm (Caused by SSLError(SSLCertVerificationError(1, \"[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'www.phys.ruc.edu.cn'. (_ssl.c:1010)\")))",
     "classification 中国人民大学｜物理学院: 已处理1个招生简章候选，但均未通过院系标题/年份/专业筛选",
     "seed https://yzb.buaa.edu.cn/info/1002/: HTTPError: 404 Client Error:  for url: https://yzb.buaa.edu.cn/info/1002/",
@@ -22,13 +22,13 @@
     "seed https://yzb.tju.edu.cn/xwzx/tkss_xw/202607/: HTTPError: 403 Client Error: Forbidden for url: https://yzb.tju.edu.cn/xwzx/tkss_xw/202607/",
     "classification 天津大学｜理学院: 已处理53个招生简章候选，但均未通过院系标题/年份/专业筛选",
     "seed https://gs.dlut.edu.cn/info/1173/: HTTPError: 404 Client Error:  for url: https://gs.dlut.edu.cn/info/1173/",
-    "classification 大连理工大学｜物理学院: 已处理51个招生简章候选，但均未通过院系标题/年份/专业筛选",
+    "classification 大连理工大学｜物理学院: 已处理52个招生简章候选，但均未通过院系标题/年份/专业筛选",
     "seed https://yz.neu.edu.cn/2026/0720/c5932a458191/: HTTPError: 403 Client Error: Forbidden for url: https://yz.neu.edu.cn/2026/0720/c5932a458191/",
     "discovery 吉林大学｜物理学院: 未发现招生简章详情页；seed=1 search=0 embedded=0",
     "seed https://gsao.fudan.edu.cn/fb/0b/c15029a785163/: HTTPError: 403 Client Error: Forbidden for url: https://gsao.fudan.edu.cn/fb/0b/c15029a785163/",
     "discovery 上海交通大学｜物理与天文学院: 未发现招生简章详情页；seed=1 search=0 embedded=0",
     "seed https://yz.tongji.edu.cn/info/1010/: HTTPError: 404 Client Error:  for url: https://yz.tongji.edu.cn/info/1010/",
-    "classification 同济大学｜物理科学与工程学院: 已处理50个招生简章候选，但均未通过院系标题/年份/专业筛选",
+    "classification 同济大学｜物理科学与工程学院: 已处理51个招生简章候选，但均未通过院系标题/年份/专业筛选",
     "http://yjszs.ecnu.edu.cn/cf/b4/c43946a577460/page.htm: HTTPError: 410 Client Error:  for url: https://yjszs.ecnu.edu.cn:443/cf/b4/c43946a577460/page.psp",
     "https://yjszs.ecnu.edu.cn/af/89/c43836a700297/page.htm: HTTPError: 410 Client Error:  for url: https://yjszs.ecnu.edu.cn:443/af/89/c43836a700297/page.psp",
     "classification 华东师范大学｜物理与电子科学学院、精密光谱科学与技术国家重点实验室: 已处理68个招生简章候选，但均未通过院系标题/年份/专业筛选",
@@ -37,7 +37,7 @@
     "seed https://physics.zju.edu.cn/2026/0615/c69706a3178903/: HTTPError: 403 Client Error: Forbidden for url: https://physics.zju.edu.cn/2026/0615/c69706a3178903/",
     "classification 浙江大学｜物理学院: 已处理58个招生简章候选，但均未通过院系标题/年份/专业筛选",
     "discovery 中国科学技术大学｜物理学院、天文学系: 未发现招生简章详情页；seed=1 search=0 embedded=0",
-    "seed https://cpst.xmu.edu.cn/info/1045/: HTTPError: 404 Client Error:  for url: https://cpst.xmu.edu.cn/info/1045/",
+    "seed https://cpst.xmu.edu.cn/info/1045/: RetryError: HTTPSConnectionPool(host='cpst.xmu.edu.cn', port=443): Max retries exceeded with url: /info/1045/ (Caused by ResponseError('too many 502 error responses'))",
     "classification 厦门大学｜物理科学与技术学院: 已处理80个招生简章候选，但均未通过院系标题/年份/专业筛选",
     "classification 山东大学｜物理学院、空间科学与技术学院、前沿交叉科学青岛研究院: 已处理35个招生简章候选，但均未通过院系标题/年份/专业筛选",
     "classification 中国海洋大学｜物理与光电工程学院/相关理工单位: 已处理57个招生简章候选，但均未通过院系标题/年份/专业筛选",
@@ -233,7 +233,7 @@
       "direct_count": 0,
       "search_candidates": 0,
       "embedded_details": 0,
-      "candidate_details": 51
+      "candidate_details": 52
     },
     {
       "school": "东北大学",
@@ -272,7 +272,7 @@
       "direct_count": 0,
       "search_candidates": 0,
       "embedded_details": 0,
-      "candidate_details": 59
+      "candidate_details": 60
     },
     {
       "school": "复旦大学",
@@ -285,7 +285,7 @@
       "direct_count": 0,
       "search_candidates": 0,
       "embedded_details": 0,
-      "candidate_details": 47
+      "candidate_details": 46
     },
     {
       "school": "上海交通大学",
@@ -311,7 +311,7 @@
       "direct_count": 0,
       "search_candidates": 0,
       "embedded_details": 0,
-      "candidate_details": 50
+      "candidate_details": 51
     },
     {
       "school": "华东师范大学",
@@ -552,13 +552,13 @@
       "college": "物理学院",
       "unit_id": "",
       "institution_type": "985高校",
-      "found": 2,
+      "found": 1,
       "errors": 0,
       "seed_count": 1,
       "direct_count": 0,
       "search_candidates": 0,
       "embedded_details": 0,
-      "candidate_details": 32
+      "candidate_details": 31
     },
     {
       "school": "西北工业大学",
@@ -597,7 +597,7 @@
       "direct_count": 0,
       "search_candidates": 0,
       "embedded_details": 0,
-      "candidate_details": 67
+      "candidate_details": 66
     },
     {
       "school": "中国科学院理论物理研究所",
@@ -740,7 +740,7 @@
       "direct_count": 0,
       "search_candidates": 0,
       "embedded_details": 0,
-      "candidate_details": 77
+      "candidate_details": 78
     },
     {
       "school": "中国科学院精密测量科学与技术创新研究院",
