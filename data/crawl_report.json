@@ -1,5 +1,5 @@
 {
-  "run_at": "2026-10-23T14:27:37+08:00",
+  "run_at": "2026-10-24T14:20:15+08:00",
   "schools_checked": 53,
   "institutions_checked": 53,
   "candidates_kept": 64,
@@ -7,19 +7,16 @@
   "errors": [
     "classification 北京大学｜物理学院（含天文学、粒子物理与核物理等方向）: 已处理31个招生简章候选，但均未通过院系标题/年份/专业筛选",
     "discovery 清华大学｜物理系: 未发现招生简章详情页；seed=1 search=0 embedded=0",
+    "seed https://www.phys.ruc.edu.cn/: SSLError: HTTPSConnectionPool(host='www.phys.ruc.edu.cn', port=443): Max retries exceeded with url: / (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1010)')))",
     "seed https://www.phys.ruc.edu.cn/info/1055/2892.htm: SSLError: HTTPSConnectionPool(host='www.phys.ruc.edu.cn', port=443): Max retries exceeded with url: /info/1055/2892.htm (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1010)')))",
     "seed https://www.phys.ruc.edu.cn/info/1055/: SSLError: HTTPSConnectionPool(host='www.phys.ruc.edu.cn', port=443): Max retries exceeded with url: /info/1055/ (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1010)')))",
-    "seed https://www.phys.ruc.edu.cn/: SSLError: HTTPSConnectionPool(host='www.phys.ruc.edu.cn', port=443): Max retries exceeded with url: / (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1010)')))",
-    "https://www.phys.ruc.edu.cn/info/1055/2892.htm: ConnectionError: HTTPSConnectionPool(host='www.phys.ruc.edu.cn', port=443): Max retries exceeded with url: /info/1055/2892.htm (Caused by NewConnectionError(\"HTTPSConnection(host='www.phys.ruc.edu.cn', port=443): Failed to establish a new connection: [Errno 101] Network is unreachable\"))",
+    "https://www.phys.ruc.edu.cn/info/1055/2892.htm: SSLError: HTTPSConnectionPool(host='www.phys.ruc.edu.cn', port=443): Max retries exceeded with url: /info/1055/2892.htm (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1010)')))",
     "classification 中国人民大学｜物理学院: 已处理1个招生简章候选，但均未通过院系标题/年份/专业筛选",
-    "seed https://yzb.buaa.edu.cn/info/1002/: ConnectionError: HTTPSConnectionPool(host='yzb.buaa.edu.cn', port=443): Max retries exceeded with url: /info/1002/ (Caused by NewConnectionError(\"HTTPSConnection(host='yzb.buaa.edu.cn', port=443): Failed to establish a new connection: [Errno 101] Network is unreachable\"))",
-    "seed https://yzb.buaa.edu.cn/: ConnectionError: HTTPSConnectionPool(host='yzb.buaa.edu.cn', port=443): Max retries exceeded with url: / (Caused by NewConnectionError(\"HTTPSConnection(host='yzb.buaa.edu.cn', port=443): Failed to establish a new connection: [Errno 101] Network is unreachable\"))",
-    "seed https://yzb.buaa.edu.cn/info/1002/3552.htm: ConnectionError: HTTPSConnectionPool(host='yzb.buaa.edu.cn', port=443): Max retries exceeded with url: /info/1002/3552.htm (Caused by NewConnectionError(\"HTTPSConnection(host='yzb.buaa.edu.cn', port=443): Failed to establish a new connection: [Errno 101] Network is unreachable\"))",
-    "https://yzb.buaa.edu.cn/info/1002/3552.htm: ConnectionError: HTTPSConnectionPool(host='yzb.buaa.edu.cn', port=443): Max retries exceeded with url: /info/1002/3552.htm (Caused by NewConnectionError(\"HTTPSConnection(host='yzb.buaa.edu.cn', port=443): Failed to establish a new connection: [Errno 101] Network is unreachable\"))",
-    "classification 北京航空航天大学｜物理学院: 已处理1个招生简章候选，但均未通过院系标题/年份/专业筛选",
-    "classification 北京理工大学｜物理学院: 已处理64个招生简章候选，但均未通过院系标题/年份/专业筛选",
+    "seed https://yzb.buaa.edu.cn/info/1002/: HTTPError: 404 Client Error:  for url: https://yzb.buaa.edu.cn/info/1002/",
+    "classification 北京航空航天大学｜物理学院: 已处理28个招生简章候选，但均未通过院系标题/年份/专业筛选",
+    "seed https://grd.bit.edu.cn/: ConnectionError: HTTPSConnectionPool(host='grd.bit.edu.cn', port=443): Max retries exceeded with url: / (Caused by NewConnectionError(\"HTTPSConnection(host='grd.bit.edu.cn', port=443): Failed to establish a new connection: [Errno 101] Network is unreachable\"))",
+    "discovery 北京理工大学｜物理学院: 未发现招生简章详情页；seed=1 search=0 embedded=0",
     "seed https://yt.cau.edu.cn/art/2026/7/14/: HTTPError: 403 Client Error: Forbidden for url: https://yt.cau.edu.cn/art/2026/7/14/",
-    "https://yt.cau.edu.cn/art/2025/4/1/art_39607_1059588.html: ConnectionError: HTTPSConnectionPool(host='yt.cau.edu.cn', port=443): Max retries exceeded with url: /art/2025/4/1/art_39607_1059588.html (Caused by ProtocolError('Connection aborted.', ConnectionResetError(104, 'Connection reset by peer')))",
     "classification 中国农业大学｜理学院（物理学相关方向）: 已处理74个招生简章候选，但均未通过院系标题/年份/专业筛选",
     "seed https://yzb.tju.edu.cn/xwzx/tkss_xw/202607/: HTTPError: 403 Client Error: Forbidden for url: https://yzb.tju.edu.cn/xwzx/tkss_xw/202607/",
     "classification 天津大学｜理学院: 已处理50个招生简章候选，但均未通过院系标题/年份/专业筛选",
@@ -46,11 +43,11 @@
     "classification 武汉大学｜物理科学与技术学院: 已处理74个招生简章候选，但均未通过院系标题/年份/专业筛选",
     "classification 华中科技大学｜物理学院、引力中心/精密重力测量研究设施、强磁场中心: 已处理62个招生简章候选，但均未通过院系标题/年份/专业筛选",
     "classification 湖南大学｜物理与微电子科学学院: 已处理80个招生简章候选，但均未通过院系标题/年份/专业筛选",
-    "classification 中南大学｜物理学院: 已处理24个招生简章候选，但均未通过院系标题/年份/专业筛选",
+    "classification 中南大学｜物理学院: 已处理25个招生简章候选，但均未通过院系标题/年份/专业筛选",
     "seed https://yjszs.nudt.edu.cn/: SSLError: HTTPSConnectionPool(host='yjszs.nudt.edu.cn', port=443): Max retries exceeded with url: / (Caused by SSLError(SSLError(1, '[SSL: SSLV3_ALERT_HANDSHAKE_FAILURE] sslv3 alert handshake failure (_ssl.c:1010)')))",
     "discovery 国防科技大学｜理学院/物理学相关方向: 未发现招生简章详情页；seed=1 search=0 embedded=0",
     "discovery 中山大学｜物理与天文学院、物理学院: 未发现招生简章详情页；seed=2 search=0 embedded=0",
-    "classification 华南理工大学｜物理与光电学院: 已处理62个招生简章候选，但均未通过院系标题/年份/专业筛选",
+    "classification 华南理工大学｜物理与光电学院: 已处理58个招生简章候选，但均未通过院系标题/年份/专业筛选",
     "discovery 四川大学｜物理学院: 未发现招生简章详情页；seed=2 search=0 embedded=0",
     "seed https://yz.cqu.edu.cn/news/2026-06/: HTTPError: 404 Client Error: Not Found for url: https://yz.cqu.edu.cn/news/2026-06/",
     "classification 重庆大学｜物理学院: 已处理40个招生简章候选，但均未通过院系标题/年份/专业筛选",
@@ -141,12 +138,12 @@
       "unit_id": "",
       "institution_type": "985高校",
       "found": 0,
-      "errors": 5,
+      "errors": 2,
       "seed_count": 3,
       "direct_count": 0,
       "search_candidates": 0,
       "embedded_details": 0,
-      "candidate_details": 1
+      "candidate_details": 28
     },
     {
       "school": "北京理工大学",
@@ -154,12 +151,12 @@
       "unit_id": "",
       "institution_type": "985高校",
       "found": 0,
-      "errors": 1,
+      "errors": 2,
       "seed_count": 1,
       "direct_count": 0,
       "search_candidates": 0,
       "embedded_details": 0,
-      "candidate_details": 64
+      "candidate_details": 0
     },
     {
       "school": "北京师范大学",
@@ -180,7 +177,7 @@
       "unit_id": "",
       "institution_type": "985高校",
       "found": 0,
-      "errors": 3,
+      "errors": 2,
       "seed_count": 3,
       "direct_count": 0,
       "search_candidates": 0,
@@ -471,7 +468,7 @@
       "direct_count": 0,
       "search_candidates": 0,
       "embedded_details": 0,
-      "candidate_details": 24
+      "candidate_details": 25
     },
     {
       "school": "国防科技大学",
@@ -510,7 +507,7 @@
       "direct_count": 0,
       "search_candidates": 0,
       "embedded_details": 0,
-      "candidate_details": 62
+      "candidate_details": 58
     },
     {
       "school": "四川大学",
@@ -601,7 +598,7 @@
       "direct_count": 0,
       "search_candidates": 0,
       "embedded_details": 0,
-      "candidate_details": 63
+      "candidate_details": 61
     },
     {
       "school": "中国科学院理论物理研究所",
